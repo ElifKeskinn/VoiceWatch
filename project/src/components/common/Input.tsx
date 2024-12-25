@@ -7,28 +7,29 @@ interface InputProps {
   value: string;
   onTextChange: (value: string) => void;
   secure?: boolean;
-  keyboardType?: "text" | "number" | "email" | "phone";
+  // React NativeScript’te geçerli keyboardType’lar:
+  keyboardType?: "number" | "email" | "phone" | "datetime" | "url" | "integer";
   maxLength?: number;
   style?: any;
 }
 
-export function Input({ 
-  hint, 
-  value, 
-  onTextChange, 
-  secure = false, 
-  keyboardType = "text",
+export function Input({
+  hint,
+  value,
+  onTextChange,
+  secure = false,
+  keyboardType,
   maxLength,
-  style = {} 
+  style = {},
 }: InputProps) {
   return (
-    <textField 
+    <textField
       hint={hint}
       text={value}
       secure={secure}
       keyboardType={keyboardType}
       maxLength={maxLength}
-      style={[styles.input, style]}
+      style={{ ...styles.input, ...style }}
       onTextChange={(args) => onTextChange(args.value)}
     />
   );

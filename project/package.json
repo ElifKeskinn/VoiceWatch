@@ -9,7 +9,6 @@
     "@react-navigation/core": "^6.4.10",
     "@react-navigation/native": "^6.1.9",
     "react": "^18.2.0",
-    "react-nativescript": "^5.0.0",
     "react-nativescript-navigation": "^5.0.0"
   },
   "devDependencies": {

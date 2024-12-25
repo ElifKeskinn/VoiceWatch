@@ -1,6 +1,7 @@
+import { Dialogs } from "@nativescript/core";
 import * as React from "react";
 import { StyleSheet } from "react-nativescript";
-import { Dialogs } from "@nativescript/core";
+import { Button } from "../common/CustomButton";
 
 export function SettingsScreen() {
   const [sensitivity, setSensitivity] = React.useState(50);
@@ -13,7 +14,7 @@ export function SettingsScreen() {
     Dialogs.alert({
       title: "Hakkında & Destek",
       message: "VoiceWatch v1.0.0\nDestek için: support@voicewatch.com",
-      okButtonText: "Tamam"
+      okButtonText: "Tamam",
     });
   };
 
@@ -23,9 +24,17 @@ export function SettingsScreen() {
         <label style={styles.sectionTitle}>Acil Durum Kontakları</label>
         {mockContacts.map((contact, index) => (
           <gridLayout key={index} style={styles.contactItem} columns="*, auto, auto">
-            <label col="0" style={styles.contactInfo}>{contact.name}\n{contact.phone}</label>
-            <button col="1" style={styles.iconButton}>✏️</button>
-            <button col="2" style={styles.iconButton}>❌</button>
+            <label col={0} style={styles.contactInfo}>
+              {contact.name}
+              {"\n"}
+              {contact.phone}
+            </label>
+            <button col={1} style={styles.iconButton}>
+              ✏️
+            </button>
+            <button col={2} style={styles.iconButton}>
+              ❌
+            </button>
           </gridLayout>
         ))}
         <button style={styles.addButton}>+ Yeni Kontak Ekle</button>
@@ -33,18 +42,16 @@ export function SettingsScreen() {
 
       <stackLayout style={styles.section}>
         <label style={styles.sectionTitle}>Hassasiyet Ayarı</label>
-        <slider 
-          value={sensitivity} 
-          minValue={0} 
+        <slider
+          value={sensitivity}
+          minValue={0}
           maxValue={100}
           onValueChange={(args) => setSensitivity(args.value)}
         />
         <label style={styles.sensitivityLabel}>{Math.round(sensitivity)}%</label>
       </stackLayout>
 
-      <button style={styles.aboutButton} onTap={showAbout}>
-        Hakkında & Destek
-      </button>
+      <Button style={styles.aboutButton} onTap={showAbout} text="Hakkında & Destek" />
     </scrollView>
   );
 }
@@ -74,6 +81,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     margin: 4,
+    textAlignment: "center",
   },
   addButton: {
     marginTop: 12,
@@ -82,6 +90,7 @@ const styles = StyleSheet.create({
     color: "white",
     padding: 8,
     borderRadius: 4,
+    textAlignment: "center",
   },
   sensitivityLabel: {
     textAlignment: "center",
@@ -93,5 +102,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 4,
+    textAlignment: "center",
   },
 });

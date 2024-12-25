@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StyleSheet } from "react-nativescript";
+import { Button } from "../common/CustomButton";
 
 export function HomeScreen() {
   const [isListening, setIsListening] = React.useState(false);
@@ -15,19 +16,22 @@ export function HomeScreen() {
 
   return (
     <flexboxLayout style={styles.container}>
-      <button 
-        style={[styles.button, isListening ? styles.stopButton : styles.startButton]}
+      <Button
+        style={{
+          ...styles.button,
+          ...(isListening ? styles.stopButton : styles.startButton),
+        }}
         onTap={toggleListening}
-      >
-        {isListening ? "Dinlemeyi Durdur" : "Dinlemeyi Başlat"}
-      </button>
-      
-      <button 
-        style={[styles.button, styles.alertButton]}
+        text={isListening ? "Dinlemeyi Durdur" : "Dinlemeyi Başlat"}
+        variant={isListening ? "danger" : "success"} // İsteğe bağlı varyant
+      />
+
+      <Button
+        style={{ ...styles.button, ...styles.alertButton }}
         onTap={sendAlert}
-      >
-        Bilinçli Uyarı Gönder
-      </button>
+        text="Bilinçli Uyarı Gönder"
+        variant="warning" // İsteğe bağlı varyant
+      />
     </flexboxLayout>
   );
 }

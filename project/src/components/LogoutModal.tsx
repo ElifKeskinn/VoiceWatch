@@ -1,19 +1,33 @@
 import * as React from "react";
 import { StyleSheet } from "react-nativescript";
 
-export function LogoutModal({ visible, onConfirm, onCancel }) {
+interface LogoutModalProps {
+  visible: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+export function LogoutModal({ visible, onConfirm, onCancel }: LogoutModalProps) {
   if (!visible) return null;
 
   return (
     <absoluteLayout style={styles.overlay}>
       <flexboxLayout style={styles.modal}>
         <label style={styles.title}>Çıkış Yap</label>
-        <label style={styles.message}>Oturumu kapatmak istediğinize emin misiniz?</label>
+        <label style={styles.message}>
+          Oturumu kapatmak istediğinize emin misiniz?
+        </label>
         <flexboxLayout style={styles.buttonContainer}>
-          <button style={[styles.button, styles.cancelButton]} onTap={onCancel}>
+          <button
+            style={{ ...styles.button, ...styles.cancelButton }}
+            onClick={onCancel}
+          >
             İptal
           </button>
-          <button style={[styles.button, styles.confirmButton]} onTap={onConfirm}>
+          <button
+            style={{ ...styles.button, ...styles.confirmButton }}
+            onClick={onConfirm}
+          >
             Çıkış Yap
           </button>
         </flexboxLayout>
@@ -53,7 +67,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   button: {
-    flex: 1,
+    // 'flex' property’si tipik React Native’de var ama
+    // NativeScript tarafında CSS olarak "flex-grow", "flex-shrink" vb. tanımlanır.
     margin: 8,
     padding: 12,
     borderRadius: 4,

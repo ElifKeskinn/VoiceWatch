@@ -2,14 +2,14 @@ import * as React from "react";
 import { StyleSheet } from "react-nativescript";
 import { APP_COLORS } from "../../utils/constants";
 
-export function SplashScreen({ navigation }) {
+export function SplashScreen({ navigation }: any) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('SignIn');
+      navigation.replace("SignIn");
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigation]);
 
   return (
     <flexboxLayout style={styles.container}>

@@ -1,15 +1,21 @@
+// src/components/common/CustomButton.tsx
+import { Button, GestureEventData, StyleSheet } from "@nativescript/react";
 import * as React from "react";
-import { StyleSheet } from "react-nativescript";
 import { APP_COLORS } from "../../utils/constants";
 
-interface ButtonProps {
+interface CustomButtonProps {
   text: string;
-  onTap: () => void;
+  onTap: (args: GestureEventData) => void;
   variant?: "primary" | "success" | "danger" | "warning";
   style?: any;
 }
 
-export function Button({ text, onTap, variant = "primary", style = {} }: ButtonProps) {
+export function CustomButton({
+  text,
+  onTap,
+  variant = "primary",
+  style = {},
+}: CustomButtonProps) {
   const getVariantStyle = () => {
     switch (variant) {
       case "success":
@@ -24,12 +30,11 @@ export function Button({ text, onTap, variant = "primary", style = {} }: ButtonP
   };
 
   return (
-    <button 
-      style={[styles.button, getVariantStyle(), style]}
+    <Button
+      text={text}
+      style={{ ...styles.button, ...getVariantStyle(), ...style }}
       onTap={onTap}
-    >
-      {text}
-    </button>
+    />
   );
 }
 

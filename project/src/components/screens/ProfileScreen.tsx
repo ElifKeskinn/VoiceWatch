@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { StyleSheet } from "react-nativescript";
 
@@ -9,7 +8,7 @@ export function ProfileScreen() {
     tcNo: "12345678901",
     age: "35",
     bloodType: "A Rh+",
-    profileImage: "~/assets/default-avatar.png"
+    profileImage: "~/assets/default-avatar.png",
   };
 
   const [newPassword, setNewPassword] = React.useState("");
@@ -26,8 +25,12 @@ export function ProfileScreen() {
   return (
     <scrollView style={styles.container}>
       <flexboxLayout style={styles.header}>
+        {/* image tag’inde src ve style, 
+            references.d.ts’i boşalttıktan sonra sorunsuz çalışmalı. */}
         <image src={mockUser.profileImage} style={styles.profileImage} />
-        <label style={styles.name}>{mockUser.name} {mockUser.surname}</label>
+        <label style={styles.name}>
+          {mockUser.name} {mockUser.surname}
+        </label>
       </flexboxLayout>
 
       <stackLayout style={styles.infoSection}>
@@ -55,10 +58,7 @@ export function ProfileScreen() {
           style={styles.input}
           onTextChange={(args) => setConfirmPassword(args.value)}
         />
-        <button
-          style={styles.button}
-          onTap={handlePasswordChange}
-        >
+        <button style={styles.button} onTap={handlePasswordChange}>
           Parolayı Güncelle
         </button>
       </stackLayout>

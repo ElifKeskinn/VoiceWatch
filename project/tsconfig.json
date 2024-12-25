@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noEmitHelpers": true,
+    "skipLibCheck": true,
+    "noEmitOnError": true,
+    "jsx": "react-native",
+    "jsxFactory": "React.createElement",
+    "lib": [
+      "ESNext"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ],
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*.tsx?"
+  ],
+  "files": [
+    "./references.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "platforms"
+  ]
+}
