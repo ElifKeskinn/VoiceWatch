@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
+        textAlign: 'center', // Center the title
     },
     accordionContent: {
         width: '100%',
@@ -232,6 +233,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
+        
     },
     button: {
         backgroundColor: '#FF4500', // Bright red-orange for the button
