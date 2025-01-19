@@ -9,7 +9,8 @@ const SignUpScreen = ({ navigation }) => {
     const [age, setAge] = useState('');
     const [password, setPassword] = useState('');
     const [bloodType, setBloodType] = useState('');
-    const [contacts, setContacts] = useState([{ number: '' }, { number: '' }]); // Initialize with 2 contacts
+    const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
 
     const handleSignUp = () => {
         // Handle sign-up logic here
@@ -17,13 +18,13 @@ const SignUpScreen = ({ navigation }) => {
 
     const addContact = () => {
         if (contacts.length < 2) {
-            setContacts([...contacts, { number: '' }]);
+            setContacts([...contacts, { nickname: '', number: '' }]);
         }
     };
 
-    const handleContactChange = (index, value) => {
+    const handleContactChange = (index, field, value) => {
         const newContacts = [...contacts];
-        newContacts[index].number = formatPhoneNumber(value);
+        newContacts[index][field] = value;
         setContacts(newContacts);
     };
 
@@ -69,7 +70,7 @@ const SignUpScreen = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Yaş"
-               placeholderTextColor="#FF8C00"
+                placeholderTextColor="#FF8C00"
                 value={age}
                 onChangeText={setAge}
                 keyboardType="numeric"
@@ -77,7 +78,7 @@ const SignUpScreen = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Parola"
-               placeholderTextColor="#FF8C00"
+                placeholderTextColor="#FF8C00"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -85,26 +86,47 @@ const SignUpScreen = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Kan Grubu"
-            placeholderTextColor="#FF8C00"
+                placeholderTextColor="#FF8C00"
                 value={bloodType}
                 onChangeText={setBloodType}
             />
-            {contacts.map((contact, index) => (
-                <TextInput
-                    key={index}
-                    style={styles.input}
-                    placeholder={`Acil Durum Kontağı ${index + 1} Telefon Numarası`}
-                   placeholderTextColor="#FF8C00"
-                    value={contact.number}
-                    onChangeText={(value) => handleContactChange(index, value)}
-                    keyboardType="phone-pad"
-                />
-            ))}
-            {contacts.length < 2 && (
-                <TouchableOpacity style={styles.addButton} onPress={addContact}>
-                    <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
-                </TouchableOpacity>
+           
+
+            {/* Accordion Header */}
+            <TouchableOpacity style={styles.accordionHeader} onPress={() => setIsAccordionOpen(!isAccordionOpen)}>
+                <Text style={styles.accordionTitle}>Acil Durum Kişileri Bilgileri</Text>
+            </TouchableOpacity>
+
+            {/* Accordion Content */}
+            {isAccordionOpen && (
+                <View style={styles.accordionContent}>
+                    {contacts.map((contact, index) => (
+                        <View key={index} style={styles.contactInputContainer}>
+                            <TextInput
+                                style={styles.input} // Use the same style as other inputs
+                                placeholder={`${index + 1}. Kontağın İsmi`}
+                                placeholderTextColor="#FF8C00"
+                                value={contact.nickname}
+                                onChangeText={(value) => handleContactChange(index, 'nickname', value)}
+                            />
+                            <TextInput
+                                style={styles.input} // Use the same style as other inputs
+                                placeholder={`${index + 1}. Telefon Numarası`}
+                                placeholderTextColor="#FF8C00"
+                                value={contact.number}
+                                onChangeText={(value) => handleContactChange(index, 'number', value)}
+                                keyboardType="phone-pad"
+                            />
+                        </View>
+                    ))}
+                    {contacts.length < 2 && (
+                        <TouchableOpacity style={styles.addButton} onPress={addContact}>
+                            <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
             )}
+
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Kayıt Ol</Text>
             </TouchableOpacity>
@@ -123,14 +145,16 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start', // Align items to the top
         alignItems: 'center',
         backgroundColor: '#FFFAF0', // Light background
         padding: 20,
     },
     title: {
         fontSize: 36,
-        marginBottom: 20,
+        marginTop:120,
+        marginBottom:28,
+        
         color: '#FF4500', // Bright red-orange for title
         fontWeight: 'bold',
     },
@@ -141,14 +165,51 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 15,
         marginBottom: 15,
-        width: '100%',
+        width: '100%', // Full width for all input fields
         backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
-        color:'#FF8C00'
+        
+    },
+    
+    accordionHeader: {
+        backgroundColor: '#FF4500',
+        padding: 15,
+        borderRadius: 10,
+        width: '100%',
+        marginBottom: 10,
+    },
+    accordionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    accordionContent: {
+        width: '100%',
+        padding: 10,
+        backgroundColor: '#FFFAF0',
+        borderRadius: 10,
+    },
+    contactInputContainer: {
+        flexDirection: 'column', // Stack inputs vertically
+        alignItems: 'flex-start',
+        marginBottom: 15,
+        width: '100%',
+    },
+    addButton: {
+        backgroundColor: '#FF8C00', // Bright orange for the add button
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    addButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     button: {
         backgroundColor: '#FF4500', // Bright red-orange for the button
@@ -177,18 +238,6 @@ const styles = StyleSheet.create({
     },
     switchLink: {
         color: '#FF4500', // Soft blue for the link
-        fontWeight: 'bold',
-    },
-    addButton: {
-        backgroundColor: '#FF8C00', // Bright orange for the add button
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        marginTop: 10,
-    },
-    addButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
         fontWeight: 'bold',
     },
 });
