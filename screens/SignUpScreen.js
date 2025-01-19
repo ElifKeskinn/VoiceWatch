@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import CheckBox from '@react-native-community/checkbox';// Import the icon library
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -11,6 +13,7 @@ const SignUpScreen = ({ navigation }) => {
     const [bloodType, setBloodType] = useState('');
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
+    const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
 
     const handleSignUp = () => {
         // Handle sign-up logic here
@@ -90,7 +93,8 @@ const SignUpScreen = ({ navigation }) => {
                 value={bloodType}
                 onChangeText={setBloodType}
             />
-           
+            {/* Separator Line */}
+            
 
             {/* Accordion Header */}
             <TouchableOpacity style={styles.accordionHeader} onPress={() => setIsAccordionOpen(!isAccordionOpen)}>
@@ -127,9 +131,24 @@ const SignUpScreen = ({ navigation }) => {
                 </View>
             )}
 
+           
+
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Kayıt Ol</Text>
             </TouchableOpacity>
+             {/* Privacy Policy Agreement */}
+             <View style={styles.agreementContainer}>
+                <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                    {isAgreed ? (
+                        <Icon name="check-square" size={20} color="#FF4500" />
+                    ) : (
+                        <Icon name="square-o" size={20} color="#FF4500" />
+                    )}
+                </TouchableOpacity>
+                <Text style={styles.agreementText}>
+                    Gizlilik sözleşmesini onaylıyorum.
+                </Text>
+            </View>
             <View style={styles.switchContainer}>
                 <Text style={styles.switchText}>
                     Zaten hesabınız var mı? 
@@ -152,9 +171,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 36,
-        marginTop:120,
-        marginBottom:28,
-        
+        marginTop: 90,
+        marginBottom: 28,
         color: '#FF4500', // Bright red-orange for title
         fontWeight: 'bold',
     },
@@ -172,9 +190,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
-        
     },
-    
+    separator: {
+        height: 1,
+        width: '100%',
+        backgroundColor: '#FF4500', // Color of the separator line
+        marginVertical: 20, // Space around the line
+    },
     accordionHeader: {
         backgroundColor: '#FF4500',
         padding: 15,
@@ -239,6 +261,18 @@ const styles = StyleSheet.create({
     switchLink: {
         color: '#FF4500', // Soft blue for the link
         fontWeight: 'bold',
+    },
+    agreementContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    checkbox: {
+        marginRight: 10,
+    },
+    agreementText: {
+        fontSize: 14,
+        color: '#FF4500',
     },
 });
 
