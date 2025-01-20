@@ -1,84 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const HomeScreen = () => {
     const [isListening, setIsListening] = useState(false);
-    const [animation] = useState(new Animated.Value(0));
-    let animationLoop = null; // Animasyon döngüsünü saklamak için bir değişken
 
     const toggleListening = () => {
         setIsListening(!isListening);
-        if (!isListening) {
-            startAnimation();
-        } else {
-            stopAnimation();
-        }
-    };
-
-    const startAnimation = () => {
-        animationLoop = Animated.loop(
-            Animated.sequence([
-                Animated.timing(animation, {
-                    toValue: 1,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(animation, {
-                    toValue: 0,
-                    duration: 800,
-                    useNativeDriver: true,
-                }),
-            ])
-        );
-        animationLoop.start();
-    };
-
-    const stopAnimation = () => {
-        if (animationLoop) {
-            animationLoop.stop(); // Animasyonu durdur
-            animationLoop = null; // Referansı temizle
-        }
-        animation.setValue(0); // Animasyonu sıfırla
     };
 
     const sendAlert = () => {
         console.log("Bilinçli uyarı gönderildi!");
     };
 
-    const animatedStyle = (delay) => ({
-        transform: [
-            {
-                scale: animation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 2], // Dairenin büyüme oranı
-                }),
-            },
-        ],
-        opacity: animation.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.5, 0], // Dairenin solma efekti
-        }),
-    });
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>VoiceWatcher</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={[styles.circleButton, isListening && styles.activeButton]}
+                <TouchableOpacity 
+                    style={[styles.circleButton, isListening && styles.activeButton]} 
                     onPress={toggleListening}
                 >
                     <Text style={styles.buttonText}>
                         {isListening ? "Durdur" : "Başlat"}
                     </Text>
                 </TouchableOpacity>
-                {isListening && (
-                    <>
-                        <Animated.View style={[styles.animatedCircle, animatedStyle(0)]} />
-                        <Animated.View style={[styles.animatedCircle, animatedStyle(200)]} />
-                        <Animated.View style={[styles.animatedCircle, animatedStyle(400)]} />
-                    </>
-                )}
             </View>
             <TouchableOpacity style={styles.alertButton} onPress={sendAlert}>
                 <Text style={styles.buttonText}>Bilinçli Uyarı Gönder</Text>
@@ -90,7 +35,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-start', // Başlık yukarı alındı
+        justifyContent: 'space-between', // Butonları yukarı ve aşağıya yerleştirmek için
         alignItems: 'center',
         backgroundColor: '#FFFAF0',
         padding: 20,
@@ -103,9 +48,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     buttonContainer: {
-        marginBottom: 40,
+        flex: 1,
+        justifyContent: 'center', // Butonu ortalamak için
         alignItems: 'center',
-        justifyContent: 'center',
         position: 'relative',
     },
     circleButton: {
@@ -128,13 +73,6 @@ const styles = StyleSheet.create({
     },
     activeButton: {
         backgroundColor: '#FF8C00',
-    },
-    animatedCircle: {
-        position: 'absolute',
-        width: 200,
-        height: 200,
-        borderRadius: 100,
-        backgroundColor: 'rgba(255, 69, 0, 0.3)',
     },
     alertButton: {
         backgroundColor: '#FF8C00',
