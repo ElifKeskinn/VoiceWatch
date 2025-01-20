@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native
 const HomeScreen = () => {
     const [isListening, setIsListening] = useState(false);
     const [animation] = useState(new Animated.Value(0));
-    const [pulseAnimation, setPulseAnimation] = useState(null);
+    let animationLoop = null; // Animasyon döngüsünü saklamak için bir değişken
 
     const toggleListening = () => {
         setIsListening(!isListening);
@@ -16,57 +16,54 @@ const HomeScreen = () => {
     };
 
     const startAnimation = () => {
-        const pulse = Animated.loop(
+        animationLoop = Animated.loop(
             Animated.sequence([
                 Animated.timing(animation, {
                     toValue: 1,
-                    duration: 1000,
+                    duration: 800,
                     useNativeDriver: true,
                 }),
                 Animated.timing(animation, {
                     toValue: 0,
-                    duration: 1000,
+                    duration: 800,
                     useNativeDriver: true,
                 }),
             ])
         );
-        setPulseAnimation(pulse);
-        pulse.start();
+        animationLoop.start();
     };
 
     const stopAnimation = () => {
-        if (pulseAnimation) {
-            pulseAnimation.stop();
-            setPulseAnimation(null);
+        if (animationLoop) {
+            animationLoop.stop(); // Animasyonu durdur
+            animationLoop = null; // Referansı temizle
         }
-        animation.setValue(0);
+        animation.setValue(0); // Animasyonu sıfırla
     };
 
     const sendAlert = () => {
         console.log("Bilinçli uyarı gönderildi!");
     };
 
-    const animatedStyle = {
+    const animatedStyle = (delay) => ({
         transform: [
             {
                 scale: animation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [1, 2], // Büyüme oranı
+                    outputRange: [1, 2], // Dairenin büyüme oranı
                 }),
             },
         ],
         opacity: animation.interpolate({
             inputRange: [0, 1],
-            outputRange: [0.5, 0], // Solma efekti
+            outputRange: [0.5, 0], // Dairenin solma efekti
         }),
-    };
+    });
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>VoiceWatcher</Text>
             <View style={styles.buttonContainer}>
-                <Animated.View style={[styles.animatedCircle, animatedStyle]} />
-                <Animated.View style={[styles.animatedCircle, animatedStyle, { width: 250, height: 250 }]} />
                 <TouchableOpacity
                     style={[styles.circleButton, isListening && styles.activeButton]}
                     onPress={toggleListening}
@@ -75,6 +72,13 @@ const HomeScreen = () => {
                         {isListening ? "Durdur" : "Başlat"}
                     </Text>
                 </TouchableOpacity>
+                {isListening && (
+                    <>
+                        <Animated.View style={[styles.animatedCircle, animatedStyle(0)]} />
+                        <Animated.View style={[styles.animatedCircle, animatedStyle(200)]} />
+                        <Animated.View style={[styles.animatedCircle, animatedStyle(400)]} />
+                    </>
+                )}
             </View>
             <TouchableOpacity style={styles.alertButton} onPress={sendAlert}>
                 <Text style={styles.buttonText}>Bilinçli Uyarı Gönder</Text>
@@ -86,15 +90,16 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start', // Başlık yukarı alındı
         alignItems: 'center',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#FFFAF0',
         padding: 20,
     },
     title: {
-        fontSize: 32,
-        marginBottom: 40,
-        color: '#333',
+        fontSize: 36,
+        marginTop: 40, // Başlık için üst boşluk
+        marginBottom: 40, // Başlık altındaki boşluk
+        color: '#FF4500',
         fontWeight: 'bold',
     },
     buttonContainer: {
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     circleButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#FF4500',
         width: 150,
         height: 150,
         borderRadius: 75,
@@ -112,9 +117,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
-        shadowRadius: 5,
+        shadowRadius: 4,
     },
     buttonText: {
         color: '#FFFFFF',
@@ -122,22 +127,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     activeButton: {
-        backgroundColor: '#FF3B30',
+        backgroundColor: '#FF8C00',
     },
     animatedCircle: {
         position: 'absolute',
         width: 200,
         height: 200,
         borderRadius: 100,
-        backgroundColor: 'rgba(0, 122, 255, 0.2)',
+        backgroundColor: 'rgba(255, 69, 0, 0.3)',
     },
     alertButton: {
-        backgroundColor: '#FF9500',
+        backgroundColor: '#FF8C00',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
         width: '100%',
-        marginTop: 20,
     },
 });
 
