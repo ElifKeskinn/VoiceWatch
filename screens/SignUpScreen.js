@@ -16,7 +16,8 @@ const SignUpScreen = ({ navigation }) => {
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
 
     const handleSignUp = () => {
-        // Handle sign-up logic here
+        // Kullanıcıyı HomeScreen'e yönlendir
+        navigation.navigate('Home');
     };
 
     const addContact = () => {
