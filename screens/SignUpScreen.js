@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     },
     agreementText: {
         fontSize: 14,
-        color: '#FF4500',
+        color: '#FF8C00',
     },
     switchContainer: {
         flexDirection: 'row',
