@@ -63,6 +63,23 @@ const SignUpScreen = ({ navigation }) => {
                 value={lastName}
                 onChangeText={setLastName}
             />
+             <View style={styles.rowContainer}>
+                <TextInput
+                    style={styles.rowInput}
+                    placeholder="Yaş"
+                    placeholderTextColor="#FF8C00"
+                    value={age}
+                    onChangeText={setAge}
+                    keyboardType="numeric"
+                />
+                <TextInput
+                    style={styles.rowInput}
+                    placeholder="Kan Grubu"
+                    placeholderTextColor="#FF8C00"
+                    value={bloodType}
+                    onChangeText={setBloodType}
+                />
+            </View>
             <TextInput
                 style={styles.input}
                 placeholder="TC Kimlik Numarası"
@@ -71,14 +88,7 @@ const SignUpScreen = ({ navigation }) => {
                 onChangeText={setTcNumber}
                 keyboardType="numeric"
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Yaş"
-                placeholderTextColor="#FF8C00"
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-            />
+           
             <TextInput
                 style={styles.input}
                 placeholder="Parola"
@@ -86,13 +96,6 @@ const SignUpScreen = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Kan Grubu"
-                placeholderTextColor="#FF8C00"
-                value={bloodType}
-                onChangeText={setBloodType}
             />
             {/* Separator Line */}
             
@@ -186,6 +189,26 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: '100%', // Full width for all input fields
         backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    rowInput: {
+        height: 50,
+        borderColor: '#FF4500',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginBottom: 15,
+        width: '48%', // Adjust width to fit two inputs side by side
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
