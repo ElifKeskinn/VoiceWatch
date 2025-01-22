@@ -1,8 +1,12 @@
 // screens/SignInScreen.js
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import CheckBox from '@react-native-community/checkbox';// Import the icon library
 
 const SignInScreen = ({ navigation }) => {
+    const [isAgreed, setIsAgreed] = useState(false); // Şifreyi hatırla durumu
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>VoiceWatcher</Text>
@@ -18,13 +22,19 @@ const SignInScreen = ({ navigation }) => {
                 placeholderTextColor="#FF8C00"
                 secureTextEntry
             />
+            
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>Giriş Yap</Text>
             </TouchableOpacity>
             <View style={styles.linkContainer}>
-                <TouchableOpacity style={styles.link}>
-                    <Text style={styles.linkText}>Şifreyi Hatırla</Text>
+                <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                    {isAgreed ? (
+                        <Icon name="check-square" size={20} color="#FF4500" />
+                    ) : (
+                        <Icon name="square-o" size={20} color="#FF4500" />
+                    )}
                 </TouchableOpacity>
+                <Text style={styles.linkText}>Şifreyi Hatırla</Text>
             </View>
             <View style={styles.registerContainer}>
                 <Text style={styles.registerText}>
@@ -85,6 +95,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     linkContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginTop: 10,
     },
     linkText: {
@@ -102,6 +114,9 @@ const styles = StyleSheet.create({
     registerLink: {
         color: '#FF4500',
         fontWeight: 'bold',
+    },
+    checkbox: {
+        marginRight: 10,
     },
 });
 
