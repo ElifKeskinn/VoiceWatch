@@ -51,10 +51,7 @@ const SignUpScreen = ({ navigation }) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Kayıt Ol</Text>
-            <View style={styles.stepIndicator}>
-                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
-            </View>
+           
             {step === 1 ? (
                 <>
                     <TextInput
@@ -113,6 +110,11 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setPhoneNumber}
                         keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
                     />
+                       <View style={styles.stepIndicator}>
+                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+                </View>
+                    
                     <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
                     </TouchableOpacity>
@@ -122,7 +124,7 @@ const SignUpScreen = ({ navigation }) => {
                     <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
                         <Icon name="arrow-left" size={20} color="#FF4500" />
                     </TouchableOpacity>
-                    <Text style={styles.subtitle}>Acil Durum Kişileri Bilgileri</Text>
+                    
                     {contacts.map((contact, index) => (
                         <View key={index} style={styles.contactInputContainer}>
                             <TextInput
@@ -147,6 +149,10 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
                         </TouchableOpacity>
                     )}
+                     <View style={styles.stepIndicator}>
+                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+            </View>
                     <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                         <Text style={styles.buttonText}>Kayıt Ol</Text>
                     </TouchableOpacity>
@@ -299,16 +305,17 @@ const styles = StyleSheet.create({
     },
     stepIndicator: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
+        gap: 10 ,
         width: '100%',
         marginBottom: 20,
     },
     stepCircle: {
-        width: 20,
-        height: 20,
+        width: 10,
+        height: 10,
         borderRadius: 10,
         backgroundColor: '#FF8C00',
-        opacity: 0.5,
+        opacity: 0.4,
     },
     activeStep: {
         opacity: 1,
