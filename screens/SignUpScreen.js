@@ -51,6 +51,10 @@ const SignUpScreen = ({ navigation }) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Kayıt Ol</Text>
+            <View style={styles.stepIndicator}>
+                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+            </View>
             {step === 1 ? (
                 <>
                     <TextInput
@@ -67,14 +71,7 @@ const SignUpScreen = ({ navigation }) => {
                         value={lastName}
                         onChangeText={setLastName}
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Telefon Numarası" // Telefon numarası için placeholder
-                        placeholderTextColor="#FF8C00"
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                        keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
-                    />
+                 
                     <TextInput
                         style={styles.input}
                         placeholder="TC Kimlik Numarası"
@@ -83,13 +80,38 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setTcNumber}
                         keyboardType="numeric"
                     />
+                    <View style={styles.rowContainer}>
+                        <TextInput
+                            style={styles.rowInput}
+                            placeholder="Yaş"
+                            placeholderTextColor="#FF8C00"
+                            value={age}
+                            onChangeText={setAge}
+                            keyboardType="numeric"
+                        />
+                        <TextInput
+                            style={styles.rowInput}
+                            placeholder="Kan Grubu"
+                            placeholderTextColor="#FF8C00"
+                            value={bloodType}
+                            onChangeText={setBloodType}
+                        />
+                    </View>
                     <TextInput
                         style={styles.input}
-                        placeholder="Yaş"
+                        placeholder="Parola"
                         placeholderTextColor="#FF8C00"
-                        value={age}
-                        onChangeText={setAge}
-                        keyboardType="numeric"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                    />
+                       <TextInput
+                        style={styles.input}
+                        placeholder="Telefon Numarası" // Telefon numarası için placeholder
+                        placeholderTextColor="#FF8C00"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
                     />
                     <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
@@ -97,6 +119,9 @@ const SignUpScreen = ({ navigation }) => {
                 </>
             ) : (
                 <>
+                    <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+                        <Icon name="arrow-left" size={20} color="#FF4500" />
+                    </TouchableOpacity>
                     <Text style={styles.subtitle}>Acil Durum Kişileri Bilgileri</Text>
                     {contacts.map((contact, index) => (
                         <View key={index} style={styles.contactInputContainer}>
@@ -188,6 +213,26 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
+    rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    rowInput: {
+        height: 50,
+        borderColor: '#FF4500', // Bright red-orange for the border
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginBottom: 15,
+        width: '48%', // Adjust width to fit two inputs side by side
+        backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
     contactInputContainer: {
         flexDirection: 'column', // Stack inputs vertically
         alignItems: 'flex-start',
@@ -224,17 +269,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    switchContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
-    },
-    switchText: {
-        fontSize: 14,
-        color: '#FF8C00', // Bright red-orange for the switch text
-    },
-    switchLink: {
-        color: '#FF4500', // Soft blue for the link
-        fontWeight: 'bold',
+    backButton: {
+        marginBottom: 20,
+        alignSelf: 'flex-start',
     },
     agreementContainer: {
         flexDirection: 'row',
@@ -247,6 +284,34 @@ const styles = StyleSheet.create({
     agreementText: {
         fontSize: 14,
         color: '#FF4500',
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+    },
+    switchText: {
+        fontSize: 14,
+        color: '#FF8C00', // Bright red-orange for the switch text
+    },
+    switchLink: {
+        color: '#FF4500', // Soft blue for the link
+        fontWeight: 'bold',
+    },
+    stepIndicator: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 20,
+    },
+    stepCircle: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: '#FF8C00',
+        opacity: 0.5,
+    },
+    activeStep: {
+        opacity: 1,
     },
 });
 
