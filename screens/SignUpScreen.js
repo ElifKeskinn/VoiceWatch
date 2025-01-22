@@ -9,6 +9,7 @@ const SignUpScreen = ({ navigation }) => {
     const [lastName, setLastName] = useState('');
     const [tcNumber, setTcNumber] = useState('');
     const [age, setAge] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
     const [password, setPassword] = useState('');
     const [bloodType, setBloodType] = useState('');
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
@@ -63,7 +64,23 @@ const SignUpScreen = ({ navigation }) => {
                 value={lastName}
                 onChangeText={setLastName}
             />
-             <View style={styles.rowContainer}>
+            <TextInput
+                style={styles.input}
+                placeholder="Telefon Numarası" // Telefon numarası için placeholder
+                placeholderTextColor="#FF8C00"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="TC Kimlik Numarası"
+                placeholderTextColor="#FF8C00"
+                value={tcNumber}
+                onChangeText={setTcNumber}
+                keyboardType="numeric"
+            />
+            <View style={styles.rowContainer}>
                 <TextInput
                     style={styles.rowInput}
                     placeholder="Yaş"
@@ -80,15 +97,6 @@ const SignUpScreen = ({ navigation }) => {
                     onChangeText={setBloodType}
                 />
             </View>
-            <TextInput
-                style={styles.input}
-                placeholder="TC Kimlik Numarası"
-                placeholderTextColor="#FF8C00"
-                value={tcNumber}
-                onChangeText={setTcNumber}
-                keyboardType="numeric"
-            />
-           
             <TextInput
                 style={styles.input}
                 placeholder="Parola"
