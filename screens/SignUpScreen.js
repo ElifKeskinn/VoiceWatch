@@ -121,9 +121,7 @@ const SignUpScreen = ({ navigation }) => {
                 </>
             ) : (
                 <>
-                    <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-                        <Icon name="arrow-left" size={20} color="#FF4500" />
-                    </TouchableOpacity>
+                   
                     
                     {contacts.map((contact, index) => (
                         <View key={index} style={styles.contactInputContainer}>
@@ -149,10 +147,16 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
                         </TouchableOpacity>
                     )}
-                     <View style={styles.stepIndicator}>
-                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
-            </View>
+                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+    <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+        <Icon name="arrow-left" size={20} color="#FF4500" />
+    </TouchableOpacity>
+    <View style={styles.stepIndicator}>
+        <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+        <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+    </View>
+</View>
+
                     <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                         <Text style={styles.buttonText}>Kayıt Ol</Text>
                     </TouchableOpacity>
