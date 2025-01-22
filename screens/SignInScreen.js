@@ -5,7 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 const SignInScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>VoiceWatch</Text>
+            <Text style={styles.title}>VoiceWatcher</Text>
             <TextInput
                 style={styles.input}
                 placeholder="TC Kimlik Numarası"
