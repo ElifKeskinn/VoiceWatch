@@ -15,6 +15,7 @@ const SignUpScreen = ({ navigation }) => {
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
+    const [step, setStep] = useState(1); // Step state to manage the current step
 
     const handleSignUp = () => {
         // Kullanıcıyı HomeScreen'e yönlendir
@@ -50,72 +51,53 @@ const SignUpScreen = ({ navigation }) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Kayıt Ol</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="İsim"
-                placeholderTextColor="#FF8C00"
-                value={firstName}
-                onChangeText={setFirstName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Soyisim"
-                placeholderTextColor="#FF8C00"
-                value={lastName}
-                onChangeText={setLastName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Telefon Numarası" // Telefon numarası için placeholder
-                placeholderTextColor="#FF8C00"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="TC Kimlik Numarası"
-                placeholderTextColor="#FF8C00"
-                value={tcNumber}
-                onChangeText={setTcNumber}
-                keyboardType="numeric"
-            />
-            <View style={styles.rowContainer}>
-                <TextInput
-                    style={styles.rowInput}
-                    placeholder="Yaş"
-                    placeholderTextColor="#FF8C00"
-                    value={age}
-                    onChangeText={setAge}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    style={styles.rowInput}
-                    placeholder="Kan Grubu"
-                    placeholderTextColor="#FF8C00"
-                    value={bloodType}
-                    onChangeText={setBloodType}
-                />
-            </View>
-            <TextInput
-                style={styles.input}
-                placeholder="Parola"
-                placeholderTextColor="#FF8C00"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            {/* Separator Line */}
-            
-
-            {/* Accordion Header */}
-            <TouchableOpacity style={styles.accordionHeader} onPress={() => setIsAccordionOpen(!isAccordionOpen)}>
-                <Text style={styles.accordionTitle}>Acil Durum Kişileri Bilgileri</Text>
-            </TouchableOpacity>
-
-            {/* Accordion Content */}
-            {isAccordionOpen && (
-                <View style={styles.accordionContent}>
+            {step === 1 ? (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="İsim"
+                        placeholderTextColor="#FF8C00"
+                        value={firstName}
+                        onChangeText={setFirstName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Soyisim"
+                        placeholderTextColor="#FF8C00"
+                        value={lastName}
+                        onChangeText={setLastName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Telefon Numarası" // Telefon numarası için placeholder
+                        placeholderTextColor="#FF8C00"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="TC Kimlik Numarası"
+                        placeholderTextColor="#FF8C00"
+                        value={tcNumber}
+                        onChangeText={setTcNumber}
+                        keyboardType="numeric"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Yaş"
+                        placeholderTextColor="#FF8C00"
+                        value={age}
+                        onChangeText={setAge}
+                        keyboardType="numeric"
+                    />
+                    <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
+                        <Text style={styles.buttonText}>Devam Et</Text>
+                    </TouchableOpacity>
+                </>
+            ) : (
+                <>
+                    <Text style={styles.subtitle}>Acil Durum Kişileri Bilgileri</Text>
                     {contacts.map((contact, index) => (
                         <View key={index} style={styles.contactInputContainer}>
                             <TextInput
@@ -140,16 +122,13 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
                         </TouchableOpacity>
                     )}
-                </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                        <Text style={styles.buttonText}>Kayıt Ol</Text>
+                    </TouchableOpacity>
+                </>
             )}
-
-           
-
-            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                <Text style={styles.buttonText}>Kayıt Ol</Text>
-            </TouchableOpacity>
-             {/* Privacy Policy Agreement */}
-             <View style={styles.agreementContainer}>
+            {/* Privacy Policy Agreement */}
+            <View style={styles.agreementContainer}>
                 <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
                     {isAgreed ? (
                         <Icon name="check-square" size={20} color="#FF4500" />
@@ -188,6 +167,12 @@ const styles = StyleSheet.create({
         color: '#FF4500', // Bright red-orange for title
         fontWeight: 'bold',
     },
+    subtitle: {
+        fontSize: 24,
+        marginBottom: 20,
+        color: '#FF4500',
+        fontWeight: 'bold',
+    },
     input: {
         height: 50,
         borderColor: '#FF4500', // Bright red-orange for the border
@@ -202,51 +187,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
-    },
-    rowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    rowInput: {
-        height: 50,
-        borderColor: '#FF4500',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        marginBottom: 15,
-        width: '48%', // Adjust width to fit two inputs side by side
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    separator: {
-        height: 1,
-        width: '100%',
-        backgroundColor: '#FF4500', // Color of the separator line
-        marginVertical: 20, // Space around the line
-    },
-    accordionHeader: {
-        backgroundColor: '#FF4500',
-        padding: 15,
-        borderRadius: 10,
-        width: '100%',
-        marginBottom: 10,
-    },
-    accordionTitle: {
-        color: '#FFFFFF',
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center', // Center the title
-    },
-    accordionContent: {
-        width: '100%',
-        padding: 10,
-        backgroundColor: '#FFFAF0',
-        borderRadius: 10,
     },
     contactInputContainer: {
         flexDirection: 'column', // Stack inputs vertically
