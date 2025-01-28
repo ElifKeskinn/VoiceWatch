@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import Button from '../components/Button';
 
 const HomeScreen = () => {
     const [isListening, setIsListening] = useState(false);
@@ -16,18 +17,16 @@ const HomeScreen = () => {
         <View style={styles.container}>
             <Text style={styles.title}>VoiceWatcher</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity 
-                    style={[styles.circleButton, isListening && styles.activeButton]} 
-                    onPress={toggleListening}
+                <Button 
+                    onPress={toggleListening} 
+                    style={styles.circleButton}
                 >
-                    <Text style={styles.buttonText}>
-                        {isListening ? "Durdur" : "Başlat"}
-                    </Text>
-                </TouchableOpacity>
+                    {isListening ? "Durdur" : "Başlat"}
+                </Button>
             </View>
-            <TouchableOpacity style={styles.alertButton} onPress={sendAlert}>
-                <Text style={styles.buttonText}>Bilinçli Uyarı Gönder</Text>
-            </TouchableOpacity>
+            <Button onPress={sendAlert} variant="outline" style={styles.alertButton}>
+                Bilinçli Uyarı Gönder
+            </Button>
         </View>
     );
 };
@@ -35,29 +34,26 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between', // Butonları yukarı ve aşağıya yerleştirmek için
+        justifyContent: 'space-around',
         alignItems: 'center',
         backgroundColor: '#FFFAF0',
-        padding: 20,
+        paddingVertical: 20, 
     },
     title: {
         fontSize: 36,
-        marginTop: 40, // Başlık için üst boşluk
-        marginBottom: 40, // Başlık altındaki boşluk
+        marginBottom: 20, 
         color: '#FF4500',
         fontWeight: 'bold',
     },
     buttonContainer: {
-        flex: 1,
-        justifyContent: 'center', // Butonu ortalamak için
+        justifyContent: 'center', 
         alignItems: 'center',
-        position: 'relative',
+        marginBottom: 20, 
     },
     circleButton: {
-        backgroundColor: '#FF4500',
-        width: 150,
-        height: 150,
-        borderRadius: 75,
+        width: 200,
+        height: 200,
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 10,
@@ -66,20 +62,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 4,
     },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    activeButton: {
-        backgroundColor: '#FF8C00',
-    },
     alertButton: {
-        backgroundColor: '#FF8C00',
-        paddingVertical: 15,
+        paddingVertical: 20, 
         borderRadius: 10,
         alignItems: 'center',
-        width: '100%',
+        width: '90%', 
+        backgroundColor: '#ffa500',
     },
 });
 
