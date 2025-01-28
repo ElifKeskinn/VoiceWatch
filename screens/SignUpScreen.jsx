@@ -18,8 +18,7 @@ const SignUpScreen = ({ navigation }) => {
     const [step, setStep] = useState(1); // Step state to manage the current step
 
     const handleSignUp = () => {
-        // Kullanıcıyı HomeScreen'e yönlendir
-        navigation.navigate('Home');
+        navigation.navigate('SignIn');
     };
 
     const addContact = () => {

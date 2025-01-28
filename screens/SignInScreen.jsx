@@ -6,6 +6,10 @@ import CheckBox from '@react-native-community/checkbox';// Import the icon libra
 
 const SignInScreen = ({ navigation }) => {
     const [isAgreed, setIsAgreed] = useState(false); // Şifreyi hatırla durumu
+    
+    const handleSignIn = () => {
+        navigation.navigate('Main');
+    };
 
     return (
         <View style={styles.container}>
@@ -23,7 +27,7 @@ const SignInScreen = ({ navigation }) => {
                 secureTextEntry
             />
             
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Giriş Yap</Text>
             </TouchableOpacity>
             <View style={styles.linkContainer}>
