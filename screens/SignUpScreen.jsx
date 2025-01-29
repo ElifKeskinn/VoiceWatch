@@ -12,10 +12,14 @@ const SignUpScreen = ({ navigation }) => {
     const [age, setAge] = useState('');
     const [ageError, setAgeError] = useState(''); // Yaş için hata mesajı
     const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
+    const [phoneNumberError, setPhoneNumberError] = useState(''); // Telefon numarası için hata mesajı
+    const [secondPhoneNumber, setSecondPhoneNumber] = useState(''); // İkinci telefon numarası için state
+    const [secondPhoneNumberError, setSecondPhoneNumberError] = useState(''); // İkinci telefon numarası için hata mesajı
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
     const [bloodType, setBloodType] = useState('');
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
+    const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']); // Kontakların telefon numarası için hata mesajları
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
     const [step, setStep] = useState(1); // Step state to manage the current step
@@ -29,6 +33,9 @@ const SignUpScreen = ({ navigation }) => {
         setTcNumberError(''); // Hata mesajını sıfırla
         setAgeError(''); // Hata mesajını sıfırla
         setPasswordError(''); // Hata mesajını sıfırla
+        setPhoneNumberError(''); // Hata mesajını sıfırla
+        setSecondPhoneNumberError(''); // Hata mesajını sıfırla
+        setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
 
         // Doğrulama
         if (!firstName) {
@@ -66,6 +73,60 @@ const SignUpScreen = ({ navigation }) => {
             setPasswordError('Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.');
             isValid = false;
         }
+        if (!phoneNumber) {
+            setPhoneNumberError('Telefon numarası boş olamaz.');
+            isValid = false;
+        } else if (phoneNumber.length !== 11) {
+            setPhoneNumberError('Telefon numarası 11 haneli olmalıdır.');
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(phoneNumber)) {
+            setPhoneNumberError('Telefon numarası "0" ile başlamalıdır.');
+            isValid = false;
+        }
+        if (!secondPhoneNumber) {
+            setSecondPhoneNumberError('İkinci telefon numarası boş olamaz.');
+            isValid = false;
+        } else if (secondPhoneNumber.length !== 11) {
+            setSecondPhoneNumberError('İkinci telefon numarası 11 haneli olmalıdır.');
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(secondPhoneNumber)) {
+            setSecondPhoneNumberError('İkinci telefon numarası "0" ile başlamalıdır.');
+            isValid = false;
+        }
+
+        // Kontakların telefon numaraları için doğrulama
+        contacts.forEach((contact, index) => {
+            if (!contact.nickname) {
+                setContactPhoneErrors((prev) => {
+                    const newErrors = [...prev];
+                    newErrors[index] = 'Kontağın ismi boş geçilemez.'; // Hata mesajı
+                    return newErrors;
+                });
+                isValid = false;
+            }
+            if (!contact.number) {
+                setContactPhoneErrors((prev) => {
+                    const newErrors = [...prev];
+                    newErrors[index] = 'Telefon numarası boş olamaz.'; // Hata mesajı
+                    return newErrors;
+                });
+                isValid = false;
+            } else if (contact.number.length !== 11) {
+                setContactPhoneErrors((prev) => {
+                    const newErrors = [...prev];
+                    newErrors[index] = 'Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                    return newErrors;
+                });
+                isValid = false;
+            } else if (!/^0\d{10}$/.test(contact.number)) {
+                setContactPhoneErrors((prev) => {
+                    const newErrors = [...prev];
+                    newErrors[index] = 'Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                    return newErrors;
+                });
+                isValid = false;
+            }
+        });
 
         if (isValid) {
             navigation.navigate('SignIn');
@@ -169,7 +230,10 @@ const SignUpScreen = ({ navigation }) => {
                         value={phoneNumber}
                         onChangeText={setPhoneNumber}
                         keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
+                        maxLength={11} // 11 hanelik kısıtlama
                     />
+                    {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
+                    
                     <View style={styles.stepIndicator}>
                         <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
                         <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
@@ -181,25 +245,27 @@ const SignUpScreen = ({ navigation }) => {
                 </>
             ) : (
                 <>
-                   
-                    
+                    {/* İkinci adımda kontak bilgileri */}
                     {contacts.map((contact, index) => (
                         <View key={index} style={styles.contactInputContainer}>
                             <TextInput
-                                style={styles.input} // Use the same style as other inputs
+                                style={styles.input}
                                 placeholder={`${index + 1}. Kontağın İsmi`}
                                 placeholderTextColor="#FF8C00"
                                 value={contact.nickname}
                                 onChangeText={(value) => handleContactChange(index, 'nickname', value)}
                             />
+                            {contactPhoneErrors[index] ? <Text style={styles.errorText2}>{contactPhoneErrors[index]}</Text> : null}
                             <TextInput
-                                style={styles.input} // Use the same style as other inputs
+                                style={styles.input}
                                 placeholder={`${index + 1}. Telefon Numarası`}
                                 placeholderTextColor="#FF8C00"
                                 value={contact.number}
                                 onChangeText={(value) => handleContactChange(index, 'number', value)}
                                 keyboardType="phone-pad"
+                                maxLength={11} // 11 hanelik kısıtlama
                             />
+                            {contactPhoneErrors[index] ? <Text style={styles.errorText2}>{contactPhoneErrors[index]}</Text> : null}
                         </View>
                     ))}
                     {contacts.length < 2 && (
@@ -207,15 +273,15 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
                         </TouchableOpacity>
                     )}
-                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
-    <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-        <Icon name="arrow-left" size={20} color="#FF4500" />
-    </TouchableOpacity>
-    <View style={styles.stepIndicator}>
-        <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-        <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
-    </View>
-</View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+                        <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+                            <Icon name="arrow-left" size={20} color="#FF4500" />
+                        </TouchableOpacity>
+                        <View style={styles.stepIndicator}>
+                            <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+                            <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+                        </View>
+                    </View>
 
                     <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                         <Text style={styles.buttonText}>Kayıt Ol</Text>
