@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
+import Icon from 'react-native-vector-icons/FontAwesome';
 import CheckBox from '@react-native-community/checkbox';// Import the icon library
 
 const SignUpScreen = ({ navigation }) => {
@@ -20,6 +20,7 @@ const SignUpScreen = ({ navigation }) => {
     const [bloodType, setBloodType] = useState('');
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']); // Kontakların telefon numarası için hata mesajları
+    const [contactNicknameErrors, setContactNicknameErrors] = useState(['', '']); // Kontakların ismi için hata mesajları
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
     const [step, setStep] = useState(1); // Step state to manage the current step
@@ -36,6 +37,7 @@ const SignUpScreen = ({ navigation }) => {
         setPhoneNumberError(''); // Hata mesajını sıfırla
         setSecondPhoneNumberError(''); // Hata mesajını sıfırla
         setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
+        setContactNicknameErrors(['', '']); // Kontakların ismi için hata mesajlarını sıfırla
 
         // Doğrulama
         if (!firstName) {
@@ -94,48 +96,98 @@ const SignUpScreen = ({ navigation }) => {
             isValid = false;
         }
 
-        // Kontakların telefon numaraları için doğrulama
-        contacts.forEach((contact, index) => {
-            if (!contact.nickname) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[index] = 'Kontağın ismi boş geçilemez.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            }
-            if (!contact.number) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[index] = 'Telefon numarası boş olamaz.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            } else if (contact.number.length !== 11) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[index] = 'Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            } else if (!/^0\d{10}$/.test(contact.number)) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[index] = 'Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            }
-        });
+        // 1. Kontak için doğrulama
+        if (!contacts[0].nickname) {
+            setContactNicknameErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Kontağın ismi boş geçilemez.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactNicknameErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
+
+        if (!contacts[0].number) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Telefon numarası boş olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (contacts[0].number.length !== 11) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(contacts[0].number)) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
+
+        // 2. Kontak için doğrulama
+        if (!contacts[1].nickname) {
+            setContactNicknameErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Kontağın ismi boş geçilemez.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactNicknameErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
+
+        if (!contacts[1].number) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Telefon numarası boş olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (contacts[1].number.length !== 11) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(contacts[1].number)) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
 
         if (isValid) {
             navigation.navigate('SignIn');
-        }
-    };
-
-    const addContact = () => {
-        if (contacts.length < 2) {
-            setContacts([...contacts, { nickname: '', number: '' }]);
         }
     };
 
@@ -143,26 +195,27 @@ const SignUpScreen = ({ navigation }) => {
         const newContacts = [...contacts];
         newContacts[index][field] = value;
         setContacts(newContacts);
-    };
 
-    const formatPhoneNumber = (number) => {
-        // Remove all non-digit characters
-        const cleaned = ('' + number).replace(/\D/g, '');
-        // Format the number as (0xx) xxx xx xx
-        if (cleaned.length > 10) {
-            return cleaned.slice(0, 10); // Limit to 10 digits
+        // Hata mesajlarını sıfırlama
+        if (field === 'nickname') {
+            setContactNicknameErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[index] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        } else if (field === 'number') {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[index] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
         }
-        const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
-        if (match) {
-            return `${match[1] ? `(${match[1]}` : ''}${match[2] ? `) ${match[2]}` : ''}${match[3] ? ` ${match[3]}` : ''}${match[4] ? ` ${match[4]}` : ''}`.trim();
-        }
-        return number;
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Kayıt Ol</Text>
-           
+
             {step === 1 ? (
                 <>
                     <TextInput
@@ -173,7 +226,7 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setFirstName}
                     />
                     {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
-                    
+
                     <TextInput
                         style={styles.input}
                         placeholder="Soyisim"
@@ -182,7 +235,7 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setLastName}
                     />
                     {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
-                    
+
                     <TextInput
                         style={styles.input}
                         placeholder="TC Kimlik Numarası"
@@ -193,7 +246,7 @@ const SignUpScreen = ({ navigation }) => {
                         maxLength={11}
                     />
                     {tcNumberError ? <Text style={styles.errorText2}>{tcNumberError}</Text> : null}
-                    
+
                     <View style={styles.rowContainer}>
                         <TextInput
                             style={styles.rowInput}
@@ -212,7 +265,7 @@ const SignUpScreen = ({ navigation }) => {
                         />
                     </View>
                     {ageError ? <Text style={[styles.errorText, { textAlign: 'left', width: '100%' }]}>{ageError}</Text> : null}
-                    
+
                     <TextInput
                         style={styles.input}
                         placeholder="Parola"
@@ -222,7 +275,7 @@ const SignUpScreen = ({ navigation }) => {
                         secureTextEntry
                     />
                     {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
-                    
+
                     <TextInput
                         style={styles.input}
                         placeholder="Telefon Numarası" // Telefon numarası için placeholder
@@ -233,46 +286,66 @@ const SignUpScreen = ({ navigation }) => {
                         maxLength={11} // 11 hanelik kısıtlama
                     />
                     {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
-                    
+
                     <View style={styles.stepIndicator}>
                         <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
                         <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
                     </View>
-                    
+
                     <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
                     </TouchableOpacity>
                 </>
             ) : (
                 <>
-                    {/* İkinci adımda kontak bilgileri */}
-                    {contacts.map((contact, index) => (
-                        <View key={index} style={styles.contactInputContainer}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder={`${index + 1}. Kontağın İsmi`}
-                                placeholderTextColor="#FF8C00"
-                                value={contact.nickname}
-                                onChangeText={(value) => handleContactChange(index, 'nickname', value)}
-                            />
-                            {contactPhoneErrors[index] ? <Text style={styles.errorText2}>{contactPhoneErrors[index]}</Text> : null}
-                            <TextInput
-                                style={styles.input}
-                                placeholder={`${index + 1}. Telefon Numarası`}
-                                placeholderTextColor="#FF8C00"
-                                value={contact.number}
-                                onChangeText={(value) => handleContactChange(index, 'number', value)}
-                                keyboardType="phone-pad"
-                                maxLength={11} // 11 hanelik kısıtlama
-                            />
-                            {contactPhoneErrors[index] ? <Text style={styles.errorText2}>{contactPhoneErrors[index]}</Text> : null}
-                        </View>
-                    ))}
-                    {contacts.length < 2 && (
-                        <TouchableOpacity style={styles.addButton} onPress={addContact}>
-                            <Text style={styles.addButtonText}>Acil Durum Kontağı Ekle</Text>
-                        </TouchableOpacity>
-                    )}
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="1. Kontağın İsmi"
+                            placeholderTextColor="#FF8C00"
+                            value={contacts[0].nickname}
+                            onChangeText={(value) => handleContactChange(0, 'nickname', value)}
+                        />
+                        {contactNicknameErrors[0] ? <Text style={styles.errorText2}>{contactNicknameErrors[0]}</Text> : null}
+                    </View>
+
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="1. Telefon Numarası"
+                            placeholderTextColor="#FF8C00"
+                            value={contacts[0].number}
+                            onChangeText={(value) => handleContactChange(0, 'number', value)}
+                            keyboardType="phone-pad"
+                            maxLength={11} // 11 hanelik kısıtlama
+                        />
+                        {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
+                    </View>
+
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="2. Kontağın İsmi"
+                            placeholderTextColor="#FF8C00"
+                            value={contacts[1].nickname}
+                            onChangeText={(value) => handleContactChange(1, 'nickname', value)}
+                        />
+                        {contactNicknameErrors[1] ? <Text style={styles.errorText2}>{contactNicknameErrors[1]}</Text> : null}
+                    </View>
+
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="2. Telefon Numarası"
+                            placeholderTextColor="#FF8C00"
+                            value={contacts[1].number}
+                            onChangeText={(value) => handleContactChange(1, 'number', value)}
+                            keyboardType="phone-pad"
+                            maxLength={11} // 11 hanelik kısıtlama
+                        />
+                        {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
+                    </View>
+
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
                         <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
                             <Icon name="arrow-left" size={20} color="#FF4500" />
@@ -303,7 +376,7 @@ const SignUpScreen = ({ navigation }) => {
             </View>
             <View style={styles.switchContainer}>
                 <Text style={styles.switchText}>
-                    Zaten hesabınız var mı? 
+                    Zaten hesabınız var mı?
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                     <Text style={styles.switchLink}> Giriş Yap</Text>
@@ -387,7 +460,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
-        
+
     },
     button: {
         backgroundColor: '#FF4500', // Bright red-orange for the button
@@ -437,7 +510,7 @@ const styles = StyleSheet.create({
     stepIndicator: {
         flexDirection: 'row',
         justifyContent: 'center',
-        gap: 10 ,
+        gap: 10,
         width: '100%',
         marginBottom: 20,
     },
@@ -459,7 +532,7 @@ const styles = StyleSheet.create({
     },
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10, 
+        marginBottom: 10,
         textAlign: 'left', // Hata mesajını sola hizala
     },
 });
