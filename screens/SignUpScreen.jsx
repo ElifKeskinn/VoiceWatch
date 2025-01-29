@@ -8,6 +8,7 @@ const SignUpScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [tcNumber, setTcNumber] = useState('');
+    const [tcNumberError, setTcNumberError] = useState(''); // TC kimlik numarası için hata mesajı
     const [age, setAge] = useState('');
     const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
     const [password, setPassword] = useState('');
@@ -23,6 +24,7 @@ const SignUpScreen = ({ navigation }) => {
         let isValid = true;
         setFirstNameError(''); // Hata mesajını sıfırla
         setLastNameError(''); // Hata mesajını sıfırla
+        setTcNumberError(''); // Hata mesajını sıfırla
 
         // Doğrulama
         if (!firstName) {
@@ -31,6 +33,16 @@ const SignUpScreen = ({ navigation }) => {
         }
         if (!lastName) {
             setLastNameError('Soyisim alanı boş olamaz.');
+            isValid = false;
+        }
+        if (!tcNumber) {
+            setTcNumberError('TC Kimlik Numarası boş olamaz.');
+            isValid = false;
+        } else if (tcNumber.length < 11) {
+            setTcNumberError('TC Kimlik Numarası 11 haneli olmalıdır.');
+            isValid = false;
+        } else if (!/^\d+$/.test(tcNumber)) {
+            setTcNumberError('TC Kimlik Numarası sadece rakamlardan oluşmalıdır.');
             isValid = false;
         }
 
@@ -88,7 +100,7 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setLastName}
                     />
                     {lastNameError ? <Text style={styles.errorText}>{lastNameError}</Text> : null}
-                 
+                    
                     <TextInput
                         style={styles.input}
                         placeholder="TC Kimlik Numarası"
@@ -96,7 +108,10 @@ const SignUpScreen = ({ navigation }) => {
                         value={tcNumber}
                         onChangeText={setTcNumber}
                         keyboardType="numeric"
+                        maxLength={11}
                     />
+                    {tcNumberError ? <Text style={styles.errorText}>{tcNumberError}</Text> : null}
+                    
                     <View style={styles.rowContainer}>
                         <TextInput
                             style={styles.rowInput}
