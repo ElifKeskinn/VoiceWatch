@@ -16,9 +16,27 @@ const SignUpScreen = ({ navigation }) => {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
     const [step, setStep] = useState(1); // Step state to manage the current step
+    const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
+    const [lastNameError, setLastNameError] = useState(''); // Hata mesajı için state
 
     const handleSignUp = () => {
-        navigation.navigate('SignIn');
+        let isValid = true;
+        setFirstNameError(''); // Hata mesajını sıfırla
+        setLastNameError(''); // Hata mesajını sıfırla
+
+        // Doğrulama
+        if (!firstName) {
+            setFirstNameError('İsim alanı boş olamaz.');
+            isValid = false;
+        }
+        if (!lastName) {
+            setLastNameError('Soyisim alanı boş olamaz.');
+            isValid = false;
+        }
+
+        if (isValid) {
+            navigation.navigate('SignIn');
+        }
     };
 
     const addContact = () => {
@@ -60,6 +78,8 @@ const SignUpScreen = ({ navigation }) => {
                         value={firstName}
                         onChangeText={setFirstName}
                     />
+                    {firstNameError ? <Text style={styles.errorText}>{firstNameError}</Text> : null}
+                    
                     <TextInput
                         style={styles.input}
                         placeholder="Soyisim"
@@ -67,6 +87,7 @@ const SignUpScreen = ({ navigation }) => {
                         value={lastName}
                         onChangeText={setLastName}
                     />
+                    {lastNameError ? <Text style={styles.errorText}>{lastNameError}</Text> : null}
                  
                     <TextInput
                         style={styles.input}
@@ -322,6 +343,10 @@ const styles = StyleSheet.create({
     },
     activeStep: {
         opacity: 1,
+    },
+    errorText: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
     },
 });
 
