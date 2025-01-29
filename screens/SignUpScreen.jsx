@@ -10,8 +10,10 @@ const SignUpScreen = ({ navigation }) => {
     const [tcNumber, setTcNumber] = useState('');
     const [tcNumberError, setTcNumberError] = useState(''); // TC kimlik numarası için hata mesajı
     const [age, setAge] = useState('');
+    const [ageError, setAgeError] = useState(''); // Yaş için hata mesajı
     const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
     const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
     const [bloodType, setBloodType] = useState('');
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
@@ -25,6 +27,8 @@ const SignUpScreen = ({ navigation }) => {
         setFirstNameError(''); // Hata mesajını sıfırla
         setLastNameError(''); // Hata mesajını sıfırla
         setTcNumberError(''); // Hata mesajını sıfırla
+        setAgeError(''); // Hata mesajını sıfırla
+        setPasswordError(''); // Hata mesajını sıfırla
 
         // Doğrulama
         if (!firstName) {
@@ -43,6 +47,23 @@ const SignUpScreen = ({ navigation }) => {
             isValid = false;
         } else if (!/^\d+$/.test(tcNumber)) {
             setTcNumberError('TC Kimlik Numarası sadece rakamlardan oluşmalıdır.');
+            isValid = false;
+        }
+        if (!age) {
+            setAgeError('Yaş alanı boş olamaz.');
+            isValid = false;
+        } else if (!/^\d+$/.test(age)) {
+            setAgeError('Yaş sadece rakamlardan oluşmalıdır.');
+            isValid = false;
+        }
+        if (!password) {
+            setPasswordError('Parola alanı boş olamaz.');
+            isValid = false;
+        } else if (password.length < 8) {
+            setPasswordError('Parola en az 8 karakter olmalıdır.');
+            isValid = false;
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(password)) {
+            setPasswordError('Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.');
             isValid = false;
         }
 
@@ -90,7 +111,7 @@ const SignUpScreen = ({ navigation }) => {
                         value={firstName}
                         onChangeText={setFirstName}
                     />
-                    {firstNameError ? <Text style={styles.errorText}>{firstNameError}</Text> : null}
+                    {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
                     
                     <TextInput
                         style={styles.input}
@@ -99,7 +120,7 @@ const SignUpScreen = ({ navigation }) => {
                         value={lastName}
                         onChangeText={setLastName}
                     />
-                    {lastNameError ? <Text style={styles.errorText}>{lastNameError}</Text> : null}
+                    {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
                     
                     <TextInput
                         style={styles.input}
@@ -110,7 +131,7 @@ const SignUpScreen = ({ navigation }) => {
                         keyboardType="numeric"
                         maxLength={11}
                     />
-                    {tcNumberError ? <Text style={styles.errorText}>{tcNumberError}</Text> : null}
+                    {tcNumberError ? <Text style={styles.errorText2}>{tcNumberError}</Text> : null}
                     
                     <View style={styles.rowContainer}>
                         <TextInput
@@ -129,6 +150,8 @@ const SignUpScreen = ({ navigation }) => {
                             onChangeText={setBloodType}
                         />
                     </View>
+                    {ageError ? <Text style={[styles.errorText, { textAlign: 'left', width: '100%' }]}>{ageError}</Text> : null}
+                    
                     <TextInput
                         style={styles.input}
                         placeholder="Parola"
@@ -137,7 +160,9 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setPassword}
                         secureTextEntry
                     />
-                       <TextInput
+                    {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
+                    
+                    <TextInput
                         style={styles.input}
                         placeholder="Telefon Numarası" // Telefon numarası için placeholder
                         placeholderTextColor="#FF8C00"
@@ -145,10 +170,10 @@ const SignUpScreen = ({ navigation }) => {
                         onChangeText={setPhoneNumber}
                         keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
                     />
-                       <View style={styles.stepIndicator}>
-                <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-                <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
-                </View>
+                    <View style={styles.stepIndicator}>
+                        <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
+                        <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+                    </View>
                     
                     <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
@@ -262,6 +287,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
+        marginBottom: 15,
     },
     rowInput: {
         height: 50,
@@ -269,8 +295,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
-        marginBottom: 15,
-        width: '48%', // Adjust width to fit two inputs side by side
+        marginBottom: 0,
+        width: '48%',
         backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -362,6 +388,13 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
+        textAlign: 'left', // Hata mesajını sola hizala
+        width: '100%', // Hata mesajının genişliğini ayarla
+    },
+    errorText2: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10, 
+        textAlign: 'left', // Hata mesajını sola hizala
     },
 });
 
