@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CheckBox from '@react-native-community/checkbox';// Import the icon library
+import BloodTypePicker from '../components/BloodTypePicker';
+import CustomPicker from '../components/CustomPicker';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -256,12 +258,19 @@ const SignUpScreen = ({ navigation }) => {
                             onChangeText={setAge}
                             keyboardType="numeric"
                         />
-                        <TextInput
-                            style={styles.rowInput}
-                            placeholder="Kan Grubu"
-                            placeholderTextColor="#FF8C00"
-                            value={bloodType}
-                            onChangeText={setBloodType}
+                        <CustomPicker
+                            selectedValue={bloodType}
+                            onValueChange={setBloodType}
+                            options={[
+                                { label: 'A+', value: 'A+' },
+                                { label: 'A-', value: 'A-' },
+                                { label: 'B+', value: 'B+' },
+                                { label: 'B-', value: 'B-' },
+                                { label: 'AB+', value: 'AB+' },
+                                { label: 'AB-', value: 'AB-' },
+                                { label: '0+', value: '0+' },
+                                { label: '0-', value: '0-' },
+                            ]}
                         />
                     </View>
                     {ageError ? <Text style={[styles.errorText, { textAlign: 'left', width: '100%' }]}>{ageError}</Text> : null}
@@ -430,13 +439,12 @@ const styles = StyleSheet.create({
     },
     rowInput: {
         height: 50,
-        borderColor: '#FF4500', // Bright red-orange for the border
+        borderColor: '#FF4500',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
-        marginBottom: 0,
-        width: '48%',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
+        width: '48%', // Adjust width to fit both elements
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
