@@ -160,9 +160,10 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        marginBottom: 10,
+        marginBottom: 15,
         textAlign: 'left',
         width: '100%',
+        marginTop:-10,
     },
 });
 
