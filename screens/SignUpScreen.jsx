@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -28,6 +29,14 @@ const SignUpScreen = ({ navigation }) => {
     const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
     const [lastNameError, setLastNameError] = useState(''); // Hata mesajı için state
     const [isAgreedError, setIsAgreedError] = useState(''); // State for privacy policy agreement error
+
+    const formatPhoneNumber = (number) => {
+        const phoneNumber = parsePhoneNumberFromString(number, 'TR'); // 'TR' for Turkey
+        if (phoneNumber) {
+            return phoneNumber.formatInternational(); // Format to +90 5XX XXX XX XX
+        }
+        return number; // Return unformatted if it doesn't match
+    };
 
     const handleSignUp = () => {
         let isValid = true;
@@ -82,12 +91,12 @@ const SignUpScreen = ({ navigation }) => {
         if (!phoneNumber) {
             setPhoneNumberError('Telefon numarası boş olamaz.');
             isValid = false;
-        } else if (phoneNumber.length !== 11) {
-            setPhoneNumberError('Telefon numarası 11 haneli olmalıdır.');
-            isValid = false;
-        } else if (!/^0\d{10}$/.test(phoneNumber)) {
-            setPhoneNumberError('Telefon numarası "0" ile başlamalıdır.');
-            isValid = false;
+        } else {
+            const formattedNumber = formatPhoneNumber(phoneNumber);
+            if (formattedNumber !== phoneNumber) {
+                setPhoneNumberError('Telefon numarası geçersiz formatta.');
+                isValid = false;
+            }
         }
         if (!secondPhoneNumber) {
             setSecondPhoneNumberError('İkinci telefon numarası boş olamaz.');
@@ -208,21 +217,22 @@ const SignUpScreen = ({ navigation }) => {
     };
 
     const handleContactChange = (index, field, value) => {
+        const formattedValue = field === 'number' ? formatPhoneNumber(value) : value;
         const newContacts = [...contacts];
-        newContacts[index][field] = value;
+        newContacts[index][field] = formattedValue;
         setContacts(newContacts);
 
-        // Hata mesajlarını sıfırlama
+        // Reset error messages
         if (field === 'nickname') {
             setContactNicknameErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[index] = ''; // Hata mesajını sıfırla
+                newErrors[index] = ''; // Reset error message
                 return newErrors;
             });
         } else if (field === 'number') {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[index] = ''; // Hata mesajını sıfırla
+                newErrors[index] = ''; // Reset error message
                 return newErrors;
             });
         }
@@ -311,9 +321,12 @@ const SignUpScreen = ({ navigation }) => {
                             placeholder="Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={phoneNumber}
-                            onChangeText={setPhoneNumber}
+                            onChangeText={(value) => {
+                                const formattedValue = formatPhoneNumber(value);
+                                setPhoneNumber(formattedValue);
+                            }}
                             keyboardType="phone-pad"
-                            maxLength={11}
+                            maxLength={16} // Adjusted for the formatted length
                         />
                         {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
                     </View>
@@ -362,7 +375,7 @@ const SignUpScreen = ({ navigation }) => {
                             value={contacts[0].number}
                             onChangeText={(value) => handleContactChange(0, 'number', value)}
                             keyboardType="phone-pad"
-                            maxLength={11}
+                            maxLength={16} // Adjusted for the formatted length
                         />
                         {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
                     </View>
@@ -386,7 +399,7 @@ const SignUpScreen = ({ navigation }) => {
                             value={contacts[1].number}
                             onChangeText={(value) => handleContactChange(1, 'number', value)}
                             keyboardType="phone-pad"
-                            maxLength={11}
+                            maxLength={16} // Adjusted for the formatted length
                         />
                         {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
                     </View>
