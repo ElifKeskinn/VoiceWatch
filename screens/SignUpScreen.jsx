@@ -234,35 +234,38 @@ const SignUpScreen = ({ navigation }) => {
 
             {step === 1 ? (
                 <>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="İsim"
-                        placeholderTextColor="#FF8C00"
-                        value={firstName}
-                        onChangeText={setFirstName}
-                    />
-                    {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Soyisim"
-                        placeholderTextColor="#FF8C00"
-                        value={lastName}
-                        onChangeText={setLastName}
-                    />
-                    {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="TC Kimlik Numarası"
-                        placeholderTextColor="#FF8C00"
-                        value={tcNumber}
-                        onChangeText={setTcNumber}
-                        keyboardType="numeric"
-                        maxLength={11}
-                    />
-                    {tcNumberError ? <Text style={styles.errorText2}>{tcNumberError}</Text> : null}
-
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="İsim"
+                            placeholderTextColor="#FF8C00"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
+                        {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
+                    </View>
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Soyisim"
+                            placeholderTextColor="#FF8C00"
+                            value={lastName}
+                            onChangeText={setLastName}
+                        />
+                        {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
+                    </View>
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="TC Kimlik Numarası"
+                            placeholderTextColor="#FF8C00"
+                            value={tcNumber}
+                            onChangeText={setTcNumber}
+                            keyboardType="numeric"
+                            maxLength={11}
+                        />
+                        {tcNumberError ? <Text style={styles.errorText2}>{tcNumberError}</Text> : null}
+                    </View>
                     <View style={styles.rowContainer}>
                         <TextInput
                             style={styles.rowInput}
@@ -288,10 +291,11 @@ const SignUpScreen = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.errorRowContainer}>
-                    {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
+                        {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
                         {bloodTypeError ? <Text style={styles.errorText}>{bloodTypeError}</Text> : null}
-                        
+
                     </View>
+                    <View style={styles.contactInputContainer}>
 
                     <TextInput
                         style={styles.input}
@@ -302,6 +306,8 @@ const SignUpScreen = ({ navigation }) => {
                         secureTextEntry
                     />
                     {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
+                    </View>
+                    <View style={styles.contactInputContainer}>
 
                     <TextInput
                         style={styles.input}
@@ -313,7 +319,7 @@ const SignUpScreen = ({ navigation }) => {
                         maxLength={11} // 11 hanelik kısıtlama
                     />
                     {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
-
+                    </View>
                     <View style={styles.stepIndicator}>
                         <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
                         <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
@@ -489,7 +495,7 @@ const styles = StyleSheet.create({
     contactInputContainer: {
         flexDirection: 'column', // Stack inputs vertically
         alignItems: 'flex-start',
-        marginBottom: 15,
+
         width: '100%',
     },
     addButton: {
@@ -567,29 +573,29 @@ const styles = StyleSheet.create({
     activeStep: {
         opacity: 1,
     },
-     errorText3: {
+    errorText3: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
         textAlign: 'right', // Hata mesajını sola hizala
         width: '100%', // Hata mesajının genişliğini ayarla
-        marginTop:-10,
+        marginTop: -10,
     },
     errorText: {
         color: 'red',
         width: '48%', // Adjust width to fit both elements
         textAlign: 'left',
-        marginTop:-10,
+        marginTop: -10,
 
     },
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10,
         textAlign: 'left',
-        marginTop:-10, // Hata mesajını sola hizala
+        marginTop: -10, // Hata mesajını sola hizala
     },
     errorText4: {
         color: 'red', // Hata mesajı için kırmızı renk
-        marginTop:10,
+        marginTop: 10,
         textAlign: 'left', // Hata mesajını sola hizala
     },
     errorRowContainer: {
