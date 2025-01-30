@@ -88,32 +88,25 @@ const SignUpScreen = ({ navigation }) => {
             setPasswordError('Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.');
             isValid = false;
         }
-
-        // Phone number validation
         if (!phoneNumber) {
             setPhoneNumberError('Telefon numarası boş olamaz.');
             isValid = false;
         } else {
             const formattedNumber = formatPhoneNumber(phoneNumber);
-            if (!formattedNumber.startsWith('+90 5')) {
-                setPhoneNumberError('Lütfen +90 5XX XXX XX XX formatında girin.');
-                isValid = false;
-            } else if (formattedNumber.split(' ').length !== 4) {
-                setPhoneNumberError('Lütfen +90 5XX XXX XX XX formatında girin.');
+            if (formattedNumber !== phoneNumber) {
+                setPhoneNumberError('Telefon numarası geçersiz formatta.');
                 isValid = false;
             }
         }
-
-        // Second phone number validation (if needed)
-        if (secondPhoneNumber) {
-            const formattedSecondNumber = formatPhoneNumber(secondPhoneNumber);
-            if (!formattedSecondNumber.startsWith('+90 5')) {
-                setSecondPhoneNumberError('Lütfen +90 5XX XXX XX XX formatında girin.');
-                isValid = false;
-            } else if (formattedSecondNumber.split(' ').length !== 4) {
-                setSecondPhoneNumberError('Lütfen +90 5XX XXX XX XX formatında girin.');
-                isValid = false;
-            }
+        if (!secondPhoneNumber) {
+            setSecondPhoneNumberError('İkinci telefon numarası boş olamaz.');
+            isValid = false;
+        } else if (secondPhoneNumber.length !== 11) {
+            setSecondPhoneNumberError('İkinci telefon numarası 11 haneli olmalıdır.');
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(secondPhoneNumber)) {
+            setSecondPhoneNumberError('İkinci telefon numarası "0" ile başlamalıdır.');
+            isValid = false;
         }
 
         // 1. Kontak için doğrulama
@@ -139,23 +132,26 @@ const SignUpScreen = ({ navigation }) => {
                 return newErrors;
             });
             isValid = false;
+        } else if (contacts[0].number.length !== 11) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(contacts[0].number)) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
         } else {
-            const formattedContactNumber = formatPhoneNumber(contacts[0].number);
-            if (!formattedContactNumber.startsWith('+90 5')) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[0] = 'Lütfen +90 5XX XXX XX XX formatında girin.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            } else if (formattedContactNumber.split(' ').length !== 4) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[0] = 'Lütfen +90 5XX XXX XX XX formatında girin.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            }
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
         }
 
         // 2. Kontak için doğrulama
@@ -181,23 +177,26 @@ const SignUpScreen = ({ navigation }) => {
                 return newErrors;
             });
             isValid = false;
+        } else if (contacts[1].number.length !== 11) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else if (!/^0\d{10}$/.test(contacts[1].number)) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '2. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
         } else {
-            const formattedContactNumber = formatPhoneNumber(contacts[1].number);
-            if (!formattedContactNumber.startsWith('+90 5')) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[1] = '2. Telefon numarası +90 5 ile başlamalıdır.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            } else if (formattedContactNumber.split(' ').length !== 4) {
-                setContactPhoneErrors((prev) => {
-                    const newErrors = [...prev];
-                    newErrors[1] = '2. Telefon numarası geçersiz formatta. Lütfen +90 5XX XXX XX XX formatında girin.'; // Hata mesajı
-                    return newErrors;
-                });
-                isValid = false;
-            }
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
         }
 
         // Blood type validation
