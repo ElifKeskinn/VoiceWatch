@@ -282,8 +282,9 @@ const SignUpScreen = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.errorRowContainer}>
+                    {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
                         {bloodTypeError ? <Text style={styles.errorText}>{bloodTypeError}</Text> : null}
-                        {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
+                        
                     </View>
 
                     <TextInput
