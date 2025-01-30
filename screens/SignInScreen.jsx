@@ -34,6 +34,7 @@ const SignInScreen = ({ navigation }) => {
             isValid = false;
         }
 
+        // Navigate to Main if valid
         if (isValid) {
             navigation.navigate('Main');
         }

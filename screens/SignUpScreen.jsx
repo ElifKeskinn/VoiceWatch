@@ -13,8 +13,6 @@ const SignUpScreen = ({ navigation }) => {
     const [ageError, setAgeError] = useState(''); // Yaş için hata mesajı
     const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
     const [phoneNumberError, setPhoneNumberError] = useState(''); // Telefon numarası için hata mesajı
-    const [secondPhoneNumber, setSecondPhoneNumber] = useState(''); // İkinci telefon numarası için state
-    const [secondPhoneNumberError, setSecondPhoneNumberError] = useState(''); // İkinci telefon numarası için hata mesajı
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
     const [bloodType, setBloodType] = useState('');
@@ -37,7 +35,6 @@ const SignUpScreen = ({ navigation }) => {
         setAgeError(''); // Hata mesajını sıfırla
         setPasswordError(''); // Hata mesajını sıfırla
         setPhoneNumberError(''); // Hata mesajını sıfırla
-        setSecondPhoneNumberError(''); // Hata mesajını sıfırla
         setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
         setContactNicknameErrors(['', '']); // Kontakların ismi için hata mesajlarını sıfırla
         setBloodTypeError(''); // Reset error message
@@ -87,16 +84,6 @@ const SignUpScreen = ({ navigation }) => {
             isValid = false;
         } else if (!/^0\d{10}$/.test(phoneNumber)) {
             setPhoneNumberError('Telefon numarası "0" ile başlamalıdır.');
-            isValid = false;
-        }
-        if (!secondPhoneNumber) {
-            setSecondPhoneNumberError('İkinci telefon numarası boş olamaz.');
-            isValid = false;
-        } else if (secondPhoneNumber.length !== 11) {
-            setSecondPhoneNumberError('İkinci telefon numarası 11 haneli olmalıdır.');
-            isValid = false;
-        } else if (!/^0\d{10}$/.test(secondPhoneNumber)) {
-            setSecondPhoneNumberError('İkinci telefon numarası "0" ile başlamalıdır.');
             isValid = false;
         }
 
@@ -249,6 +236,7 @@ const SignUpScreen = ({ navigation }) => {
             isValid = false;
         }
 
+        // Navigate to Main if valid
         if (isValid) {
             navigation.navigate('Main');
         }
