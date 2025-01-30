@@ -163,7 +163,13 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: 'left',
         width: '100%',
-        marginTop:-10,
+        marginTop: -10,
+    },
+    errorText2: {
+        color: 'red',
+        marginBottom: 10,
+        textAlign: 'left',
+        marginTop: -10,
     },
 });
 

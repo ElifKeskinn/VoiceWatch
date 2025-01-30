@@ -572,20 +572,24 @@ const styles = StyleSheet.create({
         marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
         textAlign: 'right', // Hata mesajını sola hizala
         width: '100%', // Hata mesajının genişliğini ayarla
+        marginTop:-10,
     },
     errorText: {
         color: 'red',
         width: '48%', // Adjust width to fit both elements
         textAlign: 'left',
+        marginTop:-10,
+
     },
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10,
-        textAlign: 'left', // Hata mesajını sola hizala
+        textAlign: 'left',
+        marginTop:-10, // Hata mesajını sola hizala
     },
     errorText4: {
         color: 'red', // Hata mesajı için kırmızı renk
-        marginTop:8,
+        marginTop:10,
         textAlign: 'left', // Hata mesajını sola hizala
     },
     errorRowContainer: {
