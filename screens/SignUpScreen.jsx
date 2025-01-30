@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
-import { TextInputMask } from 'react-native-masked-text';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -294,34 +293,32 @@ const SignUpScreen = ({ navigation }) => {
                     <View style={styles.errorRowContainer}>
                         {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
                         {bloodTypeError ? <Text style={styles.errorText}>{bloodTypeError}</Text> : null}
+
                     </View>
                     <View style={styles.contactInputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Parola"
-                            placeholderTextColor="#FF8C00"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
-                        {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Parola"
+                        placeholderTextColor="#FF8C00"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                    />
+                    {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
                     </View>
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
-                            style={styles.input}
-                            placeholder="Telefon Numarası"
-                            placeholderTextColor="#FF8C00"
-                            value={phoneNumber}
-                            onChangeText={setPhoneNumber}
-                            keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "Telefon Numarası"}
-                        />
-                        {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Telefon Numarası" // Telefon numarası için placeholder
+                        placeholderTextColor="#FF8C00"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
+                        maxLength={11} // 11 hanelik kısıtlama
+                    />
+                    {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
                     </View>
                     <View style={styles.stepIndicator}>
                         <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
@@ -361,19 +358,14 @@ const SignUpScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
+                        <TextInput
                             style={styles.input}
                             placeholder="1. Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={contacts[0].number}
                             onChangeText={(value) => handleContactChange(0, 'number', value)}
                             keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "1. Telefon Numarası"}
+                            maxLength={11} // 11 hanelik kısıtlama
                         />
                         {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
                     </View>
@@ -390,19 +382,14 @@ const SignUpScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
+                        <TextInput
                             style={styles.input}
                             placeholder="2. Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={contacts[1].number}
                             onChangeText={(value) => handleContactChange(1, 'number', value)}
                             keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "2. Telefon Numarası"}
+                            maxLength={11} // 11 hanelik kısıtlama
                         />
                         {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
                     </View>
@@ -508,6 +495,7 @@ const styles = StyleSheet.create({
     contactInputContainer: {
         flexDirection: 'column', // Stack inputs vertically
         alignItems: 'flex-start',
+
         width: '100%',
     },
     addButton: {
@@ -521,6 +509,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
+
     },
     button: {
         backgroundColor: '#FF4500', // Bright red-orange for the button
@@ -596,6 +585,7 @@ const styles = StyleSheet.create({
         width: '48%', // Adjust width to fit both elements
         textAlign: 'left',
         marginTop: -10,
+
     },
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
