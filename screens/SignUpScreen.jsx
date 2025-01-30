@@ -72,7 +72,7 @@ const SignUpScreen = ({ navigation }) => {
         } else if (password.length < 8) {
             setPasswordError('Parola en az 8 karakter olmalıdır.');
             isValid = false;
-        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(password)) {
+        }   else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/.test(password)) {
             setPasswordError('Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.');
             isValid = false;
         }
