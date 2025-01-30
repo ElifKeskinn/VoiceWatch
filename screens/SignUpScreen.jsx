@@ -29,6 +29,7 @@ const SignUpScreen = ({ navigation }) => {
     const [step, setStep] = useState(1); // Step state to manage the current step
     const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
     const [lastNameError, setLastNameError] = useState(''); // Hata mesajı için state
+    const [isAgreedError, setIsAgreedError] = useState(''); // State for privacy policy agreement error
 
     const handleSignUp = () => {
         let isValid = true;
@@ -42,6 +43,7 @@ const SignUpScreen = ({ navigation }) => {
         setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
         setContactNicknameErrors(['', '']); // Kontakların ismi için hata mesajlarını sıfırla
         setBloodTypeError(''); // Reset error message
+        setIsAgreedError(''); // Reset error message for privacy policy agreement
 
         // Doğrulama
         if (!firstName) {
@@ -196,6 +198,12 @@ const SignUpScreen = ({ navigation }) => {
             isValid = false;
         }
 
+        // Privacy policy agreement validation
+        if (!isAgreed) {
+            setIsAgreedError('Gizlilik sözleşmesini onaylamalısınız.');
+            isValid = false;
+        }
+
         if (isValid) {
             navigation.navigate('SignIn');
         }
@@ -316,6 +324,21 @@ const SignUpScreen = ({ navigation }) => {
                     <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
                     </TouchableOpacity>
+
+                    {/* Privacy Policy Agreement for Step 1 */}
+                    <View style={styles.agreementContainer}>
+                        <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                            {isAgreed ? (
+                                <Icon name="check-square" size={20} color="#FF4500" />
+                            ) : (
+                                <Icon name="square-o" size={20} color="#FF4500" />
+                            )}
+                        </TouchableOpacity>
+                        <Text style={styles.agreementText}>
+                            Gizlilik sözleşmesini onaylıyorum.
+                        </Text>
+                    </View>
+                    {isAgreedError ? <Text style={styles.errorText4}>{isAgreedError}</Text> : null}
                 </>
             ) : (
                 <>
@@ -380,21 +403,23 @@ const SignUpScreen = ({ navigation }) => {
                     <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                         <Text style={styles.buttonText}>Kayıt Ol</Text>
                     </TouchableOpacity>
+
+                    {/* Privacy Policy Agreement for Step 2 */}
+                    <View style={styles.agreementContainer}>
+                        <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                            {isAgreed ? (
+                                <Icon name="check-square" size={20} color="#FF4500" />
+                            ) : (
+                                <Icon name="square-o" size={20} color="#FF4500" />
+                            )}
+                        </TouchableOpacity>
+                        <Text style={styles.agreementText}>
+                            Gizlilik sözleşmesini onaylıyorum.
+                        </Text>
+                    </View>
+                    {isAgreedError ? <Text style={styles.errorText4}>{isAgreedError}</Text> : null}
                 </>
             )}
-            {/* Privacy Policy Agreement */}
-            <View style={styles.agreementContainer}>
-                <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
-                    {isAgreed ? (
-                        <Icon name="check-square" size={20} color="#FF4500" />
-                    ) : (
-                        <Icon name="square-o" size={20} color="#FF4500" />
-                    )}
-                </TouchableOpacity>
-                <Text style={styles.agreementText}>
-                    Gizlilik sözleşmesini onaylıyorum.
-                </Text>
-            </View>
             <View style={styles.switchContainer}>
                 <Text style={styles.switchText}>
                     Zaten hesabınız var mı?
@@ -513,7 +538,7 @@ const styles = StyleSheet.create({
     },
     agreementText: {
         fontSize: 14,
-        color: '#FF8C00',
+        color: 'black',
     },
     switchContainer: {
         flexDirection: 'row',
@@ -558,6 +583,11 @@ const styles = StyleSheet.create({
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10,
+        textAlign: 'left', // Hata mesajını sola hizala
+    },
+    errorText4: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginTop:8,
         textAlign: 'left', // Hata mesajını sola hizala
     },
     errorRowContainer: {
