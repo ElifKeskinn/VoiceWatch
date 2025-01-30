@@ -11,12 +11,12 @@ const CustomPicker = ({ label, options, selectedValue, onValueChange }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      
       <TouchableOpacity
         style={styles.picker}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.selectedText}>
+        <Text style={selectedValue ? styles.selectedText : styles.placeholderText}>
           {selectedValue || 'Kan Grubu'}
         </Text>
       </TouchableOpacity>
@@ -51,12 +51,11 @@ const CustomPicker = ({ label, options, selectedValue, onValueChange }) => {
 const styles = StyleSheet.create({
   container: {
     width: '48%',
-    marginBottom: 0,
+    
   },
   label: {
     fontSize: 16,
     color: '#FF8C00',
-    marginBottom: 5,
   },
   picker: {
     height: 50,
@@ -67,8 +66,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
-  selectedText: {
+  placeholderText: {
     color: '#FF8C00',
+  },
+  selectedText: {
+    color: 'black',
   },
   modalContainer: {
     flex: 1,

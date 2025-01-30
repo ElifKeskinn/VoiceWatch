@@ -20,6 +20,7 @@ const SignUpScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
     const [bloodType, setBloodType] = useState('');
+    const [bloodTypeError, setBloodTypeError] = useState(''); // State for blood type error
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']); // Kontakların telefon numarası için hata mesajları
     const [contactNicknameErrors, setContactNicknameErrors] = useState(['', '']); // Kontakların ismi için hata mesajları
@@ -40,6 +41,7 @@ const SignUpScreen = ({ navigation }) => {
         setSecondPhoneNumberError(''); // Hata mesajını sıfırla
         setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
         setContactNicknameErrors(['', '']); // Kontakların ismi için hata mesajlarını sıfırla
+        setBloodTypeError(''); // Reset error message
 
         // Doğrulama
         if (!firstName) {
@@ -188,6 +190,12 @@ const SignUpScreen = ({ navigation }) => {
             });
         }
 
+        // Blood type validation
+        if (!bloodType) {
+            setBloodTypeError('Kan grubu seçilmelidir.');
+            isValid = false;
+        }
+
         if (isValid) {
             navigation.navigate('SignIn');
         }
@@ -273,7 +281,10 @@ const SignUpScreen = ({ navigation }) => {
                             ]}
                         />
                     </View>
-                    {ageError ? <Text style={[styles.errorText, { textAlign: 'left', width: '100%' }]}>{ageError}</Text> : null}
+                    <View style={styles.errorRowContainer}>
+                        {bloodTypeError ? <Text style={styles.errorText}>{bloodTypeError}</Text> : null}
+                        {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
+                    </View>
 
                     <TextInput
                         style={styles.input}
@@ -434,7 +445,6 @@ const styles = StyleSheet.create({
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center', // Align items vertically in the center
         width: '100%',
         marginBottom: 15,
     },
@@ -533,16 +543,27 @@ const styles = StyleSheet.create({
     activeStep: {
         opacity: 1,
     },
-    errorText: {
+     errorText3: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
-        textAlign: 'left', // Hata mesajını sola hizala
+        textAlign: 'right', // Hata mesajını sola hizala
         width: '100%', // Hata mesajının genişliğini ayarla
+    },
+    errorText: {
+        color: 'red',
+        width: '48%', // Adjust width to fit both elements
+        textAlign: 'left',
     },
     errorText2: {
         color: 'red', // Hata mesajı için kırmızı renk
         marginBottom: 10,
         textAlign: 'left', // Hata mesajını sola hizala
+    },
+    errorRowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 10,
     },
 });
 
