@@ -19,6 +19,7 @@ const SignInScreen = ({ navigation }) => {
                 placeholder="TC Kimlik Numarası"
                 placeholderTextColor="#FF8C00"
                 keyboardType="numeric"
+                maxLength={11}
             />
             <TextInput
                 style={styles.input}

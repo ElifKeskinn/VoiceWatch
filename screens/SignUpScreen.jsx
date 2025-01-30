@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CheckBox from '@react-native-community/checkbox';// Import the icon library
-import BloodTypePicker from '../components/BloodTypePicker';
 import CustomPicker from '../components/CustomPicker';
 
 const SignUpScreen = ({ navigation }) => {
@@ -205,7 +203,7 @@ const SignUpScreen = ({ navigation }) => {
         }
 
         if (isValid) {
-            navigation.navigate('SignIn');
+            navigation.navigate('Main');
         }
     };
 
