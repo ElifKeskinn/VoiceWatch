@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Dimensions } from 'react-native';
-import { Center, Button, Input, useToast, HStack } from 'native-base';
+import { Center, Input, useToast, HStack, VStack, Text, Icon } from 'native-base';
 import ProfileCard from '../components/ProfileCard';
 import GeneralModal from '../components/GeneralModal';
+import Button from '../components/Button';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +20,11 @@ const ProfileScreen = () => {
     sensitivity: 'High',
     password: 'oldpassword', // Assuming this is the current password
   });
+
+  const [contacts, setContacts] = useState([
+    { id: 1, name: 'Alice', phone: '555-1234' },
+    { id: 2, name: 'Bob', phone: '555-5678' },
+  ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -52,41 +59,100 @@ const ProfileScreen = () => {
     setIsEditModalOpen(false);
   };
 
+  const handleAddContact = () => {
+    toast.show({
+      title: "Add Contact",
+      description: "This feature is not implemented yet.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const handleEditContact = (id) => {
+    toast.show({
+      title: "Edit Contact",
+      description: `Edit contact with id: ${id}`,
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const handleDeleteContact = (id) => {
+    toast.show({
+      title: "Delete Contact",
+      description: `Delete contact with id: ${id}`,
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const EmergencyContactSection = () => (
+    <VStack space={4} width="90%" bg="white" p={4} borderRadius="lg" mt={6}>
+      <HStack justifyContent="space-between" alignItems="center">
+        <Text fontSize="xl" fontWeight="bold">Acil Durum Kontakları</Text>
+        <Button size="sm" onPress={handleAddContact}>
+          <Icon as={Ionicons} name="add" size="sm" color="white" />
+        </Button>
+      </HStack>
+      
+      {contacts.map(contact => (
+        <HStack key={contact.id} justifyContent="space-between" alignItems="center" bg="gray.50" p={3} borderRadius="md">
+          <HStack space={3} alignItems="center">
+            <Icon as={Ionicons} name="person" size="sm" color="#FF4500" />
+            <VStack>
+              <Text fontWeight="600">{contact.name}</Text>
+              <Text color="gray.500">{contact.phone}</Text>
+            </VStack>
+          </HStack>
+          
+          <HStack space={2}>
+            <Button size="sm" variant="ghost" onPress={() => handleEditContact(contact.id)}>
+              <Icon as={Ionicons} name="pencil" size="sm" color="#FF4500" />
+            </Button>
+            <Button size="sm" variant="ghost" onPress={() => handleDeleteContact(contact.id)}>
+              <Icon as={Ionicons} name="trash" size="sm" color="#FF4500" />
+            </Button>
+          </HStack>
+        </HStack>
+      ))}
+    </VStack>
+  );
+
+  const ActionButtons = () => (
+    <HStack space={3} mt={6} width="90%">
+      <Button 
+        leftIcon={<Icon as={Ionicons} name="key" size="sm" />}
+        onPress={() => setIsModalOpen(true)} 
+        style={styles.button}
+        flex={1}
+      >
+        Şifre Değiştir
+      </Button>
+      <Button 
+        leftIcon={<Icon as={Ionicons} name="create" size="sm" />}
+        onPress={() => setIsEditModalOpen(true)} 
+        style={styles.button}
+        flex={1}
+      >
+        Profili Düzenle
+      </Button>
+    </HStack>
+  );
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Center flex={1} width="100%">
-        <ProfileCard 
-          firstName={user.firstName}
-          lastName={user.lastName}
-          tcNumber={user.tcNumber}
-          age={user.age}
-          phoneNumber={user.phoneNumber}
-          bloodType={user.bloodType}
-          profileImage={user.profileImage || noProfile}
-          sensitivity={user.sensitivity}
-        />
-        <HStack space={3} mt={4}>
-          <Button 
-            onPress={() => setIsModalOpen(true)} 
-            style={styles.button}
-            _hover={{ bg: "#FF6347" }}
-            _pressed={{ bg: "#FF6347" }}
-          >
-            Parola Değiştir
-          </Button>
-          <Button 
-            onPress={() => setIsEditModalOpen(true)} 
-            style={styles.button}
-            _hover={{ bg: "#FF6347" }}
-            _pressed={{ bg: "#FF6347" }}
-          >
-            Bilgileri Düzenle
-          </Button>
-        </HStack>
+        <ProfileCard {...user} />
+        <ActionButtons />
+        <EmergencyContactSection />
+
         <GeneralModal 
           isOpen={isModalOpen} 
           onClose={() => setIsModalOpen(false)} 
-          title="Parola Değiştir" 
+          title="Şifre Değiştir" 
           onConfirm={handlePasswordChange}
         >
           <Input
@@ -111,64 +177,67 @@ const ProfileScreen = () => {
         <GeneralModal 
           isOpen={isEditModalOpen} 
           onClose={() => setIsEditModalOpen(false)} 
-          title="Bilgileri Düzenle" 
+          title="Profil Bilgilerini Düzenle" 
           onConfirm={handleUserUpdate}
         >
-          <Input
-            placeholder="Ad"
-            value={editUser.firstName}
-            onChangeText={(text) => setEditUser({ ...editUser, firstName: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-          />
-          <Input
-            placeholder="Soyad"
-            value={editUser.lastName}
-            onChangeText={(text) => setEditUser({ ...editUser, lastName: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
-          <Input
-            placeholder="TC Kimlik No"
-            value={editUser.tcNumber}
-            onChangeText={(text) => setEditUser({ ...editUser, tcNumber: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
-          <Input
-            placeholder="Yaş"
-            value={editUser.age}
-            onChangeText={(text) => setEditUser({ ...editUser, age: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
-          <Input
-            placeholder="Telefon Numarası"
-            value={editUser.phoneNumber}
-            onChangeText={(text) => setEditUser({ ...editUser, phoneNumber: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
-          <Input
-            placeholder="Kan Grubu"
-            value={editUser.bloodType}
-            onChangeText={(text) => setEditUser({ ...editUser, bloodType: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
-          <Input
-            placeholder="Hassasiyet"
-            value={editUser.sensitivity}
-            onChangeText={(text) => setEditUser({ ...editUser, sensitivity: text })}
-            borderColor="#FF4500"
-            _focus={{ borderColor: "#FF4500" }}
-            mt={3}
-          />
+          <VStack space={3}>
+            <Text fontSize="md" fontWeight="bold">Kişisel Bilgiler</Text>
+            <Input
+              placeholder="Ad"
+              value={editUser.firstName}
+              onChangeText={(text) => setEditUser({ ...editUser, firstName: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+            />
+            <Input
+              placeholder="Soyad"
+              value={editUser.lastName}
+              onChangeText={(text) => setEditUser({ ...editUser, lastName: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+            <Input
+              placeholder="TC Kimlik No"
+              value={editUser.tcNumber}
+              onChangeText={(text) => setEditUser({ ...editUser, tcNumber: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+            <Input
+              placeholder="Yaş"
+              value={editUser.age}
+              onChangeText={(text) => setEditUser({ ...editUser, age: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+            <Input
+              placeholder="Telefon Numarası"
+              value={editUser.phoneNumber}
+              onChangeText={(text) => setEditUser({ ...editUser, phoneNumber: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+            <Input
+              placeholder="Kan Grubu"
+              value={editUser.bloodType}
+              onChangeText={(text) => setEditUser({ ...editUser, bloodType: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+            <Input
+              placeholder="Hassasiyet"
+              value={editUser.sensitivity}
+              onChangeText={(text) => setEditUser({ ...editUser, sensitivity: text })}
+              borderColor="#FF4500"
+              _focus={{ borderColor: "#FF4500" }}
+              mt={3}
+            />
+          </VStack>
         </GeneralModal>
       </Center>
     </ScrollView>
