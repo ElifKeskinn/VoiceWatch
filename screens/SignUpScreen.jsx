@@ -190,6 +190,53 @@ const SignUpScreen = ({ navigation }) => {
             });
         }
 
+        // New validation for phone numbers
+        if (phoneNumber === contacts[0].number) {
+            setPhoneNumberError('Telefon numarası ve 1. kontak numarası aynı olamaz.');
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = 'Telefon numarası ve 1. kontak numarası aynı olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
+
+        if (phoneNumber === contacts[1].number) {
+            setPhoneNumberError('Telefon numarası ve 2. kontak numarası aynı olamaz.');
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = 'Telefon numarası ve 2. kontak numarası aynı olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        } else {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = ''; // Hata mesajını sıfırla
+                return newErrors;
+            });
+        }
+
+        if (contacts[0].number === contacts[1].number) {
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[1] = '1. ve 2. kontak numaraları aynı olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            setContactPhoneErrors((prev) => {
+                const newErrors = [...prev];
+                newErrors[0] = '1. ve 2. kontak numaraları aynı olamaz.'; // Hata mesajı
+                return newErrors;
+            });
+            isValid = false;
+        }
+
         // Blood type validation
         if (!bloodType) {
             setBloodTypeError('Kan grubu seçilmelidir.');
