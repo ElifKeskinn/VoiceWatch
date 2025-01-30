@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
-import { TextInputMask } from 'react-native-masked-text';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -307,19 +306,14 @@ const SignUpScreen = ({ navigation }) => {
                         {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
                     </View>
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
+                        <TextInput
                             style={styles.input}
                             placeholder="Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={phoneNumber}
                             onChangeText={setPhoneNumber}
                             keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "Telefon Numarası"}
+                            maxLength={11}
                         />
                         {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
                     </View>
@@ -361,19 +355,14 @@ const SignUpScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
+                        <TextInput
                             style={styles.input}
                             placeholder="1. Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={contacts[0].number}
                             onChangeText={(value) => handleContactChange(0, 'number', value)}
                             keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "1. Telefon Numarası"}
+                            maxLength={11}
                         />
                         {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
                     </View>
@@ -390,19 +379,14 @@ const SignUpScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.contactInputContainer}>
-                        <TextInputMask
-                            type={'custom'}
-                            options={{
-                                mask: '+90 05XX XXX XX XX'
-                            }}
+                        <TextInput
                             style={styles.input}
                             placeholder="2. Telefon Numarası"
                             placeholderTextColor="#FF8C00"
                             value={contacts[1].number}
                             onChangeText={(value) => handleContactChange(1, 'number', value)}
                             keyboardType="phone-pad"
-                            onFocus={(e) => e.target.placeholder = "+90 05XX XXX XX XX"}
-                            onBlur={(e) => e.target.placeholder = "2. Telefon Numarası"}
+                            maxLength={11}
                         />
                         {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
                     </View>
