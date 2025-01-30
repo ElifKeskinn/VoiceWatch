@@ -50,8 +50,8 @@ const CustomPicker = ({ label, options, selectedValue, onValueChange }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginBottom: 15,
+    width: '48%',
+    marginBottom: 0,
   },
   label: {
     fontSize: 16,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   selectedText: {
-    color: 'black',
+    color: '#FF8C00',
   },
   modalContainer: {
     flex: 1,

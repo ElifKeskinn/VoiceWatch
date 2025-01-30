@@ -434,6 +434,7 @@ const styles = StyleSheet.create({
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center', // Align items vertically in the center
         width: '100%',
         marginBottom: 15,
     },
