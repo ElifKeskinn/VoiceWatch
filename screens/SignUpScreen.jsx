@@ -179,10 +179,10 @@ const SignUpScreen = ({ navigation }) => {
 
         // New validation for phone numbers
         if (phoneNumber === contacts[0].number) {
-            setPhoneNumberError('Telefon numarası ve 1. kontak numarası aynı olamaz.');
+            setPhoneNumberError('Telefon numarası ve kontak numarası aynı olamaz.');
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = 'Telefon numarası ve 1. kontak numarası aynı olamaz.'; // Hata mesajı
+                newErrors[0] = 'Telefon numarası ve kontak numarası aynı olamaz.'; // Hata mesajı
                 return newErrors;
             });
             isValid = false;
@@ -195,10 +195,10 @@ const SignUpScreen = ({ navigation }) => {
         }
 
         if (phoneNumber === contacts[1].number) {
-            setPhoneNumberError('Telefon numarası ve 2. kontak numarası aynı olamaz.');
+            setPhoneNumberError('Telefon numarası ve kontak numarası aynı olamaz.');
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = 'Telefon numarası ve 2. kontak numarası aynı olamaz.'; // Hata mesajı
+                newErrors[1] = 'Telefon numarası ve kontak numarası aynı olamaz.'; // Hata mesajı
                 return newErrors;
             });
             isValid = false;
