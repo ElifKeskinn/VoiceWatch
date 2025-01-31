@@ -120,16 +120,16 @@ const ProfileScreen = () => {
       p={4} 
       borderRadius="xl" 
       mt={6}
-      borderWidth={1}
+      borderWidth={2}
       borderColor="rgba(255,69,0,0.15)"
-      bg="#FFF2E6"
+      bg="#faf1e6"
       shadow={1}
     >
       <VStack space={4}>
         <HStack justifyContent="space-between" alignItems="center">
           <HStack space={2} alignItems="center">
             <Icon as={Ionicons} name="people" size="md" color="#FF4500" />
-            <Text fontSize="xl" fontWeight="bold" color="#FF4500">Acil Durum Kontakları</Text>
+            <Text fontSize="xl" fontWeight="bold" color="#00000">Acil Durum Kontakları</Text>
           </HStack>
           <Pressable
             onPress={handleAddContact}
@@ -157,7 +157,7 @@ const ProfileScreen = () => {
                   <Icon as={Ionicons} name="person" size="md" color="#FF4500" />
                 </Center>
                 <VStack>
-                  <Text fontWeight="600" color="#FF4500">{contact.name}</Text>
+                  <Text fontWeight="600" color="#00000">{contact.name}</Text>
                   <Text color="gray.600">{contact.phone}</Text>
                 </VStack>
               </HStack>

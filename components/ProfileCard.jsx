@@ -33,8 +33,8 @@ const ProfileCard = ({
         rounded="xl"
         overflow="hidden"
         borderColor="rgba(255,69,0,0.15)"
-        borderWidth="1"
-        bg="#FFF2E6"
+        borderWidth="2"
+        bg="#faf1e6"
         p="6"
         shadow={1}>
         {/* Profile Image Section */}
@@ -80,7 +80,7 @@ const ProfileCard = ({
 
         <Stack p="5" space={4}>
           <VStack space={3} alignItems="center">
-            <Heading size="xl" color="#FF4500" fontWeight="bold">
+            <Heading size="xl" color="#00000" fontWeight="bold">
               {firstName} {lastName}
             </Heading>
           </VStack>
