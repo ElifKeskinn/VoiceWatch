@@ -1,60 +1,75 @@
 import React from 'react';
-import { Box, AspectRatio, Image, Center, Stack, Heading, Text, VStack, HStack, Icon, Button } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';  
+import {
+  Box,
+  AspectRatio,
+  Image,
+  Center,
+  Stack,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Icon,
+  Pressable,
+} from 'native-base';
+import {Ionicons} from '@expo/vector-icons';
 
-const ProfileCard = ({ firstName, lastName, tcNumber, age, phoneNumber, bloodType, profileImage, sensitivity, onEdit }) => {
+const ProfileCard = ({
+  firstName,
+  lastName,
+  tcNumber,
+  age,
+  phoneNumber,
+  bloodType,
+  profileImage,
+  sensitivity,
+  onEdit,
+}) => {
   return (
     <Box alignItems="center" p="4" width="100%">
       <Box
-        width="100%" 
-        maxW="500px" 
-        rounded="lg"
+        width="100%"
+        maxW="500px"
+        rounded="xl"
         overflow="hidden"
-        borderColor="coolGray.300"
+        borderColor="rgba(255,69,0,0.15)"
         borderWidth="1"
-        _dark={{ borderColor: 'coolGray.600', backgroundColor: 'gray.700' }}
-        _web={{ shadow: 3, borderWidth: 0 }}
-        _light={{ backgroundColor: 'gray.50' }}
+        bg="#FFFAF0"
         p="6"
-        bg={{
-          linearGradient: {
-            colors: ['#FFFAF0', '#FF4500'],
-            start: [0, 0],
-            end: [1, 1],
-          },
-        }}
-      >
+        shadow={1}>
+        {/* Profile Image Section */}
         <Box alignItems="center" position="relative">
-          <AspectRatio w="85%" ratio={1}>
-            <Image 
-              source={profileImage} 
-              alt="Profile Image" 
-              borderRadius={100}
-            />
+          <AspectRatio w="60%" ratio={1}>
+            <Image source={profileImage} alt="Profile Image" />
           </AspectRatio>
-          <Button
+
+          {/* Edit Button */}
+          <Pressable
             position="absolute"
             bottom={0}
             right={0}
-            size="sm"
+            bg="rgba(255,69,0,0.9)"
             rounded="full"
-            bg="#FF4500"
-            onPress={onEdit}
-          >
-            <Icon as={Ionicons} name="create" size="sm" color="white" />
-          </Button>
+            p={2}
+            _pressed={{bg: 'rgba(255,69,0,0.7)'}}
+            onPress={onEdit}>
+            <Icon as={Ionicons} name="create-outline" size="sm" color="white" />
+          </Pressable>
         </Box>
 
-        <Center
-          bg="#FF4500"
-          _dark={{ bg: '#FF8C00' }}
-          _text={{ color: 'warmGray.50', fontWeight: '700', fontSize: 'sm' }}
+        {/* Profile Label */}
+        <Box
+          bg="rgba(255,69,0,0.9)"
           position="absolute"
           px="4"
           py="2"
-        >
-          PROFILE
-        </Center>
+          top={0}
+          left={0}
+          roundedBottomRight="lg">
+          <Text color="white" fontWeight="700" fontSize="sm">
+            PROFİL
+          </Text>
+        </Box>
 
         <Stack p="5" space={4}>
           <VStack space={3} alignItems="center">
@@ -63,32 +78,51 @@ const ProfileCard = ({ firstName, lastName, tcNumber, age, phoneNumber, bloodTyp
             </Heading>
           </VStack>
 
-          <VStack space={3} alignItems="flex-start" bg="rgba(255,255,255,0.6)" p={4} borderRadius="lg">
+          <VStack
+            space={3}
+            alignItems="flex-start"
+            p={4}
+            borderRadius="lg"
+            borderWidth={1}
+            borderColor="rgba(255,69,0,0.15)"
+            bg="#FFFAF0">
             <HStack space={3} alignItems="center">
               <Icon as={Ionicons} name="id-card" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">TC: {tcNumber}</Text>
+              <Text fontSize="md" fontWeight="500">
+                TC: {tcNumber}
+              </Text>
             </HStack>
 
             <HStack space={3} alignItems="center">
               <Icon as={Ionicons} name="call" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">Telefon: {phoneNumber}</Text>
+              <Text fontSize="md" fontWeight="500">
+                Telefon: {phoneNumber}
+              </Text>
             </HStack>
 
-            <HStack space={3} alignItems="center" justifyContent="space-between" width="100%">
-              <HStack space={2} alignItems="center">
-                <Icon as={Ionicons} name="calendar" size="sm" color="#FF4500" />
-                <Text fontSize="md" fontWeight="500">Yaş: {age}</Text>
-              </HStack>
-              
-              <HStack space={2} alignItems="center">
-                <Icon as={Ionicons} name="water" size="sm" color="#FF4500" />
-                <Text fontSize="md" fontWeight="500">Kan Grubu: {bloodType}</Text>
-              </HStack>
+            <HStack space={1} alignItems="center">
+              <Icon as={Ionicons} name="water" size="sm" color="#FF4500" />
+              <Text fontSize="md" fontWeight="500">
+                Kan Grubu: {bloodType}
+              </Text>
             </HStack>
 
             <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="alert-circle" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">Hassasiyet: %{sensitivity}</Text>
+              <Icon
+                as={Ionicons}
+                name="alert-circle"
+                size="sm"
+                color="#FF4500"
+              />
+              <Text fontSize="md" fontWeight="500">
+                Hassasiyet: {sensitivity}
+              </Text>
+            </HStack>
+            <HStack space={2} alignItems="center">
+              <Icon as={Ionicons} name="calendar" size="sm" color="#FF4500" />
+              <Text fontSize="md" fontWeight="500">
+                Yaş: {age}
+              </Text>
             </HStack>
           </VStack>
         </Stack>
