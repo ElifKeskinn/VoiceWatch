@@ -34,23 +34,30 @@ const ProfileCard = ({
         overflow="hidden"
         borderColor="rgba(255,69,0,0.15)"
         borderWidth="1"
-        bg="#FFFAF0"
+        bg="#FFF2E6"
         p="6"
         shadow={1}>
         {/* Profile Image Section */}
         <Box alignItems="center" position="relative">
-          <AspectRatio w="60%" ratio={1}>
-            <Image source={profileImage} alt="Profile Image" />
+          <AspectRatio w="70%" ratio={1}>
+            <Image 
+              source={profileImage} 
+              alt="Profile Image"
+              borderRadius="full"
+              borderWidth={2}
+              borderColor="rgba(255,69,0,0.2)"
+            />
           </AspectRatio>
 
           {/* Edit Button */}
           <Pressable
             position="absolute"
             bottom={0}
-            right={0}
+            right="20%"
             bg="rgba(255,69,0,0.9)"
             rounded="full"
             p={2}
+            shadow={2}
             _pressed={{bg: 'rgba(255,69,0,0.7)'}}
             onPress={onEdit}>
             <Icon as={Ionicons} name="create-outline" size="sm" color="white" />
@@ -85,7 +92,7 @@ const ProfileCard = ({
             borderRadius="lg"
             borderWidth={1}
             borderColor="rgba(255,69,0,0.15)"
-            bg="#FFFAF0">
+            bg="#FFF8F0">
             <HStack space={3} alignItems="center">
               <Icon as={Ionicons} name="id-card" size="sm" color="#FF4500" />
               <Text fontSize="md" fontWeight="500">

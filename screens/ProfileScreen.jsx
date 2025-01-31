@@ -122,14 +122,14 @@ const ProfileScreen = () => {
       mt={6}
       borderWidth={1}
       borderColor="rgba(255,69,0,0.15)"
-      bg="#FFFAF0"
+      bg="#FFF2E6"
       shadow={1}
     >
       <VStack space={4}>
         <HStack justifyContent="space-between" alignItems="center">
           <HStack space={2} alignItems="center">
             <Icon as={Ionicons} name="people" size="md" color="#FF4500" />
-            <Text fontSize="xl" fontWeight="bold">Acil Durum Kontakları</Text>
+            <Text fontSize="xl" fontWeight="bold" color="#FF4500">Acil Durum Kontakları</Text>
           </HStack>
           <Pressable
             onPress={handleAddContact}
@@ -149,7 +149,7 @@ const ProfileScreen = () => {
             borderRadius="md"
             borderWidth={1}
             borderColor="rgba(255,69,0,0.15)"
-            bg="#FFFAF0"
+            bg="#FFF8F0"
           >
             <HStack justifyContent="space-between" alignItems="center">
               <HStack space={3} alignItems="center">
@@ -157,8 +157,8 @@ const ProfileScreen = () => {
                   <Icon as={Ionicons} name="person" size="md" color="#FF4500" />
                 </Center>
                 <VStack>
-                  <Text fontWeight="600">{contact.name}</Text>
-                  <Text color="gray.500">{contact.phone}</Text>
+                  <Text fontWeight="600" color="#FF4500">{contact.name}</Text>
+                  <Text color="gray.600">{contact.phone}</Text>
                 </VStack>
               </HStack>
               
@@ -261,12 +261,12 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#FFFAF0',
+    backgroundColor: '#FFF2E6',
     padding: 20,
     minHeight: height, 
   },
   button: {
-    backgroundColor: '#FF4500',
+    backgroundColor: 'rgba(255,69,0,0.9)',
     borderRadius: 12,
     paddingHorizontal: 25,
     paddingVertical: 12,
