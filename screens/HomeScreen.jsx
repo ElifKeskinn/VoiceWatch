@@ -12,7 +12,7 @@ import Animated, {
 
 const { width } = Dimensions.get('window');
 const CIRCLE_LENGTH = width * 0.7;
-const BUTTON_SIZE = width * 0.35;
+const BUTTON_SIZE = width * 0.45;
 
 const HomeScreen = () => {
     const [isListening, setIsListening] = useState(false);
@@ -83,7 +83,7 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>VoiceWatch</Text>
+            <Text style={styles.title}>VoiceWatcher</Text>
             
             <View style={styles.circleContainer}>
                 <Animated.View style={[styles.ring, ring3Style]} />
@@ -98,6 +98,12 @@ const HomeScreen = () => {
                     </Animated.View>
                 </TouchableOpacity>
             </View>
+
+            {!isListening && (
+                <Text style={styles.descriptionText}>
+                    Bu özellik, çevredeki sesleri algılar ve acil durumları hızla tespit eder. Başlat butonuna basarak sesli izlemeyi aktive edebilir, tehlikelere hızlıca tepki verebilirsiniz.
+                </Text>
+            )}
 
             <TouchableOpacity 
                 style={styles.alertButton}
@@ -121,13 +127,15 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: '#FF4500',
         fontWeight: 'bold',
-        marginTop: 20,
+        marginTop: 40,
     },
     circleContainer: {
         width: CIRCLE_LENGTH,
         height: CIRCLE_LENGTH,
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'absolute',
+        top: '35%',
     },
     ring: {
         width: BUTTON_SIZE,
@@ -159,12 +167,25 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    descriptionText: {
+        textAlign: 'center',
+        color: '#666',
+        fontSize: 14,
+        paddingHorizontal: 30,
+        position: 'absolute',
+        top: '60%',
+        lineHeight: 20,
+        marginTop:100,
+    },
     alertButton: {
         backgroundColor: '#ffa500',
         paddingVertical: 15,
         paddingHorizontal: 30,
         borderRadius: 10,
-        marginBottom: 20,
+        marginBottom: -10,
+        width: '80%',
+        position: 'absolute',
+        bottom: 40,
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: {
@@ -173,6 +194,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
+        alignItems: 'center',
     },
     alertButtonText: {
         color: 'white',
