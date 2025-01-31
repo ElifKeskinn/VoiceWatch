@@ -76,149 +76,109 @@ const SignUpScreen = ({ navigation }) => {
             setPasswordError('Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.');
             isValid = false;
         }
-        if (!phoneNumber) {
+        if (!phoneNumber || phoneNumber.trim() === '') {
             setPhoneNumberError('Telefon numarası boş olamaz.');
             isValid = false;
-        } else {
-            const cleanedNumber = phoneNumber.replace(/\D/g, '');
-            if (cleanedNumber.length !== 12) {
-                setPhoneNumberError('Geçerli bir telefon numarası giriniz.');
-                isValid = false;
-            }
+        } else if (phoneNumber.length < 16) {
+            setPhoneNumberError('Telefon numarası eksik girilmiştir.');
+            isValid = false;
+        } else if (!phoneNumber.startsWith('+90 5')) {
+            setPhoneNumberError('Telefon numarası +90 5 ile başlamalıdır.');
+            isValid = false;
         }
 
         // 1. Kontak için doğrulama
-        if (!contacts[0].nickname) {
+        if (!contacts[0].nickname || contacts[0].nickname.trim() === '') {
             setContactNicknameErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = '1. Kontağın ismi boş geçilemez.'; // Hata mesajı
+                newErrors[0] = '1. Kontağın ismi boş geçilemez.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactNicknameErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[0] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
-        if (!contacts[0].number) {
+        if (!contacts[0].number || contacts[0].number.trim() === '') {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = '1. Telefon numarası boş olamaz.'; // Hata mesajı
+                newErrors[0] = '1. Kontak telefon numarası boş olamaz.';
                 return newErrors;
             });
             isValid = false;
-        } else if (contacts[0].number.length !== 11) {
+        } else if (contacts[0].number.length < 16) {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = '1. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                newErrors[0] = '1. Kontak telefon numarası eksik girilmiştir.';
                 return newErrors;
             });
             isValid = false;
-        } else if (!/^0\d{10}$/.test(contacts[0].number)) {
+        } else if (!contacts[0].number.startsWith('+90 5')) {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = '1. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                newErrors[0] = '1. Kontak telefon numarası +90 5 ile başlamalıdır.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactPhoneErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[0] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
         // 2. Kontak için doğrulama
-        if (!contacts[1].nickname) {
+        if (!contacts[1].nickname || contacts[1].nickname.trim() === '') {
             setContactNicknameErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = '2. Kontağın ismi boş geçilemez.'; // Hata mesajı
+                newErrors[1] = '2. Kontağın ismi boş geçilemez.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactNicknameErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[1] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
-        if (!contacts[1].number) {
+        if (!contacts[1].number || contacts[1].number.trim() === '') {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = '2. Telefon numarası boş olamaz.'; // Hata mesajı
+                newErrors[1] = '2. Kontak telefon numarası boş olamaz.';
                 return newErrors;
             });
             isValid = false;
-        } else if (contacts[1].number.length !== 11) {
+        } else if (contacts[1].number.length < 16) {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = '2. Telefon numarası 11 haneli olmalıdır.'; // Hata mesajı
+                newErrors[1] = '2. Kontak telefon numarası eksik girilmiştir.';
                 return newErrors;
             });
             isValid = false;
-        } else if (!/^0\d{10}$/.test(contacts[1].number)) {
+        } else if (!contacts[1].number.startsWith('+90 5')) {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = '2. Telefon numarası "0" ile başlamalıdır.'; // Hata mesajı
+                newErrors[1] = '2. Kontak telefon numarası +90 5 ile başlamalıdır.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactPhoneErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[1] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
-        // New validation for phone numbers
-        if (phoneNumber === contacts[0].number) {
+        // Telefon numaralarının birbirleriyle aynı olup olmadığının kontrolü
+        if (phoneNumber && contacts[0].number && phoneNumber === contacts[0].number) {
             setPhoneNumberError('Telefon numarası ve kontak numarası aynı olamaz.');
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[0] = 'Telefon numarası ve kontak numarası aynı olamaz.'; // Hata mesajı
+                newErrors[0] = 'Telefon numarası ve kontak numarası aynı olamaz.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactPhoneErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[0] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
-        if (phoneNumber === contacts[1].number) {
+        if (phoneNumber && contacts[1].number && phoneNumber === contacts[1].number) {
             setPhoneNumberError('Telefon numarası ve kontak numarası aynı olamaz.');
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = 'Telefon numarası ve kontak numarası aynı olamaz.'; // Hata mesajı
+                newErrors[1] = 'Telefon numarası ve kontak numarası aynı olamaz.';
                 return newErrors;
             });
             isValid = false;
-        } else {
-            setContactPhoneErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[1] = ''; // Hata mesajını sıfırla
-                return newErrors;
-            });
         }
 
-        if (contacts[0].number === contacts[1].number) {
+        if (contacts[0].number && contacts[1].number && contacts[0].number === contacts[1].number) {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[1] = '1. ve 2. kontak numaraları aynı olamaz.'; // Hata mesajı
-                return newErrors;
-            });
-            setContactPhoneErrors((prev) => {
-                const newErrors = [...prev];
-                newErrors[0] = '1. ve 2. kontak numaraları aynı olamaz.'; // Hata mesajı
+                newErrors[0] = '1. ve 2. kontak numaraları aynı olamaz.';
+                newErrors[1] = '1. ve 2. kontak numaraları aynı olamaz.';
                 return newErrors;
             });
             isValid = false;
@@ -300,6 +260,21 @@ const SignUpScreen = ({ navigation }) => {
         }
     };
 
+    const capitalizeFirstLetter = (text) => {
+        if (!text) return '';
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
+    const handleFirstNameChange = (text) => {
+        const capitalizedText = capitalizeFirstLetter(text);
+        setFirstName(capitalizedText);
+    };
+
+    const handleLastNameChange = (text) => {
+        const capitalizedText = capitalizeFirstLetter(text);
+        setLastName(capitalizedText);
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Kayıt Ol</Text>
@@ -312,7 +287,7 @@ const SignUpScreen = ({ navigation }) => {
                             placeholder="İsim"
                             placeholderTextColor="#FF8C00"
                             value={firstName}
-                            onChangeText={setFirstName}
+                            onChangeText={handleFirstNameChange}
                         />
                         {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
                     </View>
@@ -322,7 +297,7 @@ const SignUpScreen = ({ navigation }) => {
                             placeholder="Soyisim"
                             placeholderTextColor="#FF8C00"
                             value={lastName}
-                            onChangeText={setLastName}
+                            onChangeText={handleLastNameChange}
                         />
                         {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
                     </View>
