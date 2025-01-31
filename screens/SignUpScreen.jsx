@@ -11,8 +11,8 @@ const SignUpScreen = ({ navigation }) => {
     const [tcNumberError, setTcNumberError] = useState(''); // TC kimlik numarası için hata mesajı
     const [age, setAge] = useState('');
     const [ageError, setAgeError] = useState(''); // Yaş için hata mesajı
-    const [phoneNumber, setPhoneNumber] = useState(''); // Telefon numarası için state
-    const [phoneNumberError, setPhoneNumberError] = useState(''); // Telefon numarası için hata mesajı
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phoneNumberError, setPhoneNumberError] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
     const [bloodType, setBloodType] = useState('');
@@ -79,12 +79,12 @@ const SignUpScreen = ({ navigation }) => {
         if (!phoneNumber) {
             setPhoneNumberError('Telefon numarası boş olamaz.');
             isValid = false;
-        } else if (phoneNumber.length !== 11) {
-            setPhoneNumberError('Telefon numarası 11 haneli olmalıdır.');
-            isValid = false;
-        } else if (!/^0\d{10}$/.test(phoneNumber)) {
-            setPhoneNumberError('Telefon numarası "0" ile başlamalıdır.');
-            isValid = false;
+        } else {
+            const cleanedNumber = phoneNumber.replace(/\D/g, '');
+            if (cleanedNumber.length !== 12) {
+                setPhoneNumberError('Geçerli bir telefon numarası giriniz.');
+                isValid = false;
+            }
         }
 
         // 1. Kontak için doğrulama
@@ -242,22 +242,59 @@ const SignUpScreen = ({ navigation }) => {
         }
     };
 
+    const formatPhoneNumber = (number) => {
+        // Rakam olmayan karakterleri temizle
+        const cleaned = number.replace(/\D/g, '');
+    
+        // Boş giriş için direkt dönüş yap
+        if (cleaned.length === 0) {
+            return '';
+        }
+    
+        // + ekleyerek başlat
+        let formatted = '+' + cleaned;
+    
+        // Boşlukları ekle
+        if (cleaned.length > 2) formatted = formatted.slice(0, 3) + ' ' + formatted.slice(3);
+        if (cleaned.length > 5) formatted = formatted.slice(0, 7) + ' ' + formatted.slice(7);
+        if (cleaned.length > 8) formatted = formatted.slice(0, 11) + ' ' + formatted.slice(11);
+        if (cleaned.length > 10) formatted = formatted.slice(0, 14) + ' ' + formatted.slice(14);
+
+        return formatted; // Son karakter için limit kaldırıldı
+    };
+    
+    const handlePhoneNumberChange = (value) => {
+        // Kullanıcı girdisini işle
+        const formattedNumber = formatPhoneNumber(value);
+        
+        // Son karakterin kaybolmasını önlemek için doğrudan güncelle
+        setPhoneNumber(formattedNumber);
+    };
+
     const handleContactChange = (index, field, value) => {
         const newContacts = [...contacts];
-        newContacts[index][field] = value;
+        if (field === 'number') {
+            if (value.length === 0) {
+                newContacts[index].number = '';
+            } else {
+                newContacts[index].number = formatPhoneNumber(value);
+            }
+        } else {
+            newContacts[index][field] = value;
+        }
         setContacts(newContacts);
 
         // Hata mesajlarını sıfırlama
         if (field === 'nickname') {
             setContactNicknameErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[index] = ''; // Hata mesajını sıfırla
+                newErrors[index] = '';
                 return newErrors;
             });
         } else if (field === 'number') {
             setContactPhoneErrors((prev) => {
                 const newErrors = [...prev];
-                newErrors[index] = ''; // Hata mesajını sıfırla
+                newErrors[index] = '';
                 return newErrors;
             });
         }
@@ -343,17 +380,16 @@ const SignUpScreen = ({ navigation }) => {
                     {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
                     </View>
                     <View style={styles.contactInputContainer}>
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Telefon Numarası" // Telefon numarası için placeholder
-                        placeholderTextColor="#FF8C00"
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                        keyboardType="phone-pad" // Telefon numarası girişi için klavye türü
-                        maxLength={11} // 11 hanelik kısıtlama
-                    />
-                    {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Telefon Numarası"
+                            placeholderTextColor="#FF8C00"
+                            value={phoneNumber}
+                            onChangeText={handlePhoneNumberChange}
+                            keyboardType="phone-pad"
+                            maxLength={17}
+                        />
+                        {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
                     </View>
                     <View style={styles.stepIndicator}>
                         <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
@@ -400,7 +436,7 @@ const SignUpScreen = ({ navigation }) => {
                             value={contacts[0].number}
                             onChangeText={(value) => handleContactChange(0, 'number', value)}
                             keyboardType="phone-pad"
-                            maxLength={11} // 11 hanelik kısıtlama
+                            maxLength={17}
                         />
                         {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
                     </View>
@@ -424,7 +460,7 @@ const SignUpScreen = ({ navigation }) => {
                             value={contacts[1].number}
                             onChangeText={(value) => handleContactChange(1, 'number', value)}
                             keyboardType="phone-pad"
-                            maxLength={11} // 11 hanelik kısıtlama
+                            maxLength={17}
                         />
                         {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
                     </View>
@@ -578,6 +614,97 @@ const styles = StyleSheet.create({
     agreementText: {
         fontSize: 14,
         color: 'black',
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+    },
+    switchText: {
+        fontSize: 14,
+        color: '#FF8C00', // Bright red-orange for the switch text
+    },
+    switchLink: {
+        color: '#FF4500', // Soft blue for the link
+        fontWeight: 'bold',
+    },
+    stepIndicator: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 10,
+        width: '100%',
+        marginBottom: 20,
+    },
+    stepCircle: {
+        width: 10,
+        height: 10,
+        borderRadius: 10,
+        backgroundColor: '#FF8C00',
+        opacity: 0.4,
+    },
+    activeStep: {
+        opacity: 1,
+    },
+    errorText3: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
+        textAlign: 'right', // Hata mesajını sola hizala
+        width: '100%', // Hata mesajının genişliğini ayarla
+        marginTop: -10,
+    },
+    errorText: {
+        color: 'red',
+        width: '48%', // Adjust width to fit both elements
+        textAlign: 'left',
+        marginTop: -10,
+
+    },
+    errorText2: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10,
+        textAlign: 'left',
+        marginTop: -10, // Hata mesajını sola hizala
+    },
+    errorText4: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginTop: 10,
+        textAlign: 'left', // Hata mesajını sola hizala
+    },
+    errorRowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 10,
+    },
+    errorText3: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
+        textAlign: 'right', // Hata mesajını sola hizala
+        width: '100%', // Hata mesajının genişliğini ayarla
+        marginTop: -10,
+    },
+    errorText: {
+        color: 'red',
+        width: '48%', // Adjust width to fit both elements
+        textAlign: 'left',
+        marginTop: -10,
+
+    },
+    errorText2: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginBottom: 10,
+        textAlign: 'left',
+        marginTop: -10, // Hata mesajını sola hizala
+    },
+    errorText4: {
+        color: 'red', // Hata mesajı için kırmızı renk
+        marginTop: 10,
+        textAlign: 'left', // Hata mesajını sola hizala
+    },
+    errorRowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 10,
     },
     switchContainer: {
         flexDirection: 'row',
