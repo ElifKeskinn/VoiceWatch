@@ -20,7 +20,6 @@ const SignUpScreen = ({ navigation }) => {
     const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
     const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']); // Kontakların telefon numarası için hata mesajları
     const [contactNicknameErrors, setContactNicknameErrors] = useState(['', '']); // Kontakların ismi için hata mesajları
-    const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to manage accordion visibility
     const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
     const [step, setStep] = useState(1); // Step state to manage the current step
     const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
@@ -485,33 +484,27 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        justifyContent: 'flex-start', // Align items to the top
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#FFFAF0', // Light background
+        backgroundColor: '#FFFAF0',
         padding: 20,
     },
     title: {
         fontSize: 36,
         marginTop: 90,
         marginBottom: 28,
-        color: '#FF4500', // Bright red-orange for title
-        fontWeight: 'bold',
-    },
-    subtitle: {
-        fontSize: 24,
-        marginBottom: 20,
         color: '#FF4500',
         fontWeight: 'bold',
     },
     input: {
         height: 50,
-        borderColor: '#FF4500', // Bright red-orange for the border
+        borderColor: '#FF4500',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
         marginBottom: 15,
-        width: '100%', // Full width for all input fields
-        backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
+        width: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -530,7 +523,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
-        width: '48%', // Adjust width to fit both elements
+        width: '48%',
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -539,26 +532,12 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     contactInputContainer: {
-        flexDirection: 'column', // Stack inputs vertically
+        flexDirection: 'column',
         alignItems: 'flex-start',
-
         width: '100%',
     },
-    addButton: {
-        backgroundColor: '#FF8C00', // Bright orange for the add button
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        marginTop: 10,
-    },
-    addButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-
-    },
     button: {
-        backgroundColor: '#FF4500', // Bright red-orange for the button
+        backgroundColor: '#FF4500',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -590,17 +569,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'black',
     },
-    switchContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
-    },
-    switchText: {
-        fontSize: 14,
-        color: '#FF8C00', // Bright red-orange for the switch text
-    },
-    switchLink: {
-        color: '#FF4500', // Soft blue for the link
-        fontWeight: 'bold',
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+        textAlign: 'left',
+        marginTop: -10,
     },
     stepIndicator: {
         flexDirection: 'row',
@@ -619,121 +592,28 @@ const styles = StyleSheet.create({
     activeStep: {
         opacity: 1,
     },
-    errorText3: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
-        textAlign: 'right', // Hata mesajını sola hizala
-        width: '100%', // Hata mesajının genişliğini ayarla
-        marginTop: -10,
-    },
-    errorText: {
-        color: 'red',
-        width: '48%', // Adjust width to fit both elements
-        textAlign: 'left',
-        marginTop: -10,
-
-    },
-    errorText2: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10,
-        textAlign: 'left',
-        marginTop: -10, // Hata mesajını sola hizala
-    },
-    errorText4: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginTop: 10,
-        textAlign: 'left', // Hata mesajını sola hizala
-    },
-    errorRowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 10,
-    },
-    errorText3: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
-        textAlign: 'right', // Hata mesajını sola hizala
-        width: '100%', // Hata mesajının genişliğini ayarla
-        marginTop: -10,
-    },
-    errorText: {
-        color: 'red',
-        width: '48%', // Adjust width to fit both elements
-        textAlign: 'left',
-        marginTop: -10,
-
-    },
-    errorText2: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10,
-        textAlign: 'left',
-        marginTop: -10, // Hata mesajını sola hizala
-    },
-    errorText4: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginTop: 10,
-        textAlign: 'left', // Hata mesajını sola hizala
-    },
-    errorRowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 10,
-    },
     switchContainer: {
         flexDirection: 'row',
         marginTop: 20,
     },
     switchText: {
         fontSize: 14,
-        color: '#FF8C00', // Bright red-orange for the switch text
+        color: '#FF8C00',
     },
     switchLink: {
-        color: '#FF4500', // Soft blue for the link
+        color: '#FF4500',
         fontWeight: 'bold',
     },
-    stepIndicator: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 10,
-        width: '100%',
-        marginBottom: 20,
-    },
-    stepCircle: {
-        width: 10,
-        height: 10,
-        borderRadius: 10,
-        backgroundColor: '#FF8C00',
-        opacity: 0.4,
-    },
-    activeStep: {
-        opacity: 1,
-    },
-    errorText3: {
-        color: 'red', // Hata mesajı için kırmızı renk
-        marginBottom: 10, // Hata mesajının altındaki boşluğu artırıyoruz
-        textAlign: 'right', // Hata mesajını sola hizala
-        width: '100%', // Hata mesajının genişliğini ayarla
-        marginTop: -10,
-    },
-    errorText: {
-        color: 'red',
-        width: '48%', // Adjust width to fit both elements
-        textAlign: 'left',
-        marginTop: -10,
-
-    },
     errorText2: {
-        color: 'red', // Hata mesajı için kırmızı renk
+        color: 'red',
         marginBottom: 10,
         textAlign: 'left',
-        marginTop: -10, // Hata mesajını sola hizala
+        marginTop: -10,
     },
     errorText4: {
-        color: 'red', // Hata mesajı için kırmızı renk
+        color: 'red',
         marginTop: 10,
-        textAlign: 'left', // Hata mesajını sola hizala
+        textAlign: 'left',
     },
     errorRowContainer: {
         flexDirection: 'row',
