@@ -5,10 +5,39 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CheckBox from '@react-native-community/checkbox';// Import the icon library
 
 const SignInScreen = ({ navigation }) => {
+    const [tcNumber, setTcNumber] = useState('');
+    const [password, setPassword] = useState('');
+    const [tcNumberError, setTcNumberError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [isAgreed, setIsAgreed] = useState(false); // Şifreyi hatırla durumu
     
     const handleSignIn = () => {
-        navigation.navigate('Main');
+        let isValid = true;
+        setTcNumberError('');
+        setPasswordError('');
+
+        // Validate TC Kimlik Numarası
+        if (!tcNumber) {
+            setTcNumberError('TC Kimlik Numarası boş olamaz.');
+            isValid = false;
+        } else if (tcNumber.length !== 11 || !/^\d+$/.test(tcNumber)) {
+            setTcNumberError('Hatalı TC.');
+            isValid = false;
+        }
+
+        // Validate Password
+        if (!password) {
+            setPasswordError('Parola boş olamaz.');
+            isValid = false;
+        } else if (password.length < 8) {
+            setPasswordError('Hatalı şifre');
+            isValid = false;
+        }
+
+        // Navigate to Main if valid
+        if (isValid) {
+            navigation.navigate('Main');
+        }
     };
 
     return (
@@ -19,13 +48,21 @@ const SignInScreen = ({ navigation }) => {
                 placeholder="TC Kimlik Numarası"
                 placeholderTextColor="#FF8C00"
                 keyboardType="numeric"
+                maxLength={11}
+                value={tcNumber}
+                onChangeText={setTcNumber}
             />
+            {tcNumberError ? <Text style={styles.errorText}>{tcNumberError}</Text> : null}
+
             <TextInput
                 style={styles.input}
                 placeholder="Parola"
                 placeholderTextColor="#FF8C00"
                 secureTextEntry
+                value={password}
+                onChangeText={setPassword}
             />
+            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
             
             <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Giriş Yap</Text>
@@ -121,6 +158,19 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         marginRight: 10,
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 15,
+        textAlign: 'left',
+        width: '100%',
+        marginTop: -10,
+    },
+    errorText2: {
+        color: 'red',
+        marginBottom: 10,
+        textAlign: 'left',
+        marginTop: -10,
     },
 });
 
