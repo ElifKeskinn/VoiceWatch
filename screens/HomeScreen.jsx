@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from 'react-native-reanimated';
+import AlertPopup from '../components/AlertPopup';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_LENGTH = width * 0.7;
@@ -16,6 +17,8 @@ const BUTTON_SIZE = width * 0.45;
 
 const HomeScreen = () => {
     const [isListening, setIsListening] = useState(false);
+    const [alertType, setAlertType] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
     const scale = useSharedValue(1);
     const ring1Scale = useSharedValue(1);
     const ring2Scale = useSharedValue(1);
@@ -81,6 +84,37 @@ const HomeScreen = () => {
         transform: [{ scale: scale.value }],
     }));
 
+    useEffect(() => {
+        let alertTimer;
+        if (isListening) {
+            alertTimer = setTimeout(() => {
+                // Rastgele bir alert tipi seçiyoruz (gerçek uygulamada ses analizi sonucuna göre belirlenecek)
+                const alertTypes = ['silence', 'glass', 'fall', 'scream'];
+                const randomAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+                setAlertType(randomAlert);
+                setShowAlert(true);
+            }, 10000); // 10 saniye sonra
+        }
+        return () => clearTimeout(alertTimer);
+    }, [isListening]);
+
+    const handleAlertCancel = () => {
+        setShowAlert(false);
+        setAlertType(null);
+    };
+
+    const handleAlertConfirm = () => {
+        // Burada kontakları bilgilendirme işlemi yapılacak
+        console.log('Kontaklar bilgilendiriliyor...');
+        setShowAlert(false);
+        setAlertType(null);
+    };
+
+    const handleAlertTimeout = () => {
+        setShowAlert(false);
+        setAlertType(null);
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>VoiceWatcher</Text>
@@ -111,6 +145,14 @@ const HomeScreen = () => {
             >
                 <Text style={styles.alertButtonText}>Bilinçli Uyarı Gönder</Text>
             </TouchableOpacity>
+
+            <AlertPopup
+                visible={showAlert}
+                type={alertType}
+                onCancel={handleAlertCancel}
+                onConfirm={handleAlertConfirm}
+                onTimeout={handleAlertTimeout}
+            />
         </View>
     );
 };
