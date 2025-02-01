@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
@@ -110,10 +110,10 @@ const HomeScreen = () => {
         setAlertType(null);
     };
 
-    const handleAlertTimeout = () => {
+    const handleAlertTimeout = useCallback(() => {
         setShowAlert(false);
         setAlertType(null);
-    };
+    }, []);
 
     return (
         <View style={styles.container}>
