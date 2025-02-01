@@ -133,12 +133,12 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   timerText: {
-    fontSize: 36,
+    fontSize: 48,
     fontWeight: 'bold',
     color: '#FF4500',
   },
   timerLabel: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#666',
   },
   buttonContainer: {
