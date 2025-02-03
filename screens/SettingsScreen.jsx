@@ -10,6 +10,7 @@ import GeneralModal from '../components/GeneralModal';
 import SensitivitySlider from '../components/SensitivitySlider';
 import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 
 const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -49,7 +50,60 @@ const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
   );
 };
 
+const AccountButton = ({ icon, title, description, onPress, variant = "solid" }) => (
+  <Pressable 
+    onPress={onPress}
+    mb={3}
+  >
+    <Box 
+      bg={variant === "solid" ? "#FF4500" : "transparent"}
+      borderWidth={variant === "outline" ? 1 : 0}
+      borderColor={variant === "outline" ? "#FF4500" : "transparent"}
+      rounded="xl"
+      p={4}
+      shadow={variant === "solid" ? 2 : 0}
+    >
+      <HStack space={4} alignItems="center">
+        <Center
+          bg={variant === "solid" ? "rgba(255,255,255,0.2)" : "rgba(255,69,0,0.1)"}
+          p={2}
+          rounded="lg"
+        >
+          <Icon 
+            as={Ionicons} 
+            name={icon} 
+            size="md" 
+            color={variant === "solid" ? "white" : "#FF4500"} 
+          />
+        </Center>
+        <VStack flex={1}>
+          <Text 
+            fontSize="md" 
+            fontWeight="600" 
+            color={variant === "solid" ? "white" : "#00000"}
+          >
+            {title}
+          </Text>
+          <Text 
+            fontSize="sm" 
+            color={variant === "solid" ? "rgba(255,255,255,0.8)" : "#666666"}
+          >
+            {description}
+          </Text>
+        </VStack>
+        <Icon 
+          as={Ionicons} 
+          name="chevron-forward" 
+          size="sm" 
+          color={variant === "solid" ? "white" : "#FF4500"} 
+        />
+      </HStack>
+    </Box>
+  </Pressable>
+);
+
 const SettingsScreen = () => {
+  const navigation = useNavigation();
   const [sensitivity, setSensitivity] = useState(SENSITIVITY_LEVELS.MEDIUM.value);
   const [notifications, setNotifications] = useState({
     enabled: true,
@@ -60,6 +114,14 @@ const SettingsScreen = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toast = useToast();
+
+  const handlePasswordChange = () => {
+    navigation.navigate('PasswordChange');
+  };
+
+  const handleDeleteAccount = () => {
+    navigation.navigate('DeleteAccount');
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -132,16 +194,24 @@ const SettingsScreen = () => {
           </VStack>
         </SettingsSection>
 
-        {/* Security Section */}
-        <SettingsSection title="Güvenlik" icon="shield-checkmark">
-          <Button 
-            onPress={() => setIsModalOpen(true)}
-            leftIcon={<Icon as={Ionicons} name="lock-closed" size="sm" />}
-            bg="#FF4500"
-            _pressed={{ bg: "#FF8C00" }}
-          >
-            Şifre Değiştir
-          </Button>
+        {/* Hesap ve Güvenlik Section */}
+        <SettingsSection title="Hesap ve Güvenlik" icon="shield-checkmark">
+          <VStack space={2}>
+            <AccountButton
+              icon="key"
+              title="Şifre Değiştir"
+              description="Hesap güvenliğiniz için şifrenizi güncelleyin"
+              onPress={handlePasswordChange}
+              variant="solid"
+            />
+            <AccountButton
+              icon="trash"
+              title="Hesabı Sil"
+              description="Hesabınızı kalıcı olarak silin"
+              onPress={handleDeleteAccount}
+              variant="outline"
+            />
+          </VStack>
         </SettingsSection>
 
         {/* About & Support */}

@@ -29,6 +29,7 @@ const ProfileCard = ({
   const getSensitivityLabel = (value) => {
     return Object.values(SENSITIVITY_LEVELS).find(level => level.value === value)?.label || 'Orta';
   };
+   const noProfile = require('../assets/noprofile.png');
 
   return (
     <Box alignItems="center" p="4" width="100%">
@@ -46,7 +47,7 @@ const ProfileCard = ({
         <Box alignItems="center" position="relative">
           <AspectRatio w="70%" ratio={1}>
             <Image 
-              source={profileImage} 
+              source={profileImage ? { uri: profileImage } : noProfile}
               alt="Profile Image"
               borderRadius="full"
               borderWidth={2}
