@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Dimensions } from 'react-native';
-import { Center, Text, VStack, Slider, Box, useToast, Switch, HStack, Divider, Icon, Input } from 'native-base';
+import { Center, Text, VStack, Box, useToast, Switch, HStack, Divider, Icon, Input, Radio, Pressable, Slider } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button'; 
 import GeneralModal from '../components/GeneralModal';
+import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
 
 const { height } = Dimensions.get('window');
 
 const SettingsScreen = () => {
-  const [sensitivity, setSensitivity] = useState(50);
+  const [sensitivity, setSensitivity] = useState(SENSITIVITY_LEVELS.MEDIUM.value);
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -45,6 +46,27 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleSensitivityChange = (value) => {
+    if (value <= 1) {
+      setSensitivity(SENSITIVITY_LEVELS.LOW.value);
+    } else if (value === 2) {
+      setSensitivity(SENSITIVITY_LEVELS.MEDIUM.value);
+    } else {
+      setSensitivity(SENSITIVITY_LEVELS.HIGH.value);
+    }
+  };
+
+  const getCurrentSliderValue = () => {
+    switch (sensitivity) {
+      case SENSITIVITY_LEVELS.LOW.value:
+        return 1;
+      case SENSITIVITY_LEVELS.HIGH.value:
+        return 3;
+      default:
+        return 2;
+    }
+  };
+
   const SettingItem = ({ icon, title, value, onToggle, type = "switch" }) => (
     <HStack space={3} alignItems="center" justifyContent="space-between" width="100%" py={3}>
       <HStack space={3} alignItems="center">
@@ -59,6 +81,26 @@ const SettingsScreen = () => {
     </HStack>
   );
 
+  const SensitivityButton = ({ value, label }) => (
+    <Pressable
+      onPress={() => setSensitivity(value)}
+      bg={sensitivity === value ? "rgba(255,69,0,0.9)" : "transparent"}
+      borderWidth={1}
+      borderColor="rgba(255,69,0,0.9)"
+      rounded="md"
+      px={4}
+      py={2}
+      my={1}
+    >
+      <Text
+        color={sensitivity === value ? "white" : "rgba(255,69,0,0.9)"}
+        fontWeight="500"
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Center flex={1} width="100%">
@@ -68,20 +110,33 @@ const SettingsScreen = () => {
               <Icon as={Ionicons} name="options" size="md" color="#FF4500" />
               <Text fontSize="xl" fontWeight="bold">Hassasiyet Ayarı</Text>
             </HStack>
-            <Slider
-              defaultValue={sensitivity}
-              minValue={0}
-              maxValue={100}
-              step={1}
-              onChange={v => setSensitivity(v)}
-              colorScheme="orange"
-            >
-              <Slider.Track>
-                <Slider.FilledTrack />
-              </Slider.Track>
-              <Slider.Thumb />
-            </Slider>
-            <Text textAlign="right" mt={2}>%{sensitivity}</Text>
+            <Box>
+              {/* Sensitivity Level Labels */}
+              <HStack justifyContent="space-between" mb={2}>
+                <Text color="gray.600" fontSize="sm">Az</Text>
+                <Text color="gray.600" fontSize="sm">Orta</Text>
+                <Text color="gray.600" fontSize="sm">Hassas</Text>
+              </HStack>
+              
+              <Slider
+                defaultValue={2}
+                value={getCurrentSliderValue()}
+                minValue={1}
+                maxValue={3}
+                step={1}
+                onChange={handleSensitivityChange}
+                colorScheme="orange"
+              >
+                <Slider.Track>
+                  <Slider.FilledTrack />
+                </Slider.Track>
+                <Slider.Thumb />
+              </Slider>
+              
+              <Text textAlign="right" mt={2} color="#FF4500" fontWeight="500">
+                {Object.values(SENSITIVITY_LEVELS).find(level => level.value === sensitivity)?.label}
+              </Text>
+            </Box>
           </Box>
 
           <VStack space={2}>

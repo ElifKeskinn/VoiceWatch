@@ -13,6 +13,7 @@ import {
   Pressable,
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
+import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
 
 const ProfileCard = ({
   firstName,
@@ -25,6 +26,10 @@ const ProfileCard = ({
   sensitivity,
   onEdit,
 }) => {
+  const getSensitivityLabel = (value) => {
+    return Object.values(SENSITIVITY_LEVELS).find(level => level.value === value)?.label || 'Orta';
+  };
+
   return (
     <Box alignItems="center" p="4" width="100%">
       <Box
@@ -122,7 +127,7 @@ const ProfileCard = ({
                 color="#FF4500"
               />
               <Text fontSize="md" fontWeight="500">
-                Hassasiyet: {sensitivity}
+                Hassasiyet: {getSensitivityLabel(sensitivity)}
               </Text>
             </HStack>
             <HStack space={2} alignItems="center">
