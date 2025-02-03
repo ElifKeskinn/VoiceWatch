@@ -4,6 +4,27 @@ import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
+const sensitivityInfo = {
+  LOW: {
+    title: "Düşük Hassasiyet",
+    icon: "volume-low",
+    description: "Sadece yüksek sesli gürültüleri algılar",
+    recommendation: "Gürültülü ortamlarda kullanım için idealdir"
+  },
+  MEDIUM: {
+    title: "Orta Hassasiyet",
+    icon: "volume-medium",
+    description: "Normal konuşma seviyesindeki sesleri algılar",
+    recommendation: "Günlük kullanım için en uygun seviyedir"
+  },
+  HIGH: {
+    title: "Yüksek Hassasiyet",
+    icon: "volume-high",
+    description: "En küçük sesleri bile algılar",
+    recommendation: "Sessiz ortamlarda maksimum farkındalık sağlar"
+  }
+};
+
 export default function SensitivitySlider({ value, onChange }) {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -102,24 +123,24 @@ export default function SensitivitySlider({ value, onChange }) {
 
         {/* Info Panel */}
         <Collapse isOpen={isInfoVisible}>
-          <VStack 
-            space={4} 
-            p={4} 
-            bg="#007AFF10" 
-            rounded="lg"
-          >
-            <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="volume-low" color="#007AFF" />
-              <Text flex={1} fontSize="sm">Kalabalık ortamlar için ideal</Text>
-            </HStack>
-            <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="volume-medium" color="#007AFF" />
-              <Text flex={1} fontSize="sm">Günlük kullanım için dengeli</Text>
-            </HStack>
-            <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="volume-high" color="#007AFF" />
-              <Text flex={1} fontSize="sm">Sessiz ortamlar için hassas</Text>
-            </HStack>
+          <VStack space={4} p={4} bg="#007AFF10" rounded="lg">
+            {Object.entries(sensitivityInfo).map(([level, info]) => (
+              <Box key={level} mb={4}>
+                <HStack space={3} alignItems="center" mb={2}>
+                  <Icon as={Ionicons} name={info.icon} size="md" color="#007AFF" />
+                  <Text fontSize="md" fontWeight="600" color="#1C1C1E">
+                    {info.title}
+                  </Text>
+                </HStack>
+                <VStack space={2} pl={8}>
+                  <Text fontSize="sm" color="gray.600">{info.description}</Text>
+                  <HStack space={2} alignItems="center">
+                    <Icon as={Ionicons} name="checkmark-circle" size="xs" color="#007AFF" />
+                    <Text fontSize="sm" color="gray.600">{info.recommendation}</Text>
+                  </HStack>
+                </VStack>
+              </Box>
+            ))}
           </VStack>
         </Collapse>
       </Box>
