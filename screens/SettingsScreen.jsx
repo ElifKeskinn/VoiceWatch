@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { 
   Center, Text, VStack, Box, useToast, Switch, 
   HStack, Icon, Input, Pressable, Collapse 
@@ -16,18 +16,26 @@ const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
 
   return (
     <Animated.View entering={FadeIn}>
-      <Box bg="white" rounded="xl" shadow={2} overflow="hidden" mb={4}>
+      <Box 
+        bg="#faf1e6" 
+        rounded="2xl" 
+        shadow={2} 
+        overflow="hidden" 
+        mb={4}
+        borderWidth={1}
+        borderColor="rgba(255,69,0,0.15)"
+      >
         <Pressable onPress={() => setIsOpen(!isOpen)}>
           <HStack p={4} justifyContent="space-between" alignItems="center">
             <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name={icon} size="md" color="#007AFF" />
-              <Text fontSize="lg" fontWeight="600" color="#1C1C1E">{title}</Text>
+              <Icon as={Ionicons} name={icon} size="md" color="#FF4500" />
+              <Text fontSize="lg" fontWeight="600" color="#00000">{title}</Text>
             </HStack>
             <Icon 
               as={MaterialIcons} 
               name={isOpen ? "expand-less" : "expand-more"} 
               size="md" 
-              color="gray.400" 
+              color="#FF8C00" 
             />
           </HStack>
         </Pressable>
@@ -60,8 +68,8 @@ const SettingsScreen = () => {
         <SettingsSection title="Hassasiyet Ayarları" icon="options" defaultOpen>
           <VStack space={4}>
             <SensitivitySlider value={sensitivity} onChange={setSensitivity} />
-            <Box bg="#007AFF10" p={3} rounded="md">
-              <Text fontSize="sm" color="#007AFF">
+            <Box bg="rgba(255,69,0,0.1)" p={3} rounded="xl">
+              <Text fontSize="sm" color="#FF4500">
                 İPUCU: Bulunduğunuz ortama göre hassasiyet ayarını değiştirebilirsiniz.
               </Text>
             </Box>
@@ -72,37 +80,37 @@ const SettingsScreen = () => {
         <SettingsSection title="Bildirim Ayarları" icon="notifications">
           <VStack space={4}>
             <HStack justifyContent="space-between" alignItems="center">
-              <Text color="#1C1C1E">Bildirimleri Etkinleştir</Text>
+              <Text color="#00000">Bildirimleri Etkinleştir</Text>
               <Switch 
                 isChecked={notifications.enabled} 
                 onToggle={() => setNotifications(prev => ({...prev, enabled: !prev.enabled}))}
-                onTrackColor="#007AFF"
+                onTrackColor="#FF4500"
               />
             </HStack>
             <Collapse isOpen={notifications.enabled}>
               <VStack space={3}>
                 <HStack justifyContent="space-between" alignItems="center">
-                  <Text color="#1C1C1E">Ses</Text>
+                  <Text color="#00000">Ses</Text>
                   <Switch 
                     isChecked={notifications.sound}
                     onToggle={() => setNotifications(prev => ({...prev, sound: !prev.sound}))}
-                    onTrackColor="#007AFF"
+                    onTrackColor="#FF4500"
                   />
                 </HStack>
                 <HStack justifyContent="space-between" alignItems="center">
-                  <Text>Titreşim</Text>
+                  <Text color="#00000">Titreşim</Text>
                   <Switch 
                     isChecked={notifications.vibration}
                     onToggle={() => setNotifications(prev => ({...prev, vibration: !prev.vibration}))}
-                    colorScheme="orange"
+                    onTrackColor="#FF4500"
                   />
                 </HStack>
                 <HStack justifyContent="space-between" alignItems="center">
-                  <Text>Rahatsız Etme Modu</Text>
+                  <Text color="#00000">Rahatsız Etme Modu</Text>
                   <Switch 
                     isChecked={notifications.silent}
                     onToggle={() => setNotifications(prev => ({...prev, silent: !prev.silent}))}
-                    colorScheme="orange"
+                    onTrackColor="#FF4500"
                   />
                 </HStack>
               </VStack>
@@ -114,11 +122,11 @@ const SettingsScreen = () => {
         <SettingsSection title="Görünüm" icon="color-palette">
           <VStack space={4}>
             <HStack justifyContent="space-between" alignItems="center">
-              <Text>Karanlık Mod</Text>
+              <Text color="#00000">Karanlık Mod</Text>
               <Switch 
                 isChecked={darkMode}
                 onToggle={() => setDarkMode(!darkMode)}
-                colorScheme="orange"
+                onTrackColor="#FF4500"
               />
             </HStack>
           </VStack>
@@ -129,8 +137,8 @@ const SettingsScreen = () => {
           <Button 
             onPress={() => setIsModalOpen(true)}
             leftIcon={<Icon as={Ionicons} name="lock-closed" size="sm" />}
-            bg="#007AFF"
-            _pressed={{ bg: "#0066CC" }}
+            bg="#FF4500"
+            _pressed={{ bg: "#FF8C00" }}
           >
             Şifre Değiştir
           </Button>
@@ -139,18 +147,18 @@ const SettingsScreen = () => {
         {/* About & Support */}
         <SettingsSection title="Hakkında & Destek" icon="information-circle">
           <VStack space={4}>
-            <Text color="#1C1C1E">Uygulama Versiyonu: 1.0.0</Text>
+            <Text color="#00000">Uygulama Versiyonu: 1.0.0</Text>
             <Button 
               variant="outline" 
-              borderColor="#007AFF"
-              _text={{ color: "#007AFF" }}
+              borderColor="#FF4500"
+              _text={{ color: "#FF4500" }}
             >
               Destek Al
             </Button>
             <Button 
               variant="outline"
-              borderColor="#007AFF"
-              _text={{ color: "#007AFF" }}
+              borderColor="#FF4500"
+              _text={{ color: "#FF4500" }}
             >
               Geri Bildirim Gönder
             </Button>
@@ -170,7 +178,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FFFAF0',
   }
 });
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, HStack, VStack, Text, Slider, Pressable, Icon, Collapse } from 'native-base';
 import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import {Ionicons } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 const sensitivityInfo = {
@@ -62,16 +62,16 @@ export default function SensitivitySlider({ value, onChange }) {
 
   return (
     <Animated.View entering={FadeIn}>
-      <Box bg="white" p={5} rounded="xl" shadow={2}>
+      <Box bg="#faf1e6" p={5} rounded="2xl" shadow={2} borderWidth={1} borderColor="rgba(255,69,0,0.15)">
         {/* Current Level Display */}
         <VStack space={6} alignItems="center" mb={6}>
           <Icon
             as={Ionicons}
             name={getLevelLabel().icon}
             size={12}
-            color="#007AFF"
+            color="#FF4500"
           />
-          <Text fontSize="2xl" fontWeight="600" color="#1C1C1E">
+          <Text fontSize="2xl" fontWeight="600" color="#00000">
             {getLevelLabel().text}
           </Text>
         </VStack>
@@ -86,15 +86,15 @@ export default function SensitivitySlider({ value, onChange }) {
             step={1}
             onChange={handleChange}
           >
-            <Slider.Track bg="#007AFF20">
-              <Slider.FilledTrack bg="#007AFF" />
+            <Slider.Track bg="rgba(255,69,0,0.2)">
+              <Slider.FilledTrack bg="#FF4500" />
             </Slider.Track>
-            <Slider.Thumb bg="white" shadow={2} size={6} />
+            <Slider.Thumb bg="white" shadow={3} size={6} />
           </Slider>
           <HStack justifyContent="space-between" mt={2}>
-            <Text color="gray.500">Az</Text>
-            <Text color="gray.500">Orta</Text>
-            <Text color="gray.500">Yüksek</Text>
+            <Text color="#FF8C00">Az</Text>
+            <Text color="#FF8C00">Orta</Text>
+            <Text color="#FF8C00">Yüksek</Text>
           </HStack>
         </Box>
 
@@ -113,9 +113,9 @@ export default function SensitivitySlider({ value, onChange }) {
               as={Ionicons}
               name="information-circle-outline"
               size={5}
-              color="#007AFF"
+              color="#FF4500"
             />
-            <Text color="#007AFF" fontWeight="500">
+            <Text color="#FF4500" fontWeight="500">
               {isInfoVisible ? "Bilgileri Gizle" : "Daha Fazla Bilgi"}
             </Text>
           </HStack>
@@ -123,20 +123,20 @@ export default function SensitivitySlider({ value, onChange }) {
 
         {/* Info Panel */}
         <Collapse isOpen={isInfoVisible}>
-          <VStack space={4} p={4} bg="#007AFF10" rounded="lg">
+          <VStack space={4} p={4} bg="rgba(255,69,0,0.1)" rounded="xl">
             {Object.entries(sensitivityInfo).map(([level, info]) => (
               <Box key={level} mb={4}>
                 <HStack space={3} alignItems="center" mb={2}>
-                  <Icon as={Ionicons} name={info.icon} size="md" color="#007AFF" />
-                  <Text fontSize="md" fontWeight="600" color="#1C1C1E">
+                  <Icon as={Ionicons} name={info.icon} size="md" color="#FF4500" />
+                  <Text fontSize="md" fontWeight="600" color="#00000">
                     {info.title}
                   </Text>
                 </HStack>
                 <VStack space={2} pl={8}>
-                  <Text fontSize="sm" color="gray.600">{info.description}</Text>
+                  <Text fontSize="sm" color="#666666">{info.description}</Text>
                   <HStack space={2} alignItems="center">
-                    <Icon as={Ionicons} name="checkmark-circle" size="xs" color="#007AFF" />
-                    <Text fontSize="sm" color="gray.600">{info.recommendation}</Text>
+                    <Icon as={Ionicons} name="checkmark-circle" size="xs" color="#FF4500" />
+                    <Text fontSize="sm" color="#666666">{info.recommendation}</Text>
                   </HStack>
                 </VStack>
               </Box>
