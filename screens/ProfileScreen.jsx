@@ -10,6 +10,7 @@ import {
   Icon,
   Box,
   Pressable,
+  useColorModeValue,
 } from 'native-base';
 import ProfileCard from '../components/profile/ProfileCard';
 import {Ionicons} from '@expo/vector-icons';
@@ -39,6 +40,16 @@ const ProfileScreen = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(user);
   const toast = useToast();
+
+  // Dark mod renkleri
+  const bgColor = useColorModeValue('#FFF2E6', '#121212');
+  const cardBgColor = useColorModeValue('#faf1e6', '#1E1E1E');
+  const contentBgColor = useColorModeValue('#FFF8F0', '#2D2D2D');
+  const textColor = useColorModeValue('#000000', '#E8E8E8');
+  const borderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+  const accentColor = useColorModeValue('#FF4500', '#FF6347');
+  const iconBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.15)');
+  const secondaryTextColor = useColorModeValue('#666666', '#B0B0B0');
 
   const handleUserUpdate = () => {
     setUser(editUser);
@@ -106,23 +117,23 @@ const ProfileScreen = () => {
       borderRadius="xl"
       mt={6}
       borderWidth={2}
-      borderColor="rgba(255,69,0,0.15)"
-      bg="#faf1e6"
+      borderColor={borderColor}
+      bg={cardBgColor}
       shadow={1}>
       <VStack space={4}>
         <HStack justifyContent="space-between" alignItems="center">
           <HStack space={2} alignItems="center">
-            <Icon as={Ionicons} name="people" size="md" color="#FF4500" />
-            <Text fontSize="xl" fontWeight="bold" color="#00000">
+            <Icon as={Ionicons} name="people" size="md" color={accentColor} />
+            <Text fontSize="xl" fontWeight="bold" color={textColor}>
               Acil Durum Kontakları
             </Text>
           </HStack>
           <Pressable
             onPress={handleAddContact}
-            bg="rgba(255,69,0,0.9)"
+            bg={accentColor}
             rounded="full"
             p={2}
-            _pressed={{bg: 'rgba(255,69,0,0.7)'}}>
+            _pressed={{opacity: 0.8}}>
             <Icon as={Ionicons} name="add" size="sm" color="white" />
           </Pressable>
         </HStack>
@@ -133,18 +144,18 @@ const ProfileScreen = () => {
             p={3}
             borderRadius="md"
             borderWidth={1}
-            borderColor="rgba(255,69,0,0.15)"
-            bg="#FFF8F0">
+            borderColor={borderColor}
+            bg={contentBgColor}>
             <HStack justifyContent="space-between" alignItems="center">
               <HStack space={3} alignItems="center">
-                <Center bg="rgba(255,69,0,0.1)" p={2} rounded="full">
-                  <Icon as={Ionicons} name="person" size="md" color="#FF4500" />
+                <Center bg={iconBgColor} p={2} rounded="full">
+                  <Icon as={Ionicons} name="person" size="md" color={accentColor} />
                 </Center>
                 <VStack>
-                  <Text fontWeight="600" color="#00000">
+                  <Text fontWeight="600" color={textColor}>
                     {contact.name}
                   </Text>
-                  <Text color="gray.600">{contact.phone}</Text>
+                  <Text color={secondaryTextColor}>{contact.phone}</Text>
                 </VStack>
               </HStack>
 
@@ -152,16 +163,16 @@ const ProfileScreen = () => {
                 <Pressable
                   p={2}
                   rounded="full"
-                  _pressed={{bg: 'rgba(255,69,0,0.1)'}}
+                  _pressed={{bg: iconBgColor}}
                   onPress={() => handleEditContact(contact.id)}>
-                  <Icon as={Ionicons} name="create" size="sm" color="#FF4500" />
+                  <Icon as={Ionicons} name="create" size="sm" color={accentColor} />
                 </Pressable>
                 <Pressable
                   p={2}
                   rounded="full"
-                  _pressed={{bg: 'rgba(255,69,0,0.1)'}}
+                  _pressed={{bg: iconBgColor}}
                   onPress={() => handleDeleteContact(contact.id)}>
-                  <Icon as={Ionicons} name="trash" size="sm" color="#FF4500" />
+                  <Icon as={Ionicons} name="trash" size="sm" color={accentColor} />
                 </Pressable>
               </HStack>
             </HStack>
@@ -172,12 +183,15 @@ const ProfileScreen = () => {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: bgColor }]}>
       <Center flex={1} width="100%">
-        <ProfileCard {...user} onEdit={handleEditProfile} />
+        <ProfileCard 
+          {...user} 
+          onEdit={handleEditProfile}
+          darkMode={useColorModeValue(false, true)}
+        />
         <EmergencyContactSection />
 
-        {/* Edit Profile Modal */}
         <EditProfileModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
@@ -185,6 +199,7 @@ const ProfileScreen = () => {
           userData={editUser}
           onUserDataChange={handleUserDataChange}
           onPickImage={handlePickImage}
+          darkMode={useColorModeValue(false, true)}
         />
       </Center>
     </ScrollView>
@@ -194,15 +209,8 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#FFF2E6',
     padding: 20,
-    minHeight: height,
-  },
-  button: {
-    backgroundColor: 'rgba(255,69,0,0.9)',
-    borderRadius: 12,
-    paddingHorizontal: 25,
-    paddingVertical: 12,
+    minHeight: Dimensions.get('window').height,
   },
 });
 

@@ -11,6 +11,7 @@ import {
   HStack,
   Icon,
   Pressable,
+  useColorModeValue,
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
@@ -26,6 +27,13 @@ const ProfileCard = ({
   sensitivity,
   onEdit,
 }) => {
+  const bgColor = useColorModeValue('#faf1e6', '#1E1E1E');
+  const contentBgColor = useColorModeValue('#FFF8F0', '#2D2D2D');
+  const textColor = useColorModeValue('#000000', '#E8E8E8');
+  const borderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+  const accentColor = useColorModeValue('#FF4500', '#FF6347');
+  const iconColor = useColorModeValue('#FF4500', '#FF6347');
+
   const getSensitivityLabel = value => {
     return (
       Object.values(SENSITIVITY_LEVELS).find(level => level.value === value)
@@ -41,9 +49,9 @@ const ProfileCard = ({
         maxW="500px"
         rounded="xl"
         overflow="hidden"
-        borderColor="rgba(255,69,0,0.15)"
+        borderColor={borderColor}
         borderWidth="2"
-        bg="#faf1e6"
+        bg={bgColor}
         p="6"
         shadow={1}>
         {/* Profile Image Section */}
@@ -75,7 +83,7 @@ const ProfileCard = ({
 
         {/* Profile Label */}
         <Box
-          bg="rgba(255,69,0,0.9)"
+          bg={accentColor}
           position="absolute"
           px="4"
           py="2"
@@ -89,7 +97,7 @@ const ProfileCard = ({
 
         <Stack p="5" space={4}>
           <VStack space={3} alignItems="center">
-            <Heading size="xl" color="#00000" fontWeight="bold">
+            <Heading size="xl" color={textColor} fontWeight="bold">
               {firstName} {lastName}
             </Heading>
           </VStack>
@@ -100,25 +108,25 @@ const ProfileCard = ({
             p={4}
             borderRadius="lg"
             borderWidth={1}
-            borderColor="rgba(255,69,0,0.15)"
-            bg="#FFF8F0">
+            borderColor={borderColor}
+            bg={contentBgColor}>
             <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="id-card" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">
+              <Icon as={Ionicons} name="id-card" size="sm" color={iconColor} />
+              <Text fontSize="md" fontWeight="500" color={textColor}>
                 TC: {tcNumber}
               </Text>
             </HStack>
 
             <HStack space={3} alignItems="center">
-              <Icon as={Ionicons} name="call" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">
+              <Icon as={Ionicons} name="call" size="sm" color={iconColor} />
+              <Text fontSize="md" fontWeight="500" color={textColor}>
                 Telefon: {phoneNumber}
               </Text>
             </HStack>
 
             <HStack space={1} alignItems="center">
-              <Icon as={Ionicons} name="water" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">
+              <Icon as={Ionicons} name="water" size="sm" color={iconColor} />
+              <Text fontSize="md" fontWeight="500" color={textColor}>
                 Kan Grubu: {bloodType}
               </Text>
             </HStack>
@@ -128,15 +136,15 @@ const ProfileCard = ({
                 as={Ionicons}
                 name="alert-circle"
                 size="sm"
-                color="#FF4500"
+                color={iconColor}
               />
-              <Text fontSize="md" fontWeight="500">
+              <Text fontSize="md" fontWeight="500" color={textColor}>
                 Hassasiyet: {getSensitivityLabel(sensitivity)}
               </Text>
             </HStack>
             <HStack space={2} alignItems="center">
-              <Icon as={Ionicons} name="calendar" size="sm" color="#FF4500" />
-              <Text fontSize="md" fontWeight="500">
+              <Icon as={Ionicons} name="calendar" size="sm" color={iconColor} />
+              <Text fontSize="md" fontWeight="500" color={textColor}>
                 Yaş: {age}
               </Text>
             </HStack>
