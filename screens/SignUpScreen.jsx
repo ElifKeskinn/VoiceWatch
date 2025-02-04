@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
+import { useColorModeValue } from 'native-base';
+import Logo from '../components/common/Logo';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -25,6 +27,16 @@ const SignUpScreen = ({ navigation }) => {
     const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
     const [lastNameError, setLastNameError] = useState(''); // Hata mesajı için state
     const [isAgreedError, setIsAgreedError] = useState(''); // State for privacy policy agreement error
+
+    // Dark mode renkleri
+    const bgColor = useColorModeValue('#FFFAF0', '#121212');
+    const inputBgColor = useColorModeValue('rgba(255, 255, 255, 0.9)', '#1E1E1E');
+    const inputBorderColor = useColorModeValue('#FF4500', '#FF6347');
+    const textColor = useColorModeValue('#000000', '#E8E8E8');
+    const placeholderColor = useColorModeValue('#FF8C00', '#FF6347');
+    const secondaryTextColor = useColorModeValue('#FF8C00', '#B0B0B0');
+    const buttonBgColor = useColorModeValue('#FF4500', '#FF6347');
+    const errorColor = useColorModeValue('#FF0000', '#FF6666');
 
     const handleSignUp = () => {
         let isValid = true;
@@ -275,48 +287,93 @@ const SignUpScreen = ({ navigation }) => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Kayıt Ol</Text>
+        <ScrollView
+            contentContainerStyle={[styles.container, {backgroundColor: bgColor}]}>
+            <View style={styles.headerContainer}>
+                <Text style={[styles.title, {color: buttonBgColor}]}>
+                    Kayıt Ol
+                </Text>
+            </View>
 
             {step === 1 ? (
                 <>
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="İsim"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={firstName}
                             onChangeText={handleFirstNameChange}
                         />
-                        {firstNameError ? <Text style={styles.errorText2}>{firstNameError}</Text> : null}
+                        {firstNameError ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {firstNameError}
+                            </Text>
+                        ) : null}
                     </View>
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="Soyisim"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={lastName}
                             onChangeText={handleLastNameChange}
                         />
-                        {lastNameError ? <Text style={styles.errorText2}>{lastNameError}</Text> : null}
+                        {lastNameError ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {lastNameError}
+                            </Text>
+                        ) : null}
                     </View>
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="TC Kimlik Numarası"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={tcNumber}
                             onChangeText={setTcNumber}
                             keyboardType="numeric"
                             maxLength={11}
                         />
-                        {tcNumberError ? <Text style={styles.errorText2}>{tcNumberError}</Text> : null}
+                        {tcNumberError ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {tcNumberError}
+                            </Text>
+                        ) : null}
                     </View>
                     <View style={styles.rowContainer}>
                         <TextInput
-                            style={styles.rowInput}
+                            style={[
+                                styles.rowInput,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="Yaş"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={age}
                             onChangeText={setAge}
                             keyboardType="numeric"
@@ -337,144 +394,259 @@ const SignUpScreen = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.errorRowContainer}>
-                        {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
-                        {bloodTypeError ? <Text style={[styles.errorText2, { marginRight: 18, }]}>{bloodTypeError}</Text> : null}
-
-                    </View>
-                    <View style={styles.contactInputContainer}>
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Parola"
-                        placeholderTextColor="#FF8C00"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
-                    {passwordError ? <Text style={styles.errorText2}>{passwordError}</Text> : null}
+                        {ageError ? (
+                            <Text style={[styles.errorText, {color: errorColor}]}>
+                                {ageError}
+                            </Text>
+                        ) : null}
+                        {bloodTypeError ? (
+                            <Text style={[styles.errorText2, {marginRight: 18, color: errorColor}]}>
+                                {bloodTypeError}
+                            </Text>
+                        ) : null}
                     </View>
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
+                            placeholder="Parola"
+                            placeholderTextColor={placeholderColor}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
+                        {passwordError ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {passwordError}
+                            </Text>
+                        ) : null}
+                    </View>
+                    <View style={styles.contactInputContainer}>
+                        <TextInput
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="Telefon Numarası"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={phoneNumber}
                             onChangeText={handlePhoneNumberChange}
                             keyboardType="phone-pad"
                             maxLength={17}
                         />
-                        {phoneNumberError ? <Text style={styles.errorText2}>{phoneNumberError}</Text> : null}
+                        {phoneNumberError ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {phoneNumberError}
+                            </Text>
+                        ) : null}
                     </View>
                     <View style={styles.stepIndicator}>
-                        <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-                        <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+                        <View
+                            style={[
+                                styles.stepCircle,
+                                step === 1 && [styles.activeStep, {backgroundColor: buttonBgColor}],
+                                {backgroundColor: secondaryTextColor},
+                            ]}
+                        />
+                        <View
+                            style={[
+                                styles.stepCircle,
+                                step === 2 && [styles.activeStep, {backgroundColor: buttonBgColor}],
+                                {backgroundColor: secondaryTextColor},
+                            ]}
+                        />
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
+                    <TouchableOpacity
+                        style={[styles.button, {backgroundColor: buttonBgColor}]}
+                        onPress={() => setStep(2)}>
                         <Text style={styles.buttonText}>Devam Et</Text>
                     </TouchableOpacity>
 
-                    {/* Privacy Policy Agreement for Step 1 */}
                     <View style={styles.agreementContainer}>
-                        <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                        <TouchableOpacity
+                            onPress={() => setIsAgreed(!isAgreed)}
+                            style={styles.checkbox}>
                             {isAgreed ? (
-                                <Icon name="check-square" size={20} color="#FF4500" />
+                                <Icon name="check-square" size={20} color={inputBorderColor} />
                             ) : (
-                                <Icon name="square-o" size={20} color="#FF4500" />
+                                <Icon name="square-o" size={20} color={inputBorderColor} />
                             )}
                         </TouchableOpacity>
-                        <Text style={styles.agreementText}>
+                        <Text style={[styles.agreementText, {color: textColor}]}>
                             Gizlilik sözleşmesini onaylıyorum.
                         </Text>
                     </View>
-                    {isAgreedError ? <Text style={styles.errorText4}>{isAgreedError}</Text> : null}
+                    {isAgreedError ? (
+                        <Text style={[styles.errorText4, {color: errorColor}]}>
+                            {isAgreedError}
+                        </Text>
+                    ) : null}
                 </>
             ) : (
                 <>
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="1. Kontağın İsmi"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={contacts[0].nickname}
                             onChangeText={(value) => handleContactChange(0, 'nickname', value)}
                         />
-                        {contactNicknameErrors[0] ? <Text style={styles.errorText2}>{contactNicknameErrors[0]}</Text> : null}
+                        {contactNicknameErrors[0] ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {contactNicknameErrors[0]}
+                            </Text>
+                        ) : null}
                     </View>
 
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="1. Telefon Numarası"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={contacts[0].number}
                             onChangeText={(value) => handleContactChange(0, 'number', value)}
                             keyboardType="phone-pad"
                             maxLength={17}
                         />
-                        {contactPhoneErrors[0] ? <Text style={styles.errorText2}>{contactPhoneErrors[0]}</Text> : null}
+                        {contactPhoneErrors[0] ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {contactPhoneErrors[0]}
+                            </Text>
+                        ) : null}
                     </View>
 
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="2. Kontağın İsmi"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={contacts[1].nickname}
                             onChangeText={(value) => handleContactChange(1, 'nickname', value)}
                         />
-                        {contactNicknameErrors[1] ? <Text style={styles.errorText2}>{contactNicknameErrors[1]}</Text> : null}
+                        {contactNicknameErrors[1] ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {contactNicknameErrors[1]}
+                            </Text>
+                        ) : null}
                     </View>
 
                     <View style={styles.contactInputContainer}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: inputBgColor,
+                                    borderColor: inputBorderColor,
+                                    color: textColor,
+                                },
+                            ]}
                             placeholder="2. Telefon Numarası"
-                            placeholderTextColor="#FF8C00"
+                            placeholderTextColor={placeholderColor}
                             value={contacts[1].number}
                             onChangeText={(value) => handleContactChange(1, 'number', value)}
                             keyboardType="phone-pad"
                             maxLength={17}
                         />
-                        {contactPhoneErrors[1] ? <Text style={styles.errorText2}>{contactPhoneErrors[1]}</Text> : null}
+                        {contactPhoneErrors[1] ? (
+                            <Text style={[styles.errorText2, {color: errorColor}]}>
+                                {contactPhoneErrors[1]}
+                            </Text>
+                        ) : null}
                     </View>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
-                        <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-                            <Icon name="arrow-left" size={20} color="#FF4500" />
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                        <TouchableOpacity
+                            style={styles.backButton}
+                            onPress={() => setStep(1)}>
+                            <Icon name="arrow-left" size={20} color={buttonBgColor} />
                         </TouchableOpacity>
                         <View style={styles.stepIndicator}>
-                            <View style={[styles.stepCircle, step === 1 && styles.activeStep]} />
-                            <View style={[styles.stepCircle, step === 2 && styles.activeStep]} />
+                            <View
+                                style={[
+                                    styles.stepCircle,
+                                    step === 1 && [styles.activeStep, {backgroundColor: buttonBgColor}],
+                                    {backgroundColor: secondaryTextColor},
+                                ]}
+                            />
+                            <View
+                                style={[
+                                    styles.stepCircle,
+                                    step === 2 && [styles.activeStep, {backgroundColor: buttonBgColor}],
+                                    {backgroundColor: secondaryTextColor},
+                                ]}
+                            />
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                    <TouchableOpacity
+                        style={[styles.button, {backgroundColor: buttonBgColor}]}
+                        onPress={handleSignUp}>
                         <Text style={styles.buttonText}>Kayıt Ol</Text>
                     </TouchableOpacity>
 
-                    {/* Privacy Policy Agreement for Step 2 */}
                     <View style={styles.agreementContainer}>
-                        <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                        <TouchableOpacity
+                            onPress={() => setIsAgreed(!isAgreed)}
+                            style={styles.checkbox}>
                             {isAgreed ? (
-                                <Icon name="check-square" size={20} color="#FF4500" />
+                                <Icon name="check-square" size={20} color={inputBorderColor} />
                             ) : (
-                                <Icon name="square-o" size={20} color="#FF4500" />
+                                <Icon name="square-o" size={20} color={inputBorderColor} />
                             )}
                         </TouchableOpacity>
-                        <Text style={styles.agreementText}>
+                        <Text style={[styles.agreementText, {color: textColor}]}>
                             Gizlilik sözleşmesini onaylıyorum.
                         </Text>
                     </View>
-                    {isAgreedError ? <Text style={styles.errorText4}>{isAgreedError}</Text> : null}
+                    {isAgreedError ? (
+                        <Text style={[styles.errorText4, {color: errorColor}]}>
+                            {isAgreedError}
+                        </Text>
+                    ) : null}
                 </>
             )}
             <View style={styles.switchContainer}>
-                <Text style={styles.switchText}>
+                <Text style={[styles.switchText, {color: secondaryTextColor}]}>
                     Zaten hesabınız var mı?
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                    <Text style={styles.switchLink}> Giriş Yap</Text>
+                    <Text style={[styles.switchLink, {color: buttonBgColor}]}>
+                        {' '}
+                        Giriş Yap
+                    </Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -486,14 +658,16 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#FFFAF0',
         padding: 20,
+    },
+    headerContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 50,
+        marginBottom: 30,
     },
     title: {
         fontSize: 36,
-        marginTop: 90,
-        marginBottom: 28,
-        color: '#FF4500',
         fontWeight: 'bold',
     },
     input: {
