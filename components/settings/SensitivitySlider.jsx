@@ -1,31 +1,40 @@
-import React, { useState } from 'react';
-import { Box, HStack, VStack, Text, Slider, Pressable, Icon, Collapse } from 'native-base';
-import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
-import {Ionicons } from '@expo/vector-icons';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import React, {useState} from 'react';
+import {
+  Box,
+  HStack,
+  VStack,
+  Text,
+  Slider,
+  Pressable,
+  Icon,
+  Collapse,
+} from 'native-base';
+import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
+import {Ionicons} from '@expo/vector-icons';
+import Animated, {FadeIn} from 'react-native-reanimated';
 
 const sensitivityInfo = {
   LOW: {
-    title: "Düşük Hassasiyet",
-    icon: "volume-low",
-    description: "Sadece yüksek sesli gürültüleri algılar",
-    recommendation: "Gürültülü ortamlarda kullanım için idealdir"
+    title: 'Düşük Hassasiyet',
+    icon: 'volume-low',
+    description: 'Sadece yüksek sesli gürültüleri algılar',
+    recommendation: 'Gürültülü ortamlarda kullanım için idealdir',
   },
   MEDIUM: {
-    title: "Orta Hassasiyet",
-    icon: "volume-medium",
-    description: "Normal konuşma seviyesindeki sesleri algılar",
-    recommendation: "Günlük kullanım için en uygun seviyedir"
+    title: 'Orta Hassasiyet',
+    icon: 'volume-medium',
+    description: 'Normal konuşma seviyesindeki sesleri algılar',
+    recommendation: 'Günlük kullanım için en uygun seviyedir',
   },
   HIGH: {
-    title: "Yüksek Hassasiyet",
-    icon: "volume-high",
-    description: "En küçük sesleri bile algılar",
-    recommendation: "Sessiz ortamlarda maksimum farkındalık sağlar"
-  }
+    title: 'Yüksek Hassasiyet',
+    icon: 'volume-high',
+    description: 'En küçük sesleri bile algılar',
+    recommendation: 'Sessiz ortamlarda maksimum farkındalık sağlar',
+  },
 };
 
-export default function SensitivitySlider({ value, onChange }) {
+export default function SensitivitySlider({value, onChange}) {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   const getCurrentSliderValue = () => {
@@ -39,7 +48,7 @@ export default function SensitivitySlider({ value, onChange }) {
     }
   };
 
-  const handleChange = (sliderValue) => {
+  const handleChange = sliderValue => {
     if (sliderValue <= 1) {
       onChange(SENSITIVITY_LEVELS.LOW.value);
     } else if (sliderValue === 2) {
@@ -52,17 +61,23 @@ export default function SensitivitySlider({ value, onChange }) {
   const getLevelLabel = () => {
     switch (value) {
       case SENSITIVITY_LEVELS.LOW.value:
-        return { text: "Düşük Hassasiyet", icon: "volume-low" };
+        return {text: 'Düşük Hassasiyet', icon: 'volume-low'};
       case SENSITIVITY_LEVELS.HIGH.value:
-        return { text: "Yüksek Hassasiyet", icon: "volume-high" };
+        return {text: 'Yüksek Hassasiyet', icon: 'volume-high'};
       default:
-        return { text: "Orta Hassasiyet", icon: "volume-medium" };
+        return {text: 'Orta Hassasiyet', icon: 'volume-medium'};
     }
   };
 
   return (
     <Animated.View entering={FadeIn}>
-      <Box bg="#faf1e6" p={5} rounded="2xl" shadow={2} borderWidth={1} borderColor="rgba(255,69,0,0.15)">
+      <Box
+        bg="#faf1e6"
+        p={5}
+        rounded="2xl"
+        shadow={2}
+        borderWidth={1}
+        borderColor="rgba(255,69,0,0.15)">
         {/* Current Level Display */}
         <VStack space={6} alignItems="center" mb={6}>
           <Icon
@@ -84,8 +99,7 @@ export default function SensitivitySlider({ value, onChange }) {
             minValue={1}
             maxValue={3}
             step={1}
-            onChange={handleChange}
-          >
+            onChange={handleChange}>
             <Slider.Track bg="rgba(255,69,0,0.2)">
               <Slider.FilledTrack bg="#FF4500" />
             </Slider.Track>
@@ -99,16 +113,10 @@ export default function SensitivitySlider({ value, onChange }) {
         </Box>
 
         {/* Info Button */}
-        <Pressable 
+        <Pressable
           onPress={() => setIsInfoVisible(!isInfoVisible)}
-          mb={isInfoVisible ? 4 : 0}
-        >
-          <HStack 
-            space={2} 
-            alignItems="center" 
-            justifyContent="center"
-            py={2}
-          >
+          mb={isInfoVisible ? 4 : 0}>
+          <HStack space={2} alignItems="center" justifyContent="center" py={2}>
             <Icon
               as={Ionicons}
               name="information-circle-outline"
@@ -116,7 +124,7 @@ export default function SensitivitySlider({ value, onChange }) {
               color="#FF4500"
             />
             <Text color="#FF4500" fontWeight="500">
-              {isInfoVisible ? "Bilgileri Gizle" : "Daha Fazla Bilgi"}
+              {isInfoVisible ? 'Bilgileri Gizle' : 'Daha Fazla Bilgi'}
             </Text>
           </HStack>
         </Pressable>
@@ -127,16 +135,30 @@ export default function SensitivitySlider({ value, onChange }) {
             {Object.entries(sensitivityInfo).map(([level, info]) => (
               <Box key={level} mb={4}>
                 <HStack space={3} alignItems="center" mb={2}>
-                  <Icon as={Ionicons} name={info.icon} size="md" color="#FF4500" />
+                  <Icon
+                    as={Ionicons}
+                    name={info.icon}
+                    size="md"
+                    color="#FF4500"
+                  />
                   <Text fontSize="md" fontWeight="600" color="#00000">
                     {info.title}
                   </Text>
                 </HStack>
                 <VStack space={2} pl={8}>
-                  <Text fontSize="sm" color="#666666">{info.description}</Text>
+                  <Text fontSize="sm" color="#666666">
+                    {info.description}
+                  </Text>
                   <HStack space={2} alignItems="center">
-                    <Icon as={Ionicons} name="checkmark-circle" size="xs" color="#FF4500" />
-                    <Text fontSize="sm" color="#666666">{info.recommendation}</Text>
+                    <Icon
+                      as={Ionicons}
+                      name="checkmark-circle"
+                      size="xs"
+                      color="#FF4500"
+                    />
+                    <Text fontSize="sm" color="#666666">
+                      {info.recommendation}
+                    </Text>
                   </HStack>
                 </VStack>
               </Box>

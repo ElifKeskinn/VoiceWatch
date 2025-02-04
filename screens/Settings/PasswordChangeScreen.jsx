@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { 
-  Box, VStack, Text, Input, Icon, useToast,
-  FormControl, WarningOutlineIcon
+import React, {useState} from 'react';
+import {ScrollView, StyleSheet} from 'react-native';
+import {
+  Box,
+  VStack,
+  Text,
+  Input,
+  Icon,
+  useToast,
+  FormControl,
+  WarningOutlineIcon,
 } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import Button from '../components/Button';
+import {Ionicons} from '@expo/vector-icons';
+import Button from '../../components/common/Button';
 
-const PasswordChangeScreen = ({ navigation }) => {
+const PasswordChangeScreen = ({navigation}) => {
   const [formData, setFormData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -15,13 +21,13 @@ const PasswordChangeScreen = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const [showPasswords, setShowPasswords] = useState({
     old: false,
-    new: false
+    new: false,
   });
   const toast = useToast();
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.oldPassword) {
       newErrors.oldPassword = 'Mevcut şifre gerekli';
     }
@@ -44,16 +50,16 @@ const PasswordChangeScreen = ({ navigation }) => {
 
   const handleSubmit = () => {
     if (validateForm()) {
-      if (formData.oldPassword === "123ABC") {
+      if (formData.oldPassword === '123ABC') {
         toast.show({
-          title: "Başarılı",
-          description: "Şifreniz başarıyla değiştirildi",
-          status: "success"
+          title: 'Başarılı',
+          description: 'Şifreniz başarıyla değiştirildi',
+          status: 'success',
         });
         navigation.goBack();
       } else {
         setErrors({
-          oldPassword: "Mevcut şifre yanlış"
+          oldPassword: 'Mevcut şifre yanlış',
         });
       }
     }
@@ -75,28 +81,36 @@ const PasswordChangeScreen = ({ navigation }) => {
           <FormControl isInvalid={!!errors.oldPassword}>
             <FormControl.Label>Mevcut Şifre</FormControl.Label>
             <Input
-              type={showPasswords.old ? "text" : "password"}
+              type={showPasswords.old ? 'text' : 'password'}
               value={formData.oldPassword}
-              onChangeText={value => setFormData({...formData, oldPassword: value})}
+              onChangeText={value =>
+                setFormData({...formData, oldPassword: value})
+              }
               autoComplete="off"
               secureTextEntry
               InputRightElement={
                 <Icon
                   as={Ionicons}
-                  name={showPasswords.old ? "eye-off" : "eye"}
+                  name={showPasswords.old ? 'eye-off' : 'eye'}
                   size={5}
                   mr="2"
                   color="#FF4500"
-                  onPress={() => setShowPasswords({...showPasswords, old: !showPasswords.old})}
+                  onPress={() =>
+                    setShowPasswords({
+                      ...showPasswords,
+                      old: !showPasswords.old,
+                    })
+                  }
                 />
               }
               borderColor="#FF4500"
               _focus={{
-                borderColor: "#FF8C00",
-                bg: "transparent"
+                borderColor: '#FF8C00',
+                bg: 'transparent',
               }}
             />
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}>
               {errors.oldPassword}
             </FormControl.ErrorMessage>
           </FormControl>
@@ -104,28 +118,36 @@ const PasswordChangeScreen = ({ navigation }) => {
           <FormControl isInvalid={!!errors.newPassword}>
             <FormControl.Label>Yeni Şifre</FormControl.Label>
             <Input
-              type={showPasswords.new ? "text" : "password"}
+              type={showPasswords.new ? 'text' : 'password'}
               value={formData.newPassword}
-              onChangeText={value => setFormData({...formData, newPassword: value})}
+              onChangeText={value =>
+                setFormData({...formData, newPassword: value})
+              }
               autoComplete="off"
               secureTextEntry
               InputRightElement={
                 <Icon
                   as={Ionicons}
-                  name={showPasswords.new ? "eye-off" : "eye"}
+                  name={showPasswords.new ? 'eye-off' : 'eye'}
                   size={5}
                   mr="2"
                   color="#FF4500"
-                  onPress={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                  onPress={() =>
+                    setShowPasswords({
+                      ...showPasswords,
+                      new: !showPasswords.new,
+                    })
+                  }
                 />
               }
               borderColor="#FF4500"
               _focus={{
-                borderColor: "#FF8C00",
-                bg: "transparent"
+                borderColor: '#FF8C00',
+                bg: 'transparent',
               }}
             />
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}>
               {errors.newPassword}
             </FormControl.ErrorMessage>
           </FormControl>
@@ -133,9 +155,8 @@ const PasswordChangeScreen = ({ navigation }) => {
           <Button
             onPress={handleSubmit}
             bg="#FF4500"
-            _pressed={{ bg: "#FF8C00" }}
-            mt={4}
-          >
+            _pressed={{bg: '#FF8C00'}}
+            mt={4}>
             Şifreyi Değiştir
           </Button>
         </VStack>
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFAF0',
-  }
+  },
 });
 
 export default PasswordChangeScreen;

@@ -13,7 +13,7 @@ import {
   Pressable,
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
-import { SENSITIVITY_LEVELS } from '../constants/sensitivity';
+import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
 
 const ProfileCard = ({
   firstName,
@@ -26,10 +26,13 @@ const ProfileCard = ({
   sensitivity,
   onEdit,
 }) => {
-  const getSensitivityLabel = (value) => {
-    return Object.values(SENSITIVITY_LEVELS).find(level => level.value === value)?.label || 'Orta';
+  const getSensitivityLabel = value => {
+    return (
+      Object.values(SENSITIVITY_LEVELS).find(level => level.value === value)
+        ?.label || 'Orta'
+    );
   };
-   const noProfile = require('../assets/noprofile.png');
+  const noProfile = require('../../assets/noprofile.png');
 
   return (
     <Box alignItems="center" p="4" width="100%">
@@ -46,8 +49,8 @@ const ProfileCard = ({
         {/* Profile Image Section */}
         <Box alignItems="center" position="relative">
           <AspectRatio w="70%" ratio={1}>
-            <Image 
-              source={profileImage ? { uri: profileImage } : noProfile}
+            <Image
+              source={profileImage ? {uri: profileImage} : noProfile}
               alt="Profile Image"
               borderRadius="full"
               borderWidth={2}
