@@ -8,6 +8,7 @@ import {
   Pressable,
   Icon,
   Collapse,
+  useColorModeValue,
 } from 'native-base';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
 import {Ionicons} from '@expo/vector-icons';
@@ -36,6 +37,16 @@ const sensitivityInfo = {
 
 export default function SensitivitySlider({value, onChange}) {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+
+  // Karanlık mod renkleri
+  const bgColor = useColorModeValue('#faf1e6', '#2D2D2D');
+  const textColor = useColorModeValue('#000000', '#FFFFFF');
+  const descriptionColor = useColorModeValue('#666666', '#D3D3D3');
+  const accentColor = useColorModeValue('#FF4500', '#FF6347');
+  const borderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+  const sliderTrackBg = useColorModeValue('rgba(255,69,0,0.2)', 'rgba(255,99,71,0.3)');
+  const infoPanelBg = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
+  const levelColor = useColorModeValue('#FF8C00', '#FFA07A');
 
   const getCurrentSliderValue = () => {
     switch (value) {
@@ -72,21 +83,21 @@ export default function SensitivitySlider({value, onChange}) {
   return (
     <Animated.View entering={FadeIn}>
       <Box
-        bg="#faf1e6"
+        bg={bgColor}
         p={5}
         rounded="2xl"
         shadow={2}
         borderWidth={1}
-        borderColor="rgba(255,69,0,0.15)">
+        borderColor={borderColor}>
         {/* Current Level Display */}
         <VStack space={6} alignItems="center" mb={6}>
           <Icon
             as={Ionicons}
             name={getLevelLabel().icon}
             size={12}
-            color="#FF4500"
+            color={accentColor}
           />
-          <Text fontSize="2xl" fontWeight="600" color="#00000">
+          <Text fontSize="2xl" fontWeight="600" color={textColor}>
             {getLevelLabel().text}
           </Text>
         </VStack>
@@ -100,15 +111,15 @@ export default function SensitivitySlider({value, onChange}) {
             maxValue={3}
             step={1}
             onChange={handleChange}>
-            <Slider.Track bg="rgba(255,69,0,0.2)">
-              <Slider.FilledTrack bg="#FF4500" />
+            <Slider.Track bg={sliderTrackBg}>
+              <Slider.FilledTrack bg={accentColor} />
             </Slider.Track>
             <Slider.Thumb bg="white" shadow={3} size={6} />
           </Slider>
           <HStack justifyContent="space-between" mt={2}>
-            <Text color="#FF8C00">Az</Text>
-            <Text color="#FF8C00">Orta</Text>
-            <Text color="#FF8C00">Yüksek</Text>
+            <Text color={levelColor}>Az</Text>
+            <Text color={levelColor}>Orta</Text>
+            <Text color={levelColor}>Yüksek</Text>
           </HStack>
         </Box>
 
@@ -121,9 +132,9 @@ export default function SensitivitySlider({value, onChange}) {
               as={Ionicons}
               name="information-circle-outline"
               size={5}
-              color="#FF4500"
+              color={accentColor}
             />
-            <Text color="#FF4500" fontWeight="500">
+            <Text color={accentColor} fontWeight="500">
               {isInfoVisible ? 'Bilgileri Gizle' : 'Daha Fazla Bilgi'}
             </Text>
           </HStack>
@@ -131,7 +142,7 @@ export default function SensitivitySlider({value, onChange}) {
 
         {/* Info Panel */}
         <Collapse isOpen={isInfoVisible}>
-          <VStack space={4} p={4} bg="rgba(255,69,0,0.1)" rounded="xl">
+          <VStack space={4} p={4} bg={infoPanelBg} rounded="xl">
             {Object.entries(sensitivityInfo).map(([level, info]) => (
               <Box key={level} mb={4}>
                 <HStack space={3} alignItems="center" mb={2}>
@@ -139,14 +150,14 @@ export default function SensitivitySlider({value, onChange}) {
                     as={Ionicons}
                     name={info.icon}
                     size="md"
-                    color="#FF4500"
+                    color={accentColor}
                   />
-                  <Text fontSize="md" fontWeight="600" color="#00000">
+                  <Text fontSize="md" fontWeight="600" color={textColor}>
                     {info.title}
                   </Text>
                 </HStack>
                 <VStack space={2} pl={8}>
-                  <Text fontSize="sm" color="#666666">
+                  <Text fontSize="sm" color={descriptionColor}>
                     {info.description}
                   </Text>
                   <HStack space={2} alignItems="center">
@@ -154,9 +165,9 @@ export default function SensitivitySlider({value, onChange}) {
                       as={Ionicons}
                       name="checkmark-circle"
                       size="xs"
-                      color="#FF4500"
+                      color={accentColor}
                     />
-                    <Text fontSize="sm" color="#666666">
+                    <Text fontSize="sm" color={descriptionColor}>
                       {info.recommendation}
                     </Text>
                   </HStack>
