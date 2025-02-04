@@ -11,6 +11,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import AlertPopup from '../components/AlertPopup';
+import { useColorModeValue } from 'native-base';
+import Logo from '../components/common/Logo';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_LENGTH = width * 0.7;
@@ -27,6 +29,16 @@ const HomeScreen = () => {
     
     // Alert timer'ı için useRef kullanıyoruz
     const alertTimer = React.useRef(null);
+
+    // Dark mod renkleri
+    const bgColor = useColorModeValue('#FFFAF0', '#121212');
+    const textColor = useColorModeValue('#000000', '#E8E8E8');
+    const accentColor = useColorModeValue('#FF4500', '#FF6347');
+    const buttonBgColor = useColorModeValue('#FF4500', '#FF6347');
+    const descBgColor = useColorModeValue('#FFF8F0', '#1E1E1E');
+    const descBorderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+    const iconBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.15)');
+    const secondaryTextColor = useColorModeValue('#666666', '#B0B0B0');
 
     const animateRing = (ringScale, delay = 0, maxScale = 1.8) => {
         'worklet';
@@ -126,16 +138,41 @@ const HomeScreen = () => {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>VoiceWatcher</Text>
+        <View style={[styles.container, {backgroundColor: bgColor}]}>
+            <View style={styles.headerContainer}>
+                <Logo size="lg" />
+            </View>
             
             <View style={styles.circleContainer}>
-                <Animated.View style={[styles.ring, ring3Style]} />
-                <Animated.View style={[styles.ring, ring2Style]} />
-                <Animated.View style={[styles.ring, ring1Style]} />
+                <Animated.View
+                    style={[
+                        styles.ring,
+                        ring3Style,
+                        {borderColor: accentColor},
+                    ]}
+                />
+                <Animated.View
+                    style={[
+                        styles.ring,
+                        ring2Style,
+                        {borderColor: accentColor},
+                    ]}
+                />
+                <Animated.View
+                    style={[
+                        styles.ring,
+                        ring1Style,
+                        {borderColor: accentColor},
+                    ]}
+                />
                 
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-                    <Animated.View style={[styles.button, buttonStyle]}>
+                    <Animated.View
+                        style={[
+                            styles.button,
+                            buttonStyle,
+                            {backgroundColor: buttonBgColor},
+                        ]}>
                         <MaterialIcons 
                             name={isListening ? "mic-off" : "mic"} 
                             size={56}
@@ -149,25 +186,33 @@ const HomeScreen = () => {
             </View>
 
             {!isListening && (
-                <View style={styles.descriptionContainer}>
-                    <View style={styles.iconBackground}>
+                <View style={[styles.descriptionContainer, {
+                    backgroundColor: descBgColor,
+                    borderColor: descBorderColor,
+                }]}>
+                    <View style={[styles.iconBackground, {backgroundColor: iconBgColor}]}>
                         <MaterialIcons 
                             name="security" 
                             size={24} 
-                            color="#FF4500" 
+                            color={accentColor} 
                         />
                     </View>
-                    <Text style={styles.descriptionText}>
+                    <Text style={[styles.descriptionText, {color: secondaryTextColor}]}>
                         Bu özellik, çevredeki sesleri algılar ve acil durumları hızla tespit eder. Mikrofon butonuna basarak sesli izlemeyi aktive edebilir, tehlikelere hızlıca tepki verebilirsiniz.
                     </Text>
                 </View>
             )}
 
             <TouchableOpacity 
-                style={styles.alertButton}
+                style={[styles.alertButton, {backgroundColor: buttonBgColor}]}
                 onPress={() => console.log("Bilinçli uyarı gönderildi!")}
             >
-                <MaterialIcons name="warning" size={24} color="white" style={styles.alertButtonIcon} />
+                <MaterialIcons 
+                    name="warning" 
+                    size={24} 
+                    color="white" 
+                    style={styles.alertButtonIcon} 
+                />
                 <Text style={styles.alertButtonText}>Bilinçli Uyarı Gönder</Text>
             </TouchableOpacity>
 
@@ -187,13 +232,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#FFFAF0',
         paddingVertical: 30,
     },
-    title: {
-        fontSize: 36,
-        color: '#FF4500',
-        fontWeight: 'bold',
+    headerContainer: {
+        width: '100%',
+        alignItems: 'center',
         marginTop: 40,
     },
     circleContainer: {
@@ -209,7 +252,6 @@ const styles = StyleSheet.create({
         height: BUTTON_SIZE,
         borderRadius: BUTTON_SIZE / 2,
         borderWidth: 2,
-        borderColor: '#FF4500',
         position: 'absolute',
         backgroundColor: 'transparent',
     },
@@ -217,7 +259,6 @@ const styles = StyleSheet.create({
         width: BUTTON_SIZE,
         height: BUTTON_SIZE,
         borderRadius: BUTTON_SIZE / 2,
-        backgroundColor: '#FF4500',
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,
@@ -231,15 +272,14 @@ const styles = StyleSheet.create({
     },
     buttonStatus: {
         color: 'white',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '500',
-        marginTop: 12,
+        marginTop: 8,
     },
     iconBackground: {
         width: 40,
         height: 40,
         borderRadius: 12,
-        backgroundColor: 'rgba(255, 69, 0, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 12,
@@ -248,11 +288,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-start',
         padding: 20,
-        backgroundColor: 'white',
         borderRadius: 15,
+        borderWidth: 1,
         marginHorizontal: 20,
         marginTop: CIRCLE_LENGTH + 40,
-        marginBottom: 100,
+        marginBottom: -10,
         elevation: 4,
         shadowColor: '#000',
         shadowOffset: {
@@ -266,7 +306,6 @@ const styles = StyleSheet.create({
     },
     descriptionText: {
         flex: 1,
-        color: '#666',
         fontSize: 14,
         lineHeight: 20,
     },
@@ -274,24 +313,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFA500',
-        paddingVertical: 15,
-        paddingHorizontal: 25,
-        borderRadius: 12,
-        marginBottom: 30,
+        paddingHorizontal: 24,
+        paddingVertical: 14,
+        borderRadius: 10,
         width: '85%',
-        position: 'absolute',
-        bottom: 0,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 165, 0, 0.3)',
+        marginBottom: 0,
     },
     alertButtonIcon: {
         marginRight: 8,
@@ -299,8 +325,7 @@ const styles = StyleSheet.create({
     alertButtonText: {
         color: 'white',
         fontSize: 16,
-        fontWeight: '600',
-        letterSpacing: 0.5,
+        fontWeight: '500',
     },
 });
 

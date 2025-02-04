@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Box, VStack, HStack, Icon, useColorModeValue } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -9,6 +11,13 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const timerRef = React.useRef(null);
   const flashAnimation = React.useRef(new Animated.Value(0)).current;
   const isFlashing = React.useRef(false);
+
+  const modalBgColor = useColorModeValue('white', '#1E1E1E');
+  const textColor = useColorModeValue('#000000', '#E8E8E8');
+  const borderColor = useColorModeValue('#F0F0F0', 'rgba(255,255,255,0.1)');
+  const accentColor = useColorModeValue('#FF4500', '#FF6347');
+  const secondaryTextColor = useColorModeValue('#888', '#B0B0B0');
+  const buttonBgColor = useColorModeValue('white', '#2D2D2D');
 
   // Yanıp sönme animasyonu
   const startFlashing = () => {
@@ -113,19 +122,19 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const colors = {
     primary: flashAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#FF4500', '#FF0000'],
+      outputRange: [accentColor, '#FF0000'],
     }),
     background: flashAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['rgb(255, 255, 255)', 'rgb(255, 200, 200)'],
+      outputRange: [modalBgColor, 'rgb(255, 50, 50)'],
     }),
     border: flashAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#F0F0F0', '#FF0000'],
+      outputRange: [borderColor, '#FF0000'],
     }),
     buttonBackground: flashAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: ['white', 'rgba(255, 0, 0, 0.1)'],
+      outputRange: [buttonBgColor, 'rgba(255, 0, 0, 0.1)'],
     }),
   };
 
@@ -149,54 +158,78 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       onRequestClose={onCancel}
     >
       <View style={styles.modalContainer}>
-        <Animated.View style={[styles.alertBox, flashStyle]}>
+        <Animated.View
+          style={[
+            styles.alertBox,
+            flashStyle,
+            {backgroundColor: modalBgColor},
+          ]}>
           <View style={styles.contentContainer}>
             <View style={styles.headerContainer}>
-              <MaterialIcons name={alertInfo.icon} size={24} color={alertInfo.color} style={styles.headerIcon} />
-              <Animated.Text style={[styles.title, textColorStyle]}>{alertInfo.title}</Animated.Text>
+              <MaterialIcons
+                name={alertInfo.icon}
+                size={24}
+                color={accentColor}
+                style={styles.headerIcon}
+              />
+              <Animated.Text style={[styles.title, {color: textColor}]}>
+                {alertInfo.title}
+              </Animated.Text>
             </View>
             
-            <Animated.View style={[styles.divider, borderStyle]} />
+            <Animated.View
+              style={[styles.divider, {backgroundColor: borderColor}]}
+            />
             
-            <Animated.View style={[styles.timerContainer, flashStyle, borderStyle]}>
-              <Animated.Text style={[styles.timerText, textColorStyle]}>{timeLeft}</Animated.Text>
-              <Text style={styles.timerLabel}>saniye</Text>
+            <Animated.View
+              style={[
+                styles.timerContainer,
+                {
+                  backgroundColor: modalBgColor,
+                  borderColor: borderColor,
+                },
+              ]}>
+              <Animated.Text style={[styles.timerText, {color: accentColor}]}>
+                {timeLeft}
+              </Animated.Text>
+              <Text style={[styles.timerLabel, {color: secondaryTextColor}]}>
+                saniye
+              </Text>
             </Animated.View>
 
             <View style={styles.buttonContainer}>
-              <Animated.View
+              <TouchableOpacity
+                onPress={onCancel}
                 style={[
                   styles.button,
                   styles.cancelButton,
                   {
-                    backgroundColor: colors.buttonBackground,
-                    borderColor: colors.primary,
+                    backgroundColor: buttonBgColor,
+                    borderColor: accentColor,
                   },
-                ]}
-              >
-                <TouchableOpacity
-                  onPress={onCancel}
-                  style={styles.confirmButtonInner}
-                >
-                  <Animated.Text style={[styles.cancelButtonText, textColorStyle]}>İptal Et</Animated.Text>
-                </TouchableOpacity>
-              </Animated.View>
+                ]}>
+                <Text style={[styles.cancelButtonText, {color: accentColor}]}>
+                  İptal Et
+                </Text>
+              </TouchableOpacity>
 
-              <Animated.View
+              <TouchableOpacity
+                onPress={onConfirm}
                 style={[
                   styles.button,
                   styles.confirmButton,
-                  { backgroundColor: colors.primary },
-                ]}
-              >
-                <TouchableOpacity
-                  onPress={onConfirm}
-                  style={styles.confirmButtonInner}
-                >
-                  <MaterialIcons name="notification-important" size={20} color="white" style={styles.buttonIcon} />
-                  <Text style={styles.confirmButtonText}>Kontakları Bilgilendir</Text>
-                </TouchableOpacity>
-              </Animated.View>
+                  {backgroundColor: accentColor},
+                ]}>
+                <MaterialIcons
+                  name="notification-important"
+                  size={20}
+                  color="white"
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.confirmButtonText}>
+                  Kontakları Bilgilendir
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Animated.View>
