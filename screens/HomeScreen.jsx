@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from 'react-native-reanimated';
+import { MaterialIcons } from '@expo/vector-icons';
 import AlertPopup from '../components/AlertPopup';
 
 const { width } = Dimensions.get('window');
@@ -135,23 +136,38 @@ const HomeScreen = () => {
                 
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                     <Animated.View style={[styles.button, buttonStyle]}>
-                        <Text style={styles.buttonText}>
-                            {isListening ? 'Durdur' : 'Başlat'}
+                        <MaterialIcons 
+                            name={isListening ? "mic-off" : "mic"} 
+                            size={56}
+                            color="white"
+                        />
+                        <Text style={styles.buttonStatus}>
+                            {isListening ? 'Dinleniyor...' : 'Başlat'}
                         </Text>
                     </Animated.View>
                 </TouchableOpacity>
             </View>
 
             {!isListening && (
-                <Text style={styles.descriptionText}>
-                    Bu özellik, çevredeki sesleri algılar ve acil durumları hızla tespit eder. Başlat butonuna basarak sesli izlemeyi aktive edebilir, tehlikelere hızlıca tepki verebilirsiniz.
-                </Text>
+                <View style={styles.descriptionContainer}>
+                    <View style={styles.iconBackground}>
+                        <MaterialIcons 
+                            name="security" 
+                            size={24} 
+                            color="#FF4500" 
+                        />
+                    </View>
+                    <Text style={styles.descriptionText}>
+                        Bu özellik, çevredeki sesleri algılar ve acil durumları hızla tespit eder. Mikrofon butonuna basarak sesli izlemeyi aktive edebilir, tehlikelere hızlıca tepki verebilirsiniz.
+                    </Text>
+                </View>
             )}
 
             <TouchableOpacity 
                 style={styles.alertButton}
                 onPress={() => console.log("Bilinçli uyarı gönderildi!")}
             >
+                <MaterialIcons name="warning" size={24} color="white" style={styles.alertButtonIcon} />
                 <Text style={styles.alertButtonText}>Bilinçli Uyarı Gönder</Text>
             </TouchableOpacity>
 
@@ -172,7 +188,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#FFFAF0',
-        paddingVertical: 50,
+        paddingVertical: 30,
     },
     title: {
         fontSize: 36,
@@ -204,7 +220,40 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF4500',
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 5,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+    },
+    buttonStatus: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '500',
+        marginTop: 12,
+    },
+    iconBackground: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: 'rgba(255, 69, 0, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    descriptionContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 15,
+        marginHorizontal: 20,
+        marginTop: CIRCLE_LENGTH + 40,
+        marginBottom: 100,
+        elevation: 4,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -212,32 +261,28 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
+        maxWidth: width * 0.9,
+        alignSelf: 'center',
     },
     descriptionText: {
-        textAlign: 'center',
+        flex: 1,
         color: '#666',
         fontSize: 14,
-        paddingHorizontal: 30,
-        position: 'absolute',
-        top: '60%',
         lineHeight: 20,
-        marginTop:100,
     },
     alertButton: {
-        backgroundColor: '#ffa500',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFA500',
         paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginBottom: -10,
-        width: '80%',
+        paddingHorizontal: 25,
+        borderRadius: 12,
+        marginBottom: 30,
+        width: '85%',
         position: 'absolute',
-        bottom: 40,
-        elevation: 3,
+        bottom: 0,
+        elevation: 4,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -245,12 +290,17 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 165, 0, 0.3)',
+    },
+    alertButtonIcon: {
+        marginRight: 8,
     },
     alertButtonText: {
         color: 'white',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
 });
 
