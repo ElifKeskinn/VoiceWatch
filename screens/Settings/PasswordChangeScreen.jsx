@@ -34,14 +34,16 @@ const PasswordChangeScreen = ({navigation}) => {
 
     if (!formData.newPassword) {
       newErrors.newPassword = 'Yeni şifre gerekli';
-    } else if (formData.newPassword.length < 6) {
-      newErrors.newPassword = 'Şifre en az 6 karakter olmalı';
+    } else if (formData.newPassword.length < 8) {
+      newErrors.newPassword = 'Şifre en az 8 karakter olmalı';
     } else if (formData.newPassword === formData.oldPassword) {
       newErrors.newPassword = 'Yeni şifre eski şifre ile aynı olamaz';
     } else if (!/(?=.*[0-9])/.test(formData.newPassword)) {
       newErrors.newPassword = 'Şifre en az bir rakam içermeli';
     } else if (!/(?=.*[A-Z])/.test(formData.newPassword)) {
       newErrors.newPassword = 'Şifre en az bir büyük harf içermeli';
+    } else if (!/(?=.*[!@#$%^&*])/.test(formData.newPassword)) {
+      newErrors.newPassword = 'Şifre en az bir özel karakter içermeli (!@#$%^&*)';
     }
 
     setErrors(newErrors);
@@ -72,9 +74,10 @@ const PasswordChangeScreen = ({navigation}) => {
           <Box bg="rgba(255,69,0,0.1)" p={4} rounded="xl" mb={4}>
             <Text color="#FF4500">
               Güvenli bir şifre için:
-              {'\n'}- En az 6 karakter
+              {'\n'}- En az 8 karakter
               {'\n'}- En az 1 büyük harf
-              {'\n'}- En az 1 rakam kullanın
+              {'\n'}- En az 1 rakam
+              {'\n'}- En az 1 özel karakter (!@#$%^&*)
             </Text>
           </Box>
 
