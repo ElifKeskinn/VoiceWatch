@@ -11,6 +11,7 @@ import {
   WarningOutlineIcon,
   AlertDialog,
   Button as NativeBaseButton,
+  useColorModeValue,
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
@@ -21,6 +22,17 @@ const DeleteAccountScreen = ({navigation}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState('');
   const toast = useToast();
+
+  // Karanlık mod renkleri
+  const bgColor = useColorModeValue('#FFFAF0', '#1A1A1A');
+  const boxBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
+  const textColor = useColorModeValue('#FF4500', '#FF6347');
+  const warningTextColor = useColorModeValue('#000000', '#FFFFFF');
+  const inputBgColor = useColorModeValue('transparent', '#2D2D2D');
+  const inputBorderColor = useColorModeValue('#FF4500', '#FF6347');
+  const placeholderColor = useColorModeValue('gray.400', 'gray.500');
+  const dialogBgColor = useColorModeValue('#FFFAF0', '#2D2D2D');
+  const dialogBorderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
 
   const handleDelete = () => {
     if (!password) {
@@ -54,43 +66,47 @@ const DeleteAccountScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: bgColor }]}>
       <Box p={4}>
         <VStack space={4}>
-          <Box bg="rgba(255,69,0,0.1)" p={4} rounded="xl" mb={4}>
-            <Text color="#FF4500" fontWeight="bold" mb={2}>
+          <Box bg={boxBgColor} p={4} rounded="xl" mb={4}>
+            <Text color={textColor} fontWeight="bold" mb={2}>
               ⚠️ Dikkat
             </Text>
-            <Text color="#FF4500">
+            <Text color={warningTextColor}>
               Hesabınızı silmek geri alınamaz bir işlemdir. Tüm verileriniz
               kalıcı olarak silinecektir.
             </Text>
           </Box>
 
           <FormControl isInvalid={!!error}>
-            <FormControl.Label>Şifrenizi Girin</FormControl.Label>
+            <FormControl.Label _text={{ color: warningTextColor }}>
+              Şifrenizi Girin
+            </FormControl.Label>
             <Input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChangeText={setPassword}
+              bg={inputBgColor}
+              borderColor={inputBorderColor}
+              color={warningTextColor}
+              placeholderTextColor={placeholderColor}
+              _focus={{
+                borderColor: textColor,
+                bg: inputBgColor,
+              }}
               InputRightElement={
                 <Icon
                   as={Ionicons}
                   name={showPassword ? 'eye-off' : 'eye'}
                   size={5}
                   mr="2"
-                  color="#FF4500"
+                  color={textColor}
                   onPress={() => setShowPassword(!showPassword)}
                 />
               }
-              borderColor="#FF4500"
-              _focus={{
-                borderColor: '#FF8C00',
-                bg: 'transparent',
-              }}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
               {error}
             </FormControl.ErrorMessage>
           </FormControl>
@@ -106,32 +122,32 @@ const DeleteAccountScreen = ({navigation}) => {
 
         <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <AlertDialog.Content
-            bg="#FFFAF0"
+            bg={dialogBgColor}
             borderWidth={1}
-            borderColor="rgba(255,69,0,0.15)">
+            borderColor={dialogBorderColor}>
             <AlertDialog.Header
-              bg="#FFFAF0"
+              bg={dialogBgColor}
               borderBottomWidth={1}
-              borderBottomColor="rgba(255,69,0,0.15)">
-              <Text color="#FF4500" fontSize="lg" fontWeight="600">
+              borderBottomColor={dialogBorderColor}>
+              <Text color={textColor} fontSize="lg" fontWeight="600">
                 Hesap Silme Onayı
               </Text>
             </AlertDialog.Header>
-            <AlertDialog.Body bg="#FFFAF0">
-              <Text color="#666666">
+            <AlertDialog.Body bg={dialogBgColor}>
+              <Text color={warningTextColor}>
                 Bu işlem geri alınamaz. Hesabınızı silmek istediğinize emin
                 misiniz?
               </Text>
             </AlertDialog.Body>
             <AlertDialog.Footer
-              bg="#FFFAF0"
+              bg={dialogBgColor}
               borderTopWidth={1}
-              borderTopColor="rgba(255,69,0,0.15)">
+              borderTopColor={dialogBorderColor}>
               <NativeBaseButton.Group space={2}>
                 <NativeBaseButton
                   variant="outline"
-                  borderColor="#FF4500"
-                  _text={{color: '#FF4500'}}
+                  borderColor={textColor}
+                  _text={{color: textColor}}
                   onPress={() => setIsOpen(false)}>
                   İptal
                 </NativeBaseButton>
@@ -153,7 +169,6 @@ const DeleteAccountScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFAF0',
   },
 });
 
