@@ -10,7 +10,6 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const [timeLeft, setTimeLeft] = useState(30);
   const timerRef = React.useRef(null);
   const flashAnimation = React.useRef(new Animated.Value(0)).current;
-  const isFlashing = React.useRef(false);
 
   const modalBgColor = useColorModeValue('white', '#1E1E1E');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
@@ -19,30 +18,20 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const secondaryTextColor = useColorModeValue('#888', '#B0B0B0');
   const buttonBgColor = useColorModeValue('white', '#2D2D2D');
 
-  // Yanıp sönme animasyonu
-  const startFlashing = () => {
-    if (isFlashing.current) return;
-    
-    isFlashing.current = true;
-    Animated.sequence([
-      Animated.timing(flashAnimation, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      Animated.timing(flashAnimation, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-    ]).start(() => {
-      isFlashing.current = false;
-    });
-  };
-
   useEffect(() => {
     if (timeLeft <= 5 && timeLeft > 0) {
-      startFlashing();
+      Animated.sequence([
+        Animated.timing(flashAnimation, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(flashAnimation, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
     }
   }, [timeLeft]);
 
@@ -118,37 +107,41 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
 
   const alertInfo = getAlertInfo();
 
-  // Tüm renk animasyonları için tek bir kaynak
-  const colors = {
-    primary: flashAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [accentColor, '#FF0000'],
-    }),
-    background: flashAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [modalBgColor, 'rgb(255, 50, 50)'],
-    }),
-    border: flashAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [borderColor, '#FF0000'],
-    }),
-    buttonBackground: flashAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [buttonBgColor, 'rgba(255, 0, 0, 0.1)'],
-    }),
-  };
+  // Animasyon renkleri
+  const animatedBackgroundColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [modalBgColor, 'rgba(255, 0, 0, 0.1)']
+  });
 
-  const flashStyle = {
-    backgroundColor: colors.background,
-  };
+  const animatedBorderColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [borderColor, 'rgba(255, 0, 0, 0.3)']
+  });
 
-  const borderStyle = {
-    borderColor: colors.border,
-  };
+  const animatedTimerColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [accentColor, '#FF0000']
+  });
 
-  const textColorStyle = {
-    color: colors.primary,
-  };
+  const animatedTimerLabelColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [secondaryTextColor, '#FF0000']
+  });
+
+  const animatedCancelButtonBorderColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [accentColor, '#FF0000']
+  });
+
+  const animatedCancelButtonTextColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [accentColor, '#FF0000']
+  });
+
+  const animatedCancelButtonBgColor = flashAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [buttonBgColor, 'rgba(255, 0, 0, 0.1)']
+  });
 
   return (
     <Modal
@@ -161,8 +154,11 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         <Animated.View
           style={[
             styles.alertBox,
-            flashStyle,
-            {backgroundColor: modalBgColor},
+            {
+              backgroundColor: timeLeft <= 5 ? animatedBackgroundColor : modalBgColor,
+              borderColor: timeLeft <= 5 ? animatedBorderColor : borderColor,
+              borderWidth: 1,
+            },
           ]}>
           <View style={styles.contentContainer}>
             <View style={styles.headerContainer}>
@@ -172,29 +168,35 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
                 color={accentColor}
                 style={styles.headerIcon}
               />
-              <Animated.Text style={[styles.title, {color: textColor}]}>
+              <Text style={[styles.title, {color: textColor}]}>
                 {alertInfo.title}
-              </Animated.Text>
+              </Text>
             </View>
             
-            <Animated.View
-              style={[styles.divider, {backgroundColor: borderColor}]}
-            />
+            <View style={[styles.divider, {backgroundColor: borderColor}]} />
             
             <Animated.View
               style={[
                 styles.timerContainer,
                 {
-                  backgroundColor: modalBgColor,
-                  borderColor: borderColor,
+                  backgroundColor: timeLeft <= 5 ? animatedBackgroundColor : modalBgColor,
+                  borderColor: timeLeft <= 5 ? animatedBorderColor : borderColor,
                 },
               ]}>
-              <Animated.Text style={[styles.timerText, {color: accentColor}]}>
+              <Animated.Text 
+                style={[
+                  styles.timerText, 
+                  {color: timeLeft <= 5 ? animatedTimerColor : accentColor}
+                ]}>
                 {timeLeft}
               </Animated.Text>
-              <Text style={[styles.timerLabel, {color: secondaryTextColor}]}>
+              <Animated.Text 
+                style={[
+                  styles.timerLabel, 
+                  {color: timeLeft <= 5 ? animatedTimerLabelColor : secondaryTextColor}
+                ]}>
                 saniye
-              </Text>
+              </Animated.Text>
             </Animated.View>
 
             <View style={styles.buttonContainer}>
@@ -204,13 +206,17 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
                   styles.button,
                   styles.cancelButton,
                   {
-                    backgroundColor: buttonBgColor,
-                    borderColor: accentColor,
+                    backgroundColor: timeLeft <= 5 ? animatedCancelButtonBgColor : buttonBgColor,
+                    borderColor: timeLeft <= 5 ? animatedCancelButtonBorderColor : accentColor,
                   },
                 ]}>
-                <Text style={[styles.cancelButtonText, {color: accentColor}]}>
+                <Animated.Text 
+                  style={[
+                    styles.cancelButtonText, 
+                    {color: timeLeft <= 5 ? animatedCancelButtonTextColor : accentColor}
+                  ]}>
                   İptal Et
-                </Text>
+                </Animated.Text>
               </TouchableOpacity>
 
               <TouchableOpacity

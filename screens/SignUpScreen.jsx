@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
 import { useColorModeValue } from 'native-base';
-
+import { styles } from '../styles/screens/SignUpScreen.styles';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [tcNumber, setTcNumber] = useState('');
-    const [tcNumberError, setTcNumberError] = useState(''); // TC kimlik numarası için hata mesajı
+    const [tcNumberError, setTcNumberError] = useState('');
     const [age, setAge] = useState('');
-    const [ageError, setAgeError] = useState(''); // Yaş için hata mesajı
+    const [ageError, setAgeError] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [phoneNumberError, setPhoneNumberError] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(''); // Parola için hata mesajı
+    const [passwordError, setPasswordError] = useState('');
     const [bloodType, setBloodType] = useState('');
-    const [bloodTypeError, setBloodTypeError] = useState(''); // State for blood type error
-    const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]); // Initialize with 2 contacts
-    const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']); // Kontakların telefon numarası için hata mesajları
-    const [contactNicknameErrors, setContactNicknameErrors] = useState(['', '']); // Kontakların ismi için hata mesajları
-    const [isAgreed, setIsAgreed] = useState(false); // State for privacy policy agreement
-    const [step, setStep] = useState(1); // Step state to manage the current step
-    const [firstNameError, setFirstNameError] = useState(''); // Hata mesajı için state
-    const [lastNameError, setLastNameError] = useState(''); // Hata mesajı için state
-    const [isAgreedError, setIsAgreedError] = useState(''); // State for privacy policy agreement error
+    const [bloodTypeError, setBloodTypeError] = useState('');
+    const [contacts, setContacts] = useState([{ nickname: '', number: '' }, { nickname: '', number: '' }]);
+    const [contactPhoneErrors, setContactPhoneErrors] = useState(['', '']);
+    const [contactNicknameErrors, setContactNicknameErrors] = useState(['', '']);
+    const [isAgreed, setIsAgreed] = useState(false);
+    const [step, setStep] = useState(1);
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [isAgreedError, setIsAgreedError] = useState('');
 
     // Dark mode renkleri
     const bgColor = useColorModeValue('#FFFAF0', '#121212');
@@ -688,172 +688,5 @@ const SignUpScreen = ({ navigation }) => {
         </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: 20,
-    },
-    headerContainer: {
-        width: '100%',
-        alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 30,
-    },
-    title: {
-        fontSize: 36,
-        fontWeight: 'bold',
-    },
-    input: {
-        height: 50,
-        borderColor: '#FF4500',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        marginBottom: 15,
-        width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    rowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 15,
-    },
-    rowInput: {
-        height: 50,
-        borderColor: '#FF4500',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        width: '48%',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    contactInputContainer: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        width: '100%',
-    },
-    button: {
-        backgroundColor: '#FF4500',
-        paddingVertical: 15,
-        borderRadius: 10,
-        alignItems: 'center',
-        width: '100%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    backButton: {
-        marginBottom: 20,
-        alignSelf: 'flex-start',
-    },
-    agreementContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    checkbox: {
-        marginRight: 10,
-    },
-    agreementText: {
-        fontSize: 14,
-        color: 'black',
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 10,
-        textAlign: 'left',
-        marginTop: -10,
-    },
-    stepIndicator: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 10,
-        width: '100%',
-        marginBottom: 20,
-    },
-    stepCircle: {
-        width: 10,
-        height: 10,
-        borderRadius: 10,
-        backgroundColor: '#FF8C00',
-        opacity: 0.4,
-    },
-    activeStep: {
-        opacity: 1,
-    },
-    switchContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
-    },
-    switchText: {
-        fontSize: 14,
-        color: '#FF8C00',
-    },
-    switchLink: {
-        color: '#FF4500',
-        fontWeight: 'bold',
-    },
-    errorText2: {
-        color: 'red',
-        marginBottom: 10,
-        textAlign: 'left',
-        marginTop: -10,
-    },
-    errorOuterContainer: {
-        width: '100%',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    errorContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderRadius: 8,
-        borderWidth: 1,
-        width: '100%', // Genişliği azaltıldı
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
-    },
-    errorIcon: {
-        marginRight: 8,
-    },
-    errorText4: {
-        fontSize: 14,
-        flex: 1,
-    },
-    errorRowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 10,
-    },
-});
 
 export default SignUpScreen;
