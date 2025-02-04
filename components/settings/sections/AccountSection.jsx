@@ -1,25 +1,28 @@
 import React from 'react';
 import SettingsSection from '../SettingsSection';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import {Center, Text, VStack, Box,HStack, Icon, Pressable} from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { Center, Text, VStack, Box, HStack, Icon, Pressable, useColorModeValue } from 'native-base';
 
-
-const AccountButton = ({ icon, title, description, onPress, variant = "solid" }) => (
-    <Pressable 
-      onPress={onPress}
-      mb={3}
-    >
+const AccountButton = ({ icon, title, description, onPress, variant = "solid" }) => {
+  const solidBgColor = useColorModeValue('#FF4500', '#FF6347');
+  const outlineBgColor = useColorModeValue('transparent', 'rgba(255,99,71,0.1)');
+  const outlineBorderColor = useColorModeValue('#FF4500', '#FF6347');
+  const titleTextColor = variant === "solid" ? "white" : useColorModeValue('#000000', '#FFFFFF');
+  const descriptionColor = useColorModeValue('#666666', '#D3D3D3');
+  
+  return (
+    <Pressable onPress={onPress} mb={3}>
       <Box 
-        bg={variant === "solid" ? "#FF4500" : "transparent"}
+        bg={variant === "solid" ? solidBgColor : outlineBgColor}
         borderWidth={variant === "outline" ? 1 : 0}
-        borderColor={variant === "outline" ? "#FF4500" : "transparent"}
+        borderColor={variant === "outline" ? outlineBorderColor : "transparent"}
         rounded="xl"
         p={4}
         shadow={variant === "solid" ? 2 : 0}
       >
         <HStack space={4} alignItems="center">
           <Center
-            bg={variant === "solid" ? "rgba(255,255,255,0.2)" : "rgba(255,69,0,0.1)"}
+            bg={variant === "solid" ? "rgba(255,255,255,0.2)" : "rgba(255,99,71,0.1)"}
             p={2}
             rounded="lg"
           >
@@ -27,20 +30,20 @@ const AccountButton = ({ icon, title, description, onPress, variant = "solid" })
               as={Ionicons} 
               name={icon} 
               size="md" 
-              color={variant === "solid" ? "white" : "#FF4500"} 
+              color={variant === "solid" ? "white" : outlineBorderColor} 
             />
           </Center>
           <VStack flex={1}>
             <Text 
               fontSize="md" 
               fontWeight="600" 
-              color={variant === "solid" ? "white" : "#00000"}
+              color={titleTextColor}
             >
               {title}
             </Text>
             <Text 
               fontSize="sm" 
-              color={variant === "solid" ? "rgba(255,255,255,0.8)" : "#666666"}
+              color={variant === "solid" ? "rgba(255,255,255,0.8)" : descriptionColor}
             >
               {description}
             </Text>
@@ -49,12 +52,13 @@ const AccountButton = ({ icon, title, description, onPress, variant = "solid" })
             as={Ionicons} 
             name="chevron-forward" 
             size="sm" 
-            color={variant === "solid" ? "white" : "#FF4500"} 
+            color={variant === "solid" ? "white" : outlineBorderColor} 
           />
         </HStack>
       </Box>
     </Pressable>
   );
+};
 
 const AccountSection = ({ onPasswordChange, onDeleteAccount }) => (
   <SettingsSection title="Hesap ve Güvenlik" icon="shield-checkmark">
