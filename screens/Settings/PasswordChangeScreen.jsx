@@ -52,7 +52,7 @@ const PasswordChangeScreen = ({navigation}) => {
 
   const handleSubmit = () => {
     if (validateForm()) {
-      if (formData.oldPassword === '123ABC') {
+      if (formData.oldPassword === '123ABCD!') {
         toast.show({
           title: 'Başarılı',
           description: 'Şifreniz başarıyla değiştirildi',
