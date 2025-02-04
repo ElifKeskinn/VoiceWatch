@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
 import { useColorModeValue } from 'native-base';
-import Logo from '../components/common/Logo';
+
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
@@ -488,9 +488,27 @@ const SignUpScreen = ({ navigation }) => {
                         </Text>
                     </View>
                     {isAgreedError ? (
-                        <Text style={[styles.errorText4, {color: errorColor}]}>
-                            {isAgreedError}
-                        </Text>
+                        <View style={styles.errorOuterContainer}>
+                            <View 
+                                style={[
+                                    styles.errorContainer, 
+                                    {
+                                        backgroundColor: 'rgba(255, 69, 0, 0.1)', // Turuncu opak arka plan
+                                        borderColor: buttonBgColor, // Turuncu border
+                                    }
+                                ]}
+                            >
+                                <Icon 
+                                    name="exclamation-circle" 
+                                    size={20} 
+                                    color={buttonBgColor} 
+                                    style={styles.errorIcon}
+                                />
+                                <Text style={[styles.errorText4, {color: buttonBgColor}]}>
+                                    {isAgreedError}
+                                </Text>
+                            </View>
+                        </View>
                     ) : null}
                 </>
             ) : (
@@ -632,9 +650,27 @@ const SignUpScreen = ({ navigation }) => {
                         </Text>
                     </View>
                     {isAgreedError ? (
-                        <Text style={[styles.errorText4, {color: errorColor}]}>
-                            {isAgreedError}
-                        </Text>
+                        <View style={styles.errorOuterContainer}>
+                            <View 
+                                style={[
+                                    styles.errorContainer, 
+                                    {
+                                        backgroundColor: 'rgba(255, 69, 0, 0.1)', // Turuncu opak arka plan
+                                        borderColor: buttonBgColor, // Turuncu border
+                                    }
+                                ]}
+                            >
+                                <Icon 
+                                    name="exclamation-circle" 
+                                    size={20} 
+                                    color={buttonBgColor} 
+                                    style={styles.errorIcon}
+                                />
+                                <Text style={[styles.errorText4, {color: buttonBgColor}]}>
+                                    {isAgreedError}
+                                </Text>
+                            </View>
+                        </View>
                     ) : null}
                 </>
             )}
@@ -784,10 +820,33 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginTop: -10,
     },
-    errorText4: {
-        color: 'red',
+    errorOuterContainer: {
+        width: '100%',
+        alignItems: 'center',
         marginTop: 10,
-        textAlign: 'left',
+    },
+    errorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        width: '100%', // Genişliği azaltıldı
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    errorIcon: {
+        marginRight: 8,
+    },
+    errorText4: {
+        fontSize: 14,
+        flex: 1,
     },
     errorRowContainer: {
         flexDirection: 'row',
