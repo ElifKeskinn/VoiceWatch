@@ -1,10 +1,41 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 
 const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const [timeLeft, setTimeLeft] = useState(30);
   const timerRef = React.useRef(null);
+  const flashAnimation = React.useRef(new Animated.Value(0)).current;
+  const isFlashing = React.useRef(false);
+
+  // Yanıp sönme animasyonu
+  const startFlashing = () => {
+    if (isFlashing.current) return;
+    
+    isFlashing.current = true;
+    Animated.sequence([
+      Animated.timing(flashAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(flashAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      isFlashing.current = false;
+    });
+  };
+
+  useEffect(() => {
+    if (timeLeft <= 5 && timeLeft > 0) {
+      startFlashing();
+    }
+  }, [timeLeft]);
 
   useEffect(() => {
     if (visible) {
@@ -53,19 +84,19 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         return {
           icon: 'broken-image',
           title: 'Cam Kırılma Sesi Algılandı!',
-          color: '#FF0000',
+          color: '#FF4500',
         };
       case 'fall':
         return {
           icon: 'warning',
           title: 'Düşme Sesi Algılandı!',
-          color: '#FFA500',
+          color: '#FF4500',
         };
       case 'scream':
         return {
           icon: 'record-voice-over',
           title: 'Çığlık Sesi Algılandı!',
-          color: '#FF0000',
+          color: '#FF4500',
         };
       default:
         return {
@@ -78,6 +109,38 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
 
   const alertInfo = getAlertInfo();
 
+  // Tüm renk animasyonları için tek bir kaynak
+  const colors = {
+    primary: flashAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['#FF4500', '#FF0000'],
+    }),
+    background: flashAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['rgb(255, 255, 255)', 'rgb(255, 200, 200)'],
+    }),
+    border: flashAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['#F0F0F0', '#FF0000'],
+    }),
+    buttonBackground: flashAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['white', 'rgba(255, 0, 0, 0.1)'],
+    }),
+  };
+
+  const flashStyle = {
+    backgroundColor: colors.background,
+  };
+
+  const borderStyle = {
+    borderColor: colors.border,
+  };
+
+  const textColorStyle = {
+    color: colors.primary,
+  };
+
   return (
     <Modal
       transparent
@@ -86,33 +149,57 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       onRequestClose={onCancel}
     >
       <View style={styles.modalContainer}>
-        <View style={[styles.alertBox, { borderColor: alertInfo.color }]}>
-          <MaterialIcons name={alertInfo.icon} size={40} color={alertInfo.color} />
-          <Text style={[styles.title, { color: alertInfo.color }]}>{alertInfo.title}</Text>
-          
-          <View style={styles.timerContainer}>
-            <Text style={styles.timerText}>{timeLeft}</Text>
-            <Text style={styles.timerLabel}>saniye</Text>
-          </View>
+        <Animated.View style={[styles.alertBox, flashStyle]}>
+          <View style={styles.contentContainer}>
+            <View style={styles.headerContainer}>
+              <MaterialIcons name={alertInfo.icon} size={24} color={alertInfo.color} style={styles.headerIcon} />
+              <Animated.Text style={[styles.title, textColorStyle]}>{alertInfo.title}</Animated.Text>
+            </View>
+            
+            <Animated.View style={[styles.divider, borderStyle]} />
+            
+            <Animated.View style={[styles.timerContainer, flashStyle, borderStyle]}>
+              <Animated.Text style={[styles.timerText, textColorStyle]}>{timeLeft}</Animated.Text>
+              <Text style={styles.timerLabel}>saniye</Text>
+            </Animated.View>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={onCancel}
-            >
-              <Text style={styles.buttonText}>İptal Et</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <Animated.View
+                style={[
+                  styles.button,
+                  styles.cancelButton,
+                  {
+                    backgroundColor: colors.buttonBackground,
+                    borderColor: colors.primary,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={onCancel}
+                  style={styles.confirmButtonInner}
+                >
+                  <Animated.Text style={[styles.cancelButtonText, textColorStyle]}>İptal Et</Animated.Text>
+                </TouchableOpacity>
+              </Animated.View>
 
-            <TouchableOpacity
-              style={[styles.button, styles.confirmButton, { backgroundColor: alertInfo.color }]}
-              onPress={onConfirm}
-            >
-              <Text style={[styles.buttonText, styles.confirmButtonText]}>
-                Kontakları Bilgilendir
-              </Text>
-            </TouchableOpacity>
+              <Animated.View
+                style={[
+                  styles.button,
+                  styles.confirmButton,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={onConfirm}
+                  style={styles.confirmButtonInner}
+                >
+                  <MaterialIcons name="notification-important" size={20} color="white" style={styles.buttonIcon} />
+                  <Text style={styles.confirmButtonText}>Kontakları Bilgilendir</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
           </View>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -124,68 +211,105 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
   },
   alertBox: {
-    width: '90%',
+    width: width * 0.85,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    borderWidth: 2,
-    elevation: 5,
+    overflow: 'hidden',
+    elevation: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.2,
+    shadowRadius: 3.5,
+  },
+  contentContainer: {
+    padding: 20,
+  },
+  headerContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 16,
+  },
+  headerIcon: {
+    marginBottom: 4,
+    opacity: 0.9,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginVertical: 15,
+    fontSize: 18,
+    fontWeight: '500',
     textAlign: 'center',
+    letterSpacing: 0.3,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E8E8E8',
+    marginVertical: 16,
+    width: '100%',
   },
   timerContainer: {
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 16,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
   },
   timerText: {
     fontSize: 48,
-    fontWeight: 'bold',
-    color: '#FF4500',
+    fontWeight: '600',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(255, 69, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 12,
   },
   timerLabel: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: 16,
+    color: '#888',
+    marginTop: 4,
+    fontWeight: '400',
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 20,
+    marginTop: 16,
+    gap: 10,
   },
   button: {
-    padding: 15,
+    padding: 14,
     borderRadius: 10,
-    flex: 1,
-    marginHorizontal: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
   },
   confirmButton: {
     backgroundColor: '#FF4500',
   },
-  buttonText: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
+  buttonIcon: {
+    marginRight: 6,
+  },
+  cancelButtonText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#FF4500',
   },
   confirmButtonText: {
+    fontSize: 15,
+    fontWeight: '500',
     color: 'white',
+  },
+  confirmButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
 });
 
