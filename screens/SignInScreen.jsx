@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import CheckBox from '@react-native-community/checkbox';// Import the icon library
+import { useColorModeValue } from 'native-base';
+import Logo from '../components/common/Logo';
 
 const SignInScreen = ({ navigation }) => {
     const [tcNumber, setTcNumber] = useState('');
@@ -11,6 +13,16 @@ const SignInScreen = ({ navigation }) => {
     const [passwordError, setPasswordError] = useState('');
     const [isAgreed, setIsAgreed] = useState(false); // Şifreyi hatırla durumu
     
+    // Dark mode renkleri
+    const bgColor = useColorModeValue('#FFFAF0', '#121212');
+    const inputBgColor = useColorModeValue('rgba(255, 255, 255, 0.9)', '#1E1E1E');
+    const inputBorderColor = useColorModeValue('#FF4500', '#FF6347');
+    const textColor = useColorModeValue('#000000', '#E8E8E8');
+    const placeholderColor = useColorModeValue('#FF8C00', '#FF6347');
+    const secondaryTextColor = useColorModeValue('#FF8C00', '#B0B0B0');
+    const buttonBgColor = useColorModeValue('#FF4500', '#FF6347');
+    const errorColor = useColorModeValue('#FF0000', '#FF6666');
+
     const handleSignIn = () => {
         let isValid = true;
         setTcNumberError('');
@@ -41,48 +53,81 @@ const SignInScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>VoiceWatcher</Text>
+        <View style={[styles.container, {backgroundColor: bgColor}]}>
+            <View style={styles.logoContainer}>
+                <Logo size="lg" />
+            </View>
             <TextInput
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: inputBgColor,
+                        borderColor: inputBorderColor,
+                        color: textColor,
+                    },
+                ]}
                 placeholder="TC Kimlik Numarası"
-                placeholderTextColor="#FF8C00"
+                placeholderTextColor={placeholderColor}
                 keyboardType="numeric"
                 maxLength={11}
                 value={tcNumber}
                 onChangeText={setTcNumber}
             />
-            {tcNumberError ? <Text style={styles.errorText}>{tcNumberError}</Text> : null}
+            {tcNumberError ? (
+                <Text style={[styles.errorText, {color: errorColor}]}>
+                    {tcNumberError}
+                </Text>
+            ) : null}
 
             <TextInput
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: inputBgColor,
+                        borderColor: inputBorderColor,
+                        color: textColor,
+                    },
+                ]}
                 placeholder="Parola"
-                placeholderTextColor="#FF8C00"
+                placeholderTextColor={placeholderColor}
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
             />
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+            {passwordError ? (
+                <Text style={[styles.errorText, {color: errorColor}]}>
+                    {passwordError}
+                </Text>
+            ) : null}
             
-            <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+            <TouchableOpacity
+                style={[styles.button, {backgroundColor: buttonBgColor}]}
+                onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Giriş Yap</Text>
             </TouchableOpacity>
             <View style={styles.linkContainer}>
-                <TouchableOpacity onPress={() => setIsAgreed(!isAgreed)} style={styles.checkbox}>
+                <TouchableOpacity
+                    onPress={() => setIsAgreed(!isAgreed)}
+                    style={styles.checkbox}>
                     {isAgreed ? (
-                        <Icon name="check-square" size={20} color="#FF4500" />
+                        <Icon name="check-square" size={20} color={inputBorderColor} />
                     ) : (
-                        <Icon name="square-o" size={20} color="#FF4500" />
+                        <Icon name="square-o" size={20} color={inputBorderColor} />
                     )}
                 </TouchableOpacity>
-                <Text style={styles.linkText}>Şifreyi Hatırla</Text>
+                <Text style={[styles.linkText, {color: secondaryTextColor}]}>
+                    Şifreyi Hatırla
+                </Text>
             </View>
             <View style={styles.registerContainer}>
-                <Text style={styles.registerText}>
-                    Hesabınız yok mu? 
+                <Text style={[styles.registerText, {color: secondaryTextColor}]}>
+                    Hesabınız yok mu?
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={styles.registerLink}> Kayıt Ol</Text>
+                    <Text style={[styles.registerLink, {color: buttonBgColor}]}>
+                        {' '}
+                        Kayıt Ol
+                    </Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -94,38 +139,32 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FFFAF0',
         padding: 20,
     },
-    title: {
-        fontSize: 36,
-        marginBottom: 20,
-        color: '#FF4500',
-        fontWeight: 'bold',
+    logoContainer: {
+        position: 'absolute',
+        top: 210,
+        alignItems: 'center',
+        width: '100%',
     },
     input: {
         height: 50,
-        borderColor: '#FF4500',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
         marginBottom: 15,
         width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
     },
     button: {
-        backgroundColor: '#FF4500',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
         width: '100%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.2,
         shadowRadius: 4,
         elevation: 3,
@@ -141,7 +180,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     linkText: {
-        color: '#FF8C00',
         fontSize: 14,
     },
     registerContainer: {
@@ -150,26 +188,17 @@ const styles = StyleSheet.create({
     },
     registerText: {
         fontSize: 14,
-        color: '#FF8C00',
     },
     registerLink: {
-        color: '#FF4500',
         fontWeight: 'bold',
     },
     checkbox: {
         marginRight: 10,
     },
     errorText: {
-        color: 'red',
         marginBottom: 15,
         textAlign: 'left',
         width: '100%',
-        marginTop: -10,
-    },
-    errorText2: {
-        color: 'red',
-        marginBottom: 10,
-        textAlign: 'left',
         marginTop: -10,
     },
 });

@@ -17,7 +17,7 @@ const AppNavigator = () => {
   const headerBorderColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,255,255,0.1)');
 
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
