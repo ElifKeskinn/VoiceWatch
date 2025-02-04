@@ -23,6 +23,9 @@ const HomeScreen = () => {
     const ring1Scale = useSharedValue(1);
     const ring2Scale = useSharedValue(1);
     const ring3Scale = useSharedValue(1);
+    
+    // Alert timer'ı için useRef kullanıyoruz
+    const alertTimer = React.useRef(null);
 
     const animateRing = (ringScale, delay = 0, maxScale = 1.8) => {
         'worklet';
@@ -85,34 +88,40 @@ const HomeScreen = () => {
     }));
 
     useEffect(() => {
-        let alertTimer;
-        if (isListening) {
-            alertTimer = setTimeout(() => {
-                // Rastgele bir alert tipi seçiyoruz (gerçek uygulamada ses analizi sonucuna göre belirlenecek)
+        let newAlertTimer;
+        
+        if (isListening && !showAlert) {
+            newAlertTimer = setTimeout(() => {
                 const alertTypes = ['silence', 'glass', 'fall', 'scream'];
                 const randomAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
                 setAlertType(randomAlert);
                 setShowAlert(true);
-            }, 10000); // 10 saniye sonra
+            }, 10000);
         }
-        return () => clearTimeout(alertTimer);
-    }, [isListening]);
 
-    const handleAlertCancel = () => {
+        return () => {
+            if (newAlertTimer) {
+                clearTimeout(newAlertTimer);
+            }
+        };
+    }, [isListening, showAlert]);
+
+    const handleAlertCancel = useCallback(() => {
         setShowAlert(false);
         setAlertType(null);
-    };
+    }, []);
 
-    const handleAlertConfirm = () => {
-        // Burada kontakları bilgilendirme işlemi yapılacak
+    const handleAlertConfirm = useCallback(() => {
         console.log('Kontaklar bilgilendiriliyor...');
         setShowAlert(false);
         setAlertType(null);
-    };
+    }, []);
 
     const handleAlertTimeout = useCallback(() => {
-        setShowAlert(false);
-        setAlertType(null);
+        requestAnimationFrame(() => {
+            setShowAlert(false);
+            setAlertType(null);
+        });
     }, []);
 
     return (

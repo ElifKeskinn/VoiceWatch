@@ -1,27 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const [timeLeft, setTimeLeft] = useState(30);
+  const timerRef = React.useRef(null);
 
   useEffect(() => {
-    let timer;
     if (visible) {
       setTimeLeft(30);
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(timer);
-            onTimeout();
+      
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+              timerRef.current = null;
+            }
+            requestAnimationFrame(() => {
+              onTimeout?.();
+            });
             return 0;
           }
-          return prevTime - 1;
+          return prev - 1;
         });
       }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setTimeLeft(30);
     }
-    return () => clearInterval(timer);
-  }, [visible]);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [visible, onTimeout]);
 
   const getAlertInfo = () => {
     switch (type) {
@@ -65,6 +83,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       transparent
       visible={visible}
       animationType="fade"
+      onRequestClose={onCancel}
     >
       <View style={styles.modalContainer}>
         <View style={[styles.alertBox, { borderColor: alertInfo.color }]}>
