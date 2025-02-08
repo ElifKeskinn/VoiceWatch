@@ -9,7 +9,7 @@ const NotificationsSection = ({ values, onChange }) => {
 
   return (
     <SettingsSection title="Bildirim Ayarları" icon="notifications">
-      <VStack space={4}>
+      <VStack space={4} mt={4}>
         <HStack justifyContent="space-between" alignItems="center">
           <Text color={textColor}>Bildirimleri Etkinleştir</Text>
           <Switch 

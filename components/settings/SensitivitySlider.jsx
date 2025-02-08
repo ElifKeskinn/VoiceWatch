@@ -39,7 +39,7 @@ export default function SensitivitySlider({value, onChange}) {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   // Karanlık mod renkleri
-  const bgColor = useColorModeValue('#faf1e6', '#2D2D2D');
+  const bgColor = useColorModeValue('#FFF8F0', '#2D2D2D');
   const textColor = useColorModeValue('#000000', '#FFFFFF');
   const descriptionColor = useColorModeValue('#666666', '#D3D3D3');
   const accentColor = useColorModeValue('#FF4500', '#FF6347');

@@ -13,7 +13,7 @@ const AboutSection = () => {
 
   return (
     <SettingsSection title="Hakkında & Destek" icon="information-circle">
-      <VStack space={4}>
+      <VStack space={4} mt={4}>
         <Box bg={boxBgColor} p={4} rounded="xl">
           <Text color={titleColor} fontSize="md" fontWeight="600" mb={2}>
             VoiceWatch

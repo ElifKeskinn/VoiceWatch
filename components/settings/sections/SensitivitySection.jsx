@@ -9,7 +9,7 @@ const SensitivitySection = ({value, onChange}) => {
 
   return (
     <SettingsSection title="Hassasiyet Ayarları" icon="options" defaultOpen>
-      <VStack space={4}>
+      <VStack space={4} mt={4}>
         <SensitivitySlider value={value} onChange={onChange} />
         <Box bg={tipBgColor} p={3} rounded="xl">
           <Text fontSize="sm" color={tipTextColor}>

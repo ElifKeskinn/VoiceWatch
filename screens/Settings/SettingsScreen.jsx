@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {VStack, useColorMode} from 'native-base';
+import {useColorMode, Text, VStack, Box, HStack, Icon, Pressable} from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
 import SensitivitySection from '../../components/settings/sections/SensitivitySection';
@@ -8,6 +9,7 @@ import NotificationsSection from '../../components/settings/sections/Notificatio
 import AppearanceSection from '../../components/settings/sections/AppearanceSection';
 import AccountSection from '../../components/settings/sections/AccountSection';
 import AboutSection from '../../components/settings/sections/AboutSection';
+import LogoutModal from '../../components/common/LogoutModal';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -23,16 +25,22 @@ const SettingsScreen = () => {
   // Karanlık mod durumunu yerel state'te tutuyoruz
   const [darkMode, setDarkMode] = useState(colorMode === 'dark');
 
-  // Karanlık mod değiştiğinde hem yerel state'i hem de NativeBase'in colorMode'unu güncelliyoruz
   const handleDarkModeToggle = () => {
     setDarkMode(!darkMode);
     toggleColorMode();
   };
 
-  // Arka plan rengini karanlık moda göre ayarlıyoruz
-  const bgColor = darkMode ? '#1A1A1A' : '#FFFAF0';
-  const sectionBgColor = darkMode ? '#2D2D2D' : 'white';
-  const textColor = darkMode ? '#FFFFFF' : '#000000';
+  const bgColor = darkMode ? '#121212' : '#FFF2E6';
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignIn' }],
+    });
+  };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: bgColor }]}>
@@ -57,6 +65,48 @@ const SettingsScreen = () => {
           darkMode={darkMode}
         />
         <AboutSection darkMode={darkMode} />
+
+        <Pressable 
+          onPress={() => setShowLogoutModal(true)}
+          mb={4}
+          mt={2}
+        >
+          <Box
+            bg={darkMode ? 'rgba(255,99,71,0.1)' : 'transparent'}
+            borderWidth={1}
+            borderColor={darkMode ? '#FF6347' : '#FF4500'}
+            rounded="xl"
+            p={4}
+          >
+            <HStack space={4} alignItems="center">
+              <Box
+                bg={darkMode ? 'rgba(255,99,71,0.2)' : 'rgba(255,69,0,0.1)'}
+                p={2}
+                rounded="lg"
+              >
+                <Icon 
+                  as={Ionicons}
+                  name="log-out" 
+                  size="md"
+                  color={darkMode ? '#FF6347' : '#FF4500'}
+                />
+              </Box>
+              <Text
+                fontSize="md"
+                fontWeight="600"
+                color={darkMode ? '#FFFFFF' : '#000000'}
+              >
+                Çıkış Yap
+              </Text>
+            </HStack>
+          </Box>
+        </Pressable>
+
+        <LogoutModal
+          isOpen={showLogoutModal}
+          onClose={() => setShowLogoutModal(false)}
+          onConfirm={handleLogout}
+        />
       </VStack>
     </ScrollView>
   );

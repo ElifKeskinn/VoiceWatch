@@ -5,8 +5,9 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 
 const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const bgColor = useColorModeValue('white', '#2D2D2D');
-  const titleColor = useColorModeValue('#FF4500', '#FF6347');
+  const bgColor = useColorModeValue('#faf1e6', '#1E1E1E');
+  const titleColor = useColorModeValue('black', 'white'); 
+  const iconColor = '#FF4500'; 
   const iconBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
   const borderColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,255,255,0.1)');
 
@@ -19,10 +20,11 @@ const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
         mb={4}
         borderWidth={1}
         borderColor={borderColor}
+        overflow="hidden" 
         shadow={2}
       >
         <Pressable onPress={() => setIsOpen(!isOpen)}>
-          <HStack space={2} mb={4} alignItems="center">
+          <HStack space={3} alignItems="center">
             <Box
               bg={iconBgColor}
               p={2}
@@ -32,7 +34,7 @@ const SettingsSection = ({ title, icon, children, defaultOpen = false }) => {
                 as={Ionicons} 
                 name={icon} 
                 size="md" 
-                color={titleColor} 
+                color={iconColor} 
               />
             </Box>
             <Heading size="sm" color={titleColor}>

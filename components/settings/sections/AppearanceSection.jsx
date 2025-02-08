@@ -7,7 +7,7 @@ const AppearanceSection = ({ darkMode, onToggle }) => {
   
   return (
     <SettingsSection title="Görünüm" icon="color-palette">
-      <VStack space={4}>
+      <VStack space={4} mt={4}>
         <HStack justifyContent="space-between" alignItems="center">
           <Text color={textColor}>Karanlık Mod</Text>
           <Switch 

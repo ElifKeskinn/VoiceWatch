@@ -11,7 +11,7 @@ const AccountButton = ({ icon, title, description, onPress, variant = "solid" })
   const descriptionColor = useColorModeValue('#666666', '#D3D3D3');
   
   return (
-    <Pressable onPress={onPress} mb={3}>
+    <Pressable onPress={onPress} mt={4}>
       <Box 
         bg={variant === "solid" ? solidBgColor : outlineBgColor}
         borderWidth={variant === "outline" ? 1 : 0}
@@ -20,7 +20,7 @@ const AccountButton = ({ icon, title, description, onPress, variant = "solid" })
         p={4}
         shadow={variant === "solid" ? 2 : 0}
       >
-        <HStack space={4} alignItems="center">
+        <HStack space={2} alignItems="center">
           <Center
             bg={variant === "solid" ? "rgba(255,255,255,0.2)" : "rgba(255,99,71,0.1)"}
             p={2}
@@ -62,7 +62,7 @@ const AccountButton = ({ icon, title, description, onPress, variant = "solid" })
 
 const AccountSection = ({ onPasswordChange, onDeleteAccount }) => (
   <SettingsSection title="Hesap ve Güvenlik" icon="shield-checkmark">
-    <VStack space={2}>
+    <VStack >
       <AccountButton
         icon="key"
         title="Şifre Değiştir"
