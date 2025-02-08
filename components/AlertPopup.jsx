@@ -3,6 +3,7 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated }
 import { MaterialIcons } from '@expo/vector-icons';
 import { Box, VStack, HStack, Icon, useColorModeValue } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
 
 const { width } = Dimensions.get('window');
 
@@ -10,6 +11,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const [timeLeft, setTimeLeft] = useState(30);
   const timerRef = React.useRef(null);
   const flashAnimation = React.useRef(new Animated.Value(0)).current;
+  const soundRef = React.useRef(null);
 
   const modalBgColor = useColorModeValue('white', '#1E1E1E');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
@@ -69,6 +71,58 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       }
     };
   }, [visible, onTimeout]);
+
+  // Ses yükleme fonksiyonu
+  const loadSound = async () => {
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/alert.mp3'),
+        { shouldPlay: false }
+      );
+      soundRef.current = sound;
+    } catch (error) {
+      console.log('Ses yüklenirken hata:', error);
+    }
+  };
+
+  // Component mount olduğunda sesi yükle
+  useEffect(() => {
+    loadSound();
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+    };
+  }, []);
+
+  // Popup görünür olduğunda sesi çal
+  useEffect(() => {
+    const playSound = async () => {
+      try {
+        if (visible && soundRef.current) {
+          await soundRef.current.setPositionAsync(0);
+          await soundRef.current.playAsync();
+          
+          // 3 saniye sonra sesi durdur
+          setTimeout(async () => {
+            if (soundRef.current) {
+              await soundRef.current.stopAsync();
+            }
+          }, 3000);
+        }
+      } catch (error) {
+        console.log('Ses çalınırken hata:', error);
+      }
+    };
+
+    playSound();
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stopAsync();
+      }
+    };
+  }, [visible]);
 
   const getAlertInfo = () => {
     switch (type) {
