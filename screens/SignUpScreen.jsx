@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
 import { useColorModeValue } from 'native-base';
-import { styles } from '../styles/screens/SignUpScreen.styles';
+import { styles } from '../styles/SignUpScreen.styles';
 
 const SignUpScreen = ({ navigation }) => {
     // State variables for form fields
