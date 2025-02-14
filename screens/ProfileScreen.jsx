@@ -209,7 +209,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    paddingTop: 30,
     minHeight: Dimensions.get('window').height,
   },
 });
