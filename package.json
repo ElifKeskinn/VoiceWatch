@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.4",
+    "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "2.9.0",
@@ -21,6 +22,7 @@
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
     "expo": "^52.0.27",
+    "expo-av": "~15.0.2",
     "expo-image-picker": "~16.0.4",
     "formik": "^2.4.6",
     "install": "^0.13.0",
@@ -38,9 +40,9 @@
     "react-native-screens": "~4.4.0",
     "react-native-sound": "^0.11.2",
     "react-native-svg": "^15.8.0",
+    "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "~0.19.13",
-    "expo-av": "~15.0.2"
+    "react-native-web": "~0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
