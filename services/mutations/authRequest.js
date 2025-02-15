@@ -1,6 +1,6 @@
 import {useMutation} from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import useAxiosWithToken from '@/services/apiService';
+import useAxiosWithToken from '../apiService';
 
 export const useSignup = () => {
   const {execute} = useAxiosWithToken();
@@ -8,12 +8,17 @@ export const useSignup = () => {
   return useMutation({
     mutationKey: ['signup'],
     mutationFn: async userData => {
-      const response = await execute('POST', '/auth/signup', userData);
-      if (!response) {
-        throw new Error('Kayıt başarısız');
+      try {
+        const response = await execute('POST', 'auth/signup', userData);
+        if (!response) {
+          throw new Error('Kayıt başarısız');
+        }
+        return response;
+      } catch (error) {
+        console.log('Request Data:', userData);
+        console.log('Error Details:', error.response || error);
+        throw error;
       }
-
-      return response;
     },
     onError: error => {
       Toast.show({

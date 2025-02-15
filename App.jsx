@@ -1,5 +1,5 @@
 import React from 'react';
-import {NativeBaseProvider, useColorModeValue} from 'native-base';
+import {NativeBaseProvider, useColorModeValue, Box} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignInScreen from './screens/SignInScreen';
@@ -80,15 +80,16 @@ const AppNavigator = () => {
 // React Query client'ı oluştur
 const queryClient = new QueryClient();
 
-
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <NativeBaseProvider>
         <NavigationContainer>
           <AppNavigator />
+          <Box position="absolute" width="100%">
+            <Toast />
+          </Box>
         </NavigationContainer>
-        <Toast /> {/* Toast mesajları için */}
       </NativeBaseProvider>
     </QueryClientProvider>
   );

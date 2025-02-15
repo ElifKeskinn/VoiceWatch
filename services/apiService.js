@@ -8,16 +8,22 @@ const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
+  timeout: 10000, // 10 saniye timeout
 });
+
+// CORS hatalarını önlemek için
+axiosInstance.defaults.withCredentials = false;
 
 // Request interceptor - Her istekte token ekle
 axiosInstance.interceptors.request.use(
-  async config => {
-    const token = await AsyncStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  config => {
+    AsyncStorage.getItem('token').then(token => {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    });
     return config;
   },
   error => Promise.reject(error),
