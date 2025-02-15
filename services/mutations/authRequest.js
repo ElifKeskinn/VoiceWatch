@@ -8,8 +8,7 @@ export const useSignup = () => {
   return useMutation({
     mutationKey: ['signup'],
     mutationFn: async userData => {
-      const response = await execute('POST', '/api/auth/signup', userData);
-
+      const response = await execute('POST', '/auth/signup', userData);
       if (!response) {
         throw new Error('Kayıt başarısız');
       }

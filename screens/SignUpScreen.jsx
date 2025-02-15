@@ -6,7 +6,6 @@ import { useColorModeValue } from 'native-base';
 import { styles } from '../styles/SignUpScreen.styles';
 
 const SignUpScreen = ({ navigation }) => {
-    // State variables for form fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [tcNumber, setTcNumber] = useState('');

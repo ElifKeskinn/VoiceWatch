@@ -1,5 +1,5 @@
 import React from 'react';
-import {NativeBaseProvider, useColorModeValue, extendTheme} from 'native-base';
+import {NativeBaseProvider, useColorModeValue} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignInScreen from './screens/SignInScreen';
@@ -22,7 +22,7 @@ const AppNavigator = () => {
   );
 
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName="SignUp">
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
@@ -80,21 +80,11 @@ const AppNavigator = () => {
 // React Query client'ı oluştur
 const queryClient = new QueryClient();
 
-const theme = extendTheme({
-  colors: {
-    primary: {
-      50: '#fff3f0',
-      100: '#ffe4dc',
-      500: '#FF4500',
-      600: '#e63e00',
-    },
-  },
-});
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <NativeBaseProvider theme={theme}>
+      <NativeBaseProvider>
         <NavigationContainer>
           <AppNavigator />
         </NavigationContainer>
