@@ -80,3 +80,36 @@ export const useSignin = () => {
     },
   });
 };
+
+export const useDeleteAccount = () => {
+  const {execute} = useAxiosWithToken();
+
+  return useMutation({
+    mutationKey: ['deleteAccount'],
+    mutationFn: async (password) => {
+      try {
+        const response = await execute('DELETE', 'user/delete-account', { password });
+        return response;
+      } catch (error) {
+        if (error.response?.status === 401) {
+          throw new Error('Şifre hatalı');
+        }
+        throw error;
+      }
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: 'Hesap Silinemedi',
+        text2: error.message || 'Bir hata oluştu',
+      });
+    },
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: 'Hesap Silindi',
+        text2: 'Hesabınız başarıyla silindi',
+      });
+    },
+  });
+};
