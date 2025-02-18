@@ -1,201 +1,180 @@
 import React from 'react';
-import {VStack, Input, Text, Button, Icon, Divider, HStack} from 'native-base';
+import {
+  VStack,
+  Input,
+  Text,
+  Button,
+  Icon,
+  Divider,
+  HStack,
+  Box,
+  Image,
+} from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import GeneralModal from '../common/GeneralModal';
 import {useColorModeValue} from 'native-base';
+import {useUpdateUserProfile} from '../../services/mutations/userUpdateRequest';
 
 const EditProfileModal = ({
   isOpen,
   onClose,
-  onSubmit,
   userData,
   onUserDataChange,
   onPickImage,
+  onSuccess,
 }) => {
-  const bgColor = useColorModeValue('#FFFFFF', '#1E1E1E');
+  const updateProfileMutation = useUpdateUserProfile();
+
+  const handleSubmit = async () => {
+    try {
+      const updateData = {
+        name: userData.name,
+        surname: userData.surname,
+        age: userData.age,
+        bloodGroup: userData.bloodGroup,
+        profilePic: userData.profilePic,
+      };
+
+      await updateProfileMutation.mutateAsync(updateData);
+      onSuccess?.();
+      onClose();
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
+  };
+
+  // Renkleri uygulamanın ana temasıyla eşleştir
+  const bgColor = useColorModeValue('#FFFAF0', '#121212');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
-  const borderColor = useColorModeValue('#FF4500', '#FF6347');
+  const inputBgColor = useColorModeValue('rgba(255, 255, 255, 0.9)', '#1E1E1E');
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
-  const inputBgColor = useColorModeValue('transparent', '#2D2D2D');
 
   return (
     <GeneralModal
       isOpen={isOpen}
       onClose={onClose}
       title="Profil Bilgilerini Düzenle"
-      onConfirm={onSubmit}
+      onConfirm={handleSubmit}
       size="lg"
-      bg={bgColor}>
+      bg={bgColor}
+      confirmText="Kaydet"
+      confirmIsLoading={updateProfileMutation.isLoading}
+      confirmButtonProps={{
+        bg: accentColor,
+        _pressed: {bg: useColorModeValue('#FF8C00', '#FF7F50')},
+      }}>
       <VStack space={4}>
-        {/* Profil Fotoğrafı Değiştirme */}
-        <Button
-          leftIcon={<Icon as={Ionicons} name="camera" size="sm" />}
-          onPress={onPickImage}
-          bg={accentColor}
-          _pressed={{opacity: 0.8}}>
-          Profil Fotoğrafını Değiştir
-        </Button>
+        <Box alignItems="center">
+          <Image
+            source={
+              userData.profilePic
+                ? {uri: userData.profilePic}
+                : require('../../assets/noprofile.png')
+            }
+            alt="Profile"
+            size="xl"
+            borderRadius="full"
+            borderWidth={2}
+            borderColor={`${accentColor}20`}
+          />
+          <Button
+            leftIcon={<Icon as={Ionicons} name="camera" size="sm" />}
+            onPress={onPickImage}
+            variant="ghost"
+            _text={{color: accentColor}}
+            mt={2}>
+            Fotoğrafı Değiştir
+          </Button>
+        </Box>
 
         <Divider />
 
-        {/* Kişisel Bilgiler */}
-        <VStack space={4}>
-          <HStack alignItems="center" space={2}>
-            <Icon as={Ionicons} name="person" size="sm" color={accentColor} />
-            <Text fontSize="md" fontWeight="bold" color={textColor}>
-              Kişisel Bilgiler
-            </Text>
-          </HStack>
-
-          <VStack space={3}>
-            <Input
-              placeholder="Ad"
-              value={userData.firstName}
-              onChangeText={text => onUserDataChange('firstName', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="person-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="Soyad"
-              value={userData.lastName}
-              onChangeText={text => onUserDataChange('lastName', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="person-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="TC Kimlik No"
-              value={userData.tcNumber}
-              onChangeText={text => onUserDataChange('tcNumber', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="id-card-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="Yaş"
-              value={userData.age}
-              onChangeText={text => onUserDataChange('age', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="calendar-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="Telefon Numarası"
-              value={userData.phoneNumber}
-              onChangeText={text => onUserDataChange('phoneNumber', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="call-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="Kan Grubu"
-              value={userData.bloodType}
-              onChangeText={text => onUserDataChange('bloodType', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="water-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-            <Input
-              placeholder="Hassasiyet"
-              value={userData.sensitivity}
-              onChangeText={text => onUserDataChange('sensitivity', text)}
-              borderColor={borderColor}
-              bg={inputBgColor}
-              color={textColor}
-              _focus={{
-                borderColor: accentColor,
-                bg: inputBgColor,
-              }}
-              leftElement={
-                <Icon
-                  as={Ionicons}
-                  name="alert-circle-outline"
-                  size="sm"
-                  color={accentColor}
-                  ml={2}
-                />
-              }
-            />
-          </VStack>
+        <VStack space={3}>
+          <Input
+            placeholder="Ad"
+            value={userData.name}
+            onChangeText={text => onUserDataChange('name', text)}
+            borderColor={accentColor}
+            bg={inputBgColor}
+            color={textColor}
+            _focus={{
+              borderColor: accentColor,
+              bg: inputBgColor,
+            }}
+            leftElement={
+              <Icon
+                as={Ionicons}
+                name="person-outline"
+                size="sm"
+                color={accentColor}
+                ml={2}
+              />
+            }
+          />
+          <Input
+            placeholder="Soyad"
+            value={userData.surname}
+            onChangeText={text => onUserDataChange('surname', text)}
+            borderColor={accentColor}
+            bg={inputBgColor}
+            color={textColor}
+            _focus={{
+              borderColor: accentColor,
+              bg: inputBgColor,
+            }}
+            leftElement={
+              <Icon
+                as={Ionicons}
+                name="person-outline"
+                size="sm"
+                color={accentColor}
+                ml={2}
+              />
+            }
+          />
+          <Input
+            placeholder="Yaş"
+            value={userData.age?.toString()}
+            onChangeText={text => onUserDataChange('age', text)}
+            keyboardType="numeric"
+            borderColor={accentColor}
+            bg={inputBgColor}
+            color={textColor}
+            _focus={{
+              borderColor: accentColor,
+              bg: inputBgColor,
+            }}
+            leftElement={
+              <Icon
+                as={Ionicons}
+                name="calendar-outline"
+                size="sm"
+                color={accentColor}
+                ml={2}
+              />
+            }
+          />
+          <Input
+            placeholder="Kan Grubu"
+            value={userData.bloodGroup}
+            onChangeText={text => onUserDataChange('bloodGroup', text)}
+            borderColor={accentColor}
+            bg={inputBgColor}
+            color={textColor}
+            _focus={{
+              borderColor: accentColor,
+              bg: inputBgColor,
+            }}
+            leftElement={
+              <Icon
+                as={Ionicons}
+                name="water-outline"
+                size="sm"
+                color={accentColor}
+                ml={2}
+              />
+            }
+          />
         </VStack>
       </VStack>
     </GeneralModal>
