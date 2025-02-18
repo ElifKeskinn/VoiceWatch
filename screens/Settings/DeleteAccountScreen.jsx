@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Box,
   VStack,
@@ -15,6 +16,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
+import {useDeleteAccount} from '../../services/mutations/authRequest';
 
 const DeleteAccountScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
@@ -22,51 +24,50 @@ const DeleteAccountScreen = ({navigation}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState('');
   const toast = useToast();
+  const deleteAccountMutation = useDeleteAccount();
 
   // Karanlık mod renkleri
   const bgColor = useColorModeValue('#FFFAF0', '#1A1A1A');
-  const boxBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
+  const boxBgColor = useColorModeValue(
+    'rgba(255,69,0,0.1)',
+    'rgba(255,99,71,0.2)',
+  );
   const textColor = useColorModeValue('#FF4500', '#FF6347');
   const warningTextColor = useColorModeValue('#000000', '#FFFFFF');
   const inputBgColor = useColorModeValue('transparent', '#2D2D2D');
   const inputBorderColor = useColorModeValue('#FF4500', '#FF6347');
   const placeholderColor = useColorModeValue('gray.400', 'gray.500');
   const dialogBgColor = useColorModeValue('#FFFAF0', '#2D2D2D');
-  const dialogBorderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+  const dialogBorderColor = useColorModeValue(
+    'rgba(255,69,0,0.15)',
+    'rgba(255,255,255,0.1)',
+  );
 
   const handleDelete = () => {
     if (!password) {
       setError('Hesabınızı silmek için şifrenizi girmelisiniz');
       return;
     }
-    // Şifre kontrolü
-    if (password !== '123ABC') {
-      // Bu kısım API ile değiştirilecek
-      setError('Girdiğiniz şifre yanlış');
-      return;
-    }
     setIsOpen(true);
   };
 
-  const confirmDelete = () => {
-    // Şifre doğruysa işleme devam et
-    if (password === '123ABC') {
-      // Bu kısım API ile değiştirilecek
-      toast.show({
-        title: 'Hesap Silindi',
-        description: 'Hesabınız başarıyla silindi',
-        status: 'success',
-        duration: 3000,
+  const confirmDelete = async () => {
+    try {
+      await deleteAccountMutation.mutateAsync(password);
+      // Token'ı temizle
+      await AsyncStorage.removeItem('token');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'SignIn'}],
       });
-      navigation.replace('SignIn'); // Login yerine SignIn'e yönlendir
-    } else {
-      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
+    } catch (error) {
+      setError(error.message);
       setIsOpen(false);
     }
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: bgColor }]}>
+    <ScrollView style={[styles.container, {backgroundColor: bgColor}]}>
       <Box p={4}>
         <VStack space={4}>
           <Box bg={boxBgColor} p={4} rounded="xl" mb={4}>
@@ -80,7 +81,7 @@ const DeleteAccountScreen = ({navigation}) => {
           </Box>
 
           <FormControl isInvalid={!!error}>
-            <FormControl.Label _text={{ color: warningTextColor }}>
+            <FormControl.Label _text={{color: warningTextColor}}>
               Şifrenizi Girin
             </FormControl.Label>
             <Input
@@ -106,7 +107,8 @@ const DeleteAccountScreen = ({navigation}) => {
                 />
               }
             />
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}>
               {error}
             </FormControl.ErrorMessage>
           </FormControl>
