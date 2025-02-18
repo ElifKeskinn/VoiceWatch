@@ -1,5 +1,6 @@
 import {useMutation} from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAxiosWithToken from '../apiService';
 
 export const useSignup = () => {
@@ -32,6 +33,49 @@ export const useSignup = () => {
         type: 'success',
         text1: 'Başarılı',
         text2: 'Kullanıcı başarıyla kaydedildi',
+      });
+    },
+  });
+};
+
+export const useSignin = () => {
+  const {execute} = useAxiosWithToken();
+
+  return useMutation({
+    mutationKey: ['signin'],
+    mutationFn: async userData => {
+      try {
+        console.log('Login attempt with:', userData);
+        const response = await execute('POST', 'auth/login', userData, false);
+
+        if (!response || !response.token) {
+          throw new Error('Giriş başarısız');
+        }
+
+        await AsyncStorage.setItem('token', response.token);
+        return response;
+      } catch (error) {
+        // Backend'den gelen spesifik hataları handle et
+        if (error.response?.status === 404) {
+          throw new Error('Kullanıcı bulunamadı. Lütfen önce kayıt olun.');
+        } else if (error.response?.status === 401) {
+          throw new Error('TC Kimlik No veya şifre hatalı.');
+        }
+        throw error;
+      }
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: 'Giriş Başarısız',
+        text2: error.message || 'Giriş yapılırken bir hata oluştu',
+      });
+    },
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: 'Hoş Geldiniz',
+        text2: 'Başarıyla giriş yaptınız',
       });
     },
   });

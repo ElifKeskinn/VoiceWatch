@@ -36,7 +36,9 @@ const SignUpScreen = ({navigation}) => {
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [isAgreedError, setIsAgreedError] = useState('');
-  const signupMutation = useSignup();
+
+
+  const signupData = useSignup();
 
   // Dark mode renkleri
   const bgColor = useColorModeValue('#FFFAF0', '#121212');
@@ -50,16 +52,16 @@ const SignUpScreen = ({navigation}) => {
 
   const handleSignUp = async () => {
     let isValid = true;
-    setFirstNameError(''); // Hata mesajını sıfırla
-    setLastNameError(''); // Hata mesajını sıfırla
-    setTcNumberError(''); // Hata mesajını sıfırla
-    setAgeError(''); // Hata mesajını sıfırla
-    setPasswordError(''); // Hata mesajını sıfırla
-    setPhoneNumberError(''); // Hata mesajını sıfırla
-    setContactPhoneErrors(['', '']); // Kontakların telefon numarası için hata mesajlarını sıfırla
-    setContactNicknameErrors(['', '']); // Kontakların ismi için hata mesajlarını sıfırla
-    setBloodTypeError(''); // Reset error message
-    setIsAgreedError(''); // Reset error message for privacy policy agreement
+    setFirstNameError('');
+    setLastNameError('');
+    setTcNumberError('');
+    setAgeError('');
+    setPasswordError(''); 
+    setPhoneNumberError('');
+    setContactPhoneErrors(['', '']);
+    setContactNicknameErrors(['', '']);
+    setBloodTypeError(''); 
+    setIsAgreedError(''); 
 
     // Doğrulama
     if (!firstName) {
@@ -239,20 +241,20 @@ const SignUpScreen = ({navigation}) => {
     if (isValid) {
       try {
         const userData = {
-          name: firstName, 
-          surname: lastName, 
-          tcKimlik: tcNumber, 
+          name: firstName,
+          surname: lastName,
+          tcKimlik: tcNumber,
           age: parseInt(age),
           password: password,
           phoneNumber: phoneNumber,
-          bloodGroup: bloodType, 
+          bloodGroup: bloodType,
           emergencyContacts: contacts.map(contact => ({
-            contactInfo: contact.nickname, 
-            contactNumber: contact.number, 
+            contactInfo: contact.nickname,
+            contactNumber: contact.number,
           })),
         };
 
-        await signupMutation.mutateAsync(userData);
+        await signupData.mutateAsync(userData);
         navigation.navigate('SignIn');
       } catch (error) {
         console.error('Kayıt hatası:', error);
