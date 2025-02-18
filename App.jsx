@@ -1,5 +1,5 @@
 import React from 'react';
-import {NativeBaseProvider, useColorModeValue} from 'native-base';
+import {NativeBaseProvider, useColorModeValue, Box} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignInScreen from './screens/SignInScreen';
@@ -8,17 +8,21 @@ import SplashScreen from './screens/SplashScreen';
 import TabNavigator from './components/common/Navbar';
 import PasswordChangeScreen from './screens/Settings/PasswordChangeScreen';
 import DeleteAccountScreen from './screens/Settings/DeleteAccountScreen';
-import LogoutModal from './components/common/LogoutModal';
+import Toast from 'react-native-toast-message';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const headerBgColor = useColorModeValue('#FFFAF0', '#1A1A1A');
   const headerTintColor = useColorModeValue('#FF4500', '#FF6347');
-  const headerBorderColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,255,255,0.1)');
+  const headerBorderColor = useColorModeValue(
+    'rgba(255,69,0,0.1)',
+    'rgba(255,255,255,0.1)',
+  );
 
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName="SignUp">
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
@@ -64,8 +68,8 @@ const AppNavigator = () => {
             backgroundColor: headerBgColor,
             borderBottomWidth: 1,
             borderBottomColor: headerBorderColor,
-            elevation: 0, 
-            shadowOpacity: 0, 
+            elevation: 0,
+            shadowOpacity: 0,
           },
         }}
       />
@@ -73,13 +77,21 @@ const AppNavigator = () => {
   );
 };
 
+// React Query client'ı oluştur
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </NativeBaseProvider>
+    <QueryClientProvider client={queryClient}>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <AppNavigator />
+          <Box position="absolute" width="100%">
+            <Toast />
+          </Box>
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </QueryClientProvider>
   );
 };
 
