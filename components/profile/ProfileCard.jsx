@@ -30,7 +30,10 @@ const ProfileCard = ({
   const bgColor = useColorModeValue('#faf1e6', '#1E1E1E');
   const contentBgColor = useColorModeValue('#FFF8F0', '#2D2D2D');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
-  const borderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
+  const borderColor = useColorModeValue(
+    'rgba(255,69,0,0.15)',
+    'rgba(255,255,255,0.1)',
+  );
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
   const iconColor = useColorModeValue('#FF4500', '#FF6347');
 
@@ -40,7 +43,9 @@ const ProfileCard = ({
         ?.label || 'Orta'
     );
   };
-  const noProfile = require('../../assets/noprofile.png');
+  const imageSource = profileImage
+    ? {uri: profileImage}
+    : require('../../assets/noprofile.png');
 
   return (
     <Box alignItems="center" p="4" width="100%">
@@ -58,7 +63,7 @@ const ProfileCard = ({
         <Box alignItems="center" position="relative">
           <AspectRatio w="70%" ratio={1}>
             <Image
-              source={profileImage ? {uri: profileImage} : noProfile}
+              source={imageSource}
               alt="Profile Image"
               borderRadius="full"
               borderWidth={2}
