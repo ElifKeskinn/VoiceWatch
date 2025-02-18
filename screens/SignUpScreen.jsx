@@ -239,16 +239,16 @@ const SignUpScreen = ({navigation}) => {
     if (isValid) {
       try {
         const userData = {
-          firstName,
-          lastName,
-          tcNumber,
+          name: firstName, 
+          surname: lastName, 
+          tcKimlik: tcNumber, 
           age: parseInt(age),
-          password,
-          phoneNumber,
-          bloodType,
+          password: password,
+          phoneNumber: phoneNumber,
+          bloodGroup: bloodType, 
           emergencyContacts: contacts.map(contact => ({
-            nickname: contact.nickname,
-            phoneNumber: contact.number,
+            contactInfo: contact.nickname, 
+            contactNumber: contact.number, 
           })),
         };
 
