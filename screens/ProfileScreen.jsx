@@ -25,6 +25,7 @@ import {
   useDeleteContact,
 } from '../services/requests/contactRequests';
 import AddContactModal from '../components/contacts/AddContactModal';
+import EditContactModal from '../components/contacts/EditContactModal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -41,6 +42,7 @@ const ProfileScreen = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState(null);
 
   React.useEffect(() => {
     if (userInfo) {
@@ -81,15 +83,20 @@ const ProfileScreen = () => {
     }
   };
 
-  const handleEditContact = async (contactId, newData) => {
+  const handleEditContact = contact => {
+    setEditingContact(contact);
+  };
+
+  const handleEditContactSubmit = async data => {
     try {
       await updateContactMutation.mutateAsync({
-        id: contactId,
+        id: editingContact.id,
         data: {
-          contactInfo: newData.contactInfo,
-          contactNumber: newData.contactNumber,
+          contactInfo: data.contactInfo,
+          contactNumber: data.contactNumber,
         },
       });
+      setEditingContact(null);
     } catch (error) {
       console.error('Edit contact error:', error);
     }
@@ -191,12 +198,7 @@ const ProfileScreen = () => {
                     p={2}
                     rounded="full"
                     _pressed={{bg: iconBgColor}}
-                    onPress={() =>
-                      handleEditContact(contact.id, {
-                        contactInfo: contact.contactInfo,
-                        contactNumber: contact.contactNumber,
-                      })
-                    }>
+                    onPress={() => handleEditContact(contact)}>
                     <Icon
                       as={Ionicons}
                       name="create"
@@ -237,43 +239,55 @@ const ProfileScreen = () => {
   console.log('Contacts data:', contacts);
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.container, {backgroundColor: bgColor}]}>
-      <Center flex={1} width="100%">
-        {userLoading ? (
-          <Spinner size="lg" color={useColorModeValue('#FF4500', '#FF6347')} />
-        ) : userError ? (
-          <Text color="red.500">Profil bilgileri yüklenemedi</Text>
-        ) : userInfo ? (
-          <>
-            <ProfileCard
-              firstName={userInfo.name}
-              lastName={userInfo.surname}
-              tcNumber={userInfo.tcKimlik}
-              age={userInfo.age}
-              phoneNumber={userInfo.phoneNumber}
-              bloodType={userInfo.bloodGroup}
-              profileImage={userInfo.profilePic}
-              sensitivity={userInfo.sensitivity?.toString()}
-              onEdit={handleEditProfile}
+    <>
+      <ScrollView
+        contentContainerStyle={[styles.container, {backgroundColor: bgColor}]}>
+        <Center flex={1} width="100%">
+          {userLoading ? (
+            <Spinner
+              size="lg"
+              color={useColorModeValue('#FF4500', '#FF6347')}
             />
-            <EmergencyContactSection />
-          </>
-        ) : null}
+          ) : userError ? (
+            <Text color="red.500">Profil bilgileri yüklenemedi</Text>
+          ) : userInfo ? (
+            <>
+              <ProfileCard
+                firstName={userInfo.name}
+                lastName={userInfo.surname}
+                tcNumber={userInfo.tcKimlik}
+                age={userInfo.age}
+                phoneNumber={userInfo.phoneNumber}
+                bloodType={userInfo.bloodGroup}
+                profileImage={userInfo.profilePic}
+                sensitivity={userInfo.sensitivity?.toString()}
+                onEdit={handleEditProfile}
+              />
+              <EmergencyContactSection />
+            </>
+          ) : null}
 
-        {editUser && (
-          <EditProfileModal
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
-            onSubmit={handleUserUpdate}
-            userData={editUser}
-            onUserDataChange={handleUserDataChange}
-            onPickImage={handlePickImage}
-            darkMode={useColorModeValue(false, true)}
-          />
-        )}
-      </Center>
-    </ScrollView>
+          {editUser && (
+            <EditProfileModal
+              isOpen={isEditModalOpen}
+              onClose={() => setIsEditModalOpen(false)}
+              onSubmit={handleUserUpdate}
+              userData={editUser}
+              onUserDataChange={handleUserDataChange}
+              onPickImage={handlePickImage}
+              darkMode={useColorModeValue(false, true)}
+            />
+          )}
+        </Center>
+      </ScrollView>
+      <EditContactModal
+        isOpen={!!editingContact}
+        onClose={() => setEditingContact(null)}
+        onSubmit={handleEditContactSubmit}
+        contact={editingContact}
+        isLoading={updateContactMutation.isLoading}
+      />
+    </>
   );
 };
 

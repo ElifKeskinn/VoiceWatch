@@ -18,12 +18,11 @@ axiosInstance.defaults.withCredentials = false;
 
 // Request interceptor - Her istekte token ekle
 axiosInstance.interceptors.request.use(
-  config => {
-    AsyncStorage.getItem('token').then(token => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    });
+  async config => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   error => Promise.reject(error),
@@ -56,29 +55,59 @@ const useAxiosWithToken = () => {
   const execute = async (method, endpoint, body = null) => {
     try {
       setIsLoading(true);
+      setError(null);
 
       const config = {
         method,
         url: endpoint,
-        data: body instanceof FormData ? body : body,
+        data: body,
+        validateStatus: status => {
+          return status >= 200 && status < 500; // Handle 500 errors separately
+        },
       };
 
-      // FormData için Content-Type'ı elle ayarlamaya gerek yok
       if (body instanceof FormData) {
         config.headers = {'Content-Type': 'multipart/form-data'};
       }
 
       const response = await axiosInstance(config);
-      console.log('HTTP Durum Kodu:', response.status);
-      console.log('API Yanıtı:', response.data);
 
-      setData(response.data);
-      return response.data;
+      // Check for success status
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Success Response:', {
+          endpoint,
+          method,
+          status: response.status,
+          data: response.data,
+        });
+        setData(response.data);
+        return response.data;
+      }
+
+      // Handle non-200 responses
+      throw new Error(
+        response.data?.message ||
+          `Request failed with status ${response.status}`,
+      );
     } catch (err) {
+      console.error('API Error:', {
+        endpoint,
+        method,
+        error: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
+
+      if (err.response?.status === 500) {
+        throw new Error(
+          'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.',
+        );
+      }
+
       if (err.message === 'AUTH_ERROR') {
         navigation.navigate('SignIn');
       }
-      console.error('API Hatası:', err);
+
       setError(err.response?.data || err.message);
       throw err;
     } finally {

@@ -70,7 +70,22 @@ export const useUpdateContact = () => {
 
   return useMutation({
     mutationFn: async ({id, data}) => {
-      return await execute('PATCH', `contacts/${id}`, data);
+      if (!id || !data) {
+        throw new Error('Geçersiz kontak bilgisi');
+      }
+
+      try {
+        const response = await execute('PATCH', `contacts/${id}`, data);
+        return response;
+      } catch (error) {
+        console.error('Update contact error:', {
+          id,
+          data,
+          error: error.message,
+          response: error.response?.data,
+        });
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['contacts']);
@@ -78,6 +93,8 @@ export const useUpdateContact = () => {
         type: 'success',
         text1: 'Başarılı',
         text2: 'Kontak başarıyla güncellendi',
+        position: 'bottom',
+        visibilityTime: 3000,
       });
     },
     onError: error => {
@@ -85,6 +102,8 @@ export const useUpdateContact = () => {
         type: 'error',
         text1: 'Hata',
         text2: error.response?.data?.message || 'Kontak güncellenemedi',
+        position: 'bottom',
+        visibilityTime: 4000,
       });
     },
   });
