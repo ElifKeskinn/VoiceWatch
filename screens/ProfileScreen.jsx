@@ -188,7 +188,7 @@ const ProfileScreen = () => {
                     rounded="full"
                     _pressed={{bg: iconBgColor}}
                     onPress={() =>
-                      handleEditContact(contact._id, {
+                      handleEditContact(contact.id, {
                         contactInfo: contact.contactInfo,
                         contactNumber: contact.contactNumber,
                       })
@@ -204,7 +204,7 @@ const ProfileScreen = () => {
                     p={2}
                     rounded="full"
                     _pressed={{bg: iconBgColor}}
-                    onPress={() => handleDeleteContact(contact._id)}>
+                    onPress={() => handleDeleteContact(contact.id)}>
                     <Icon
                       as={Ionicons}
                       name="trash"
@@ -222,6 +222,8 @@ const ProfileScreen = () => {
       </VStack>
     </Box>
   );
+
+  console.log('Contacts data:', contacts);
 
   return (
     <ScrollView

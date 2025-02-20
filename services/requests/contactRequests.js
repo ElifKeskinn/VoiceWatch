@@ -11,8 +11,14 @@ export const useGetContacts = () => {
     queryFn: async () => {
       try {
         const response = await execute('GET', 'contacts');
-        // API boş dönerse boş array dön
-        return response.data || [];
+        console.log('Raw contacts response:', response); // Debug için
+        // API response yapısını kontrol et
+        if (Array.isArray(response)) {
+          return response;
+        } else if (Array.isArray(response.data)) {
+          return response.data;
+        }
+        return [];
       } catch (error) {
         console.error('Contacts fetch error:', error);
         // Hata durumunda da boş array dön
