@@ -24,6 +24,7 @@ import {
   useUpdateContact,
   useDeleteContact,
 } from '../services/requests/contactRequests';
+import AddContactModal from '../components/contacts/AddContactModal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -39,6 +40,7 @@ const ProfileScreen = () => {
   const deleteContactMutation = useDeleteContact();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
 
   React.useEffect(() => {
     if (userInfo) {
@@ -66,12 +68,14 @@ const ProfileScreen = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleAddContact = async () => {
+  const handleAddContact = () => {
+    setIsAddContactModalOpen(true);
+  };
+
+  const handleAddContactSubmit = async contactData => {
     try {
-      await addContactMutation.mutateAsync({
-        contactInfo: 'Yeni Kontak',
-        contactNumber: '5555555555',
-      });
+      await addContactMutation.mutateAsync(contactData);
+      setIsAddContactModalOpen(false);
     } catch (error) {
       console.error('Add contact error:', error);
     }
@@ -219,6 +223,13 @@ const ProfileScreen = () => {
         ) : (
           <Text color={textColor}>Henüz kontak eklenmemiş</Text>
         )}
+
+        <AddContactModal
+          isOpen={isAddContactModalOpen}
+          onClose={() => setIsAddContactModalOpen(false)}
+          onSubmit={handleAddContactSubmit}
+          isLoading={addContactMutation.isLoading}
+        />
       </VStack>
     </Box>
   );
