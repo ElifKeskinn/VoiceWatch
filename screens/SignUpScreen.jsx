@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
 import {useColorModeValue} from 'native-base';
 import {styles} from '../styles/SignUpScreen.styles';
-import {useSignup} from '../services/mutations/authRequest';
+import {useSignup} from '../services/requests/authRequest';
 
 const SignUpScreen = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
@@ -37,7 +37,6 @@ const SignUpScreen = ({navigation}) => {
   const [lastNameError, setLastNameError] = useState('');
   const [isAgreedError, setIsAgreedError] = useState('');
 
-
   const signupData = useSignup();
 
   // Dark mode renkleri
@@ -56,12 +55,12 @@ const SignUpScreen = ({navigation}) => {
     setLastNameError('');
     setTcNumberError('');
     setAgeError('');
-    setPasswordError(''); 
+    setPasswordError('');
     setPhoneNumberError('');
     setContactPhoneErrors(['', '']);
     setContactNicknameErrors(['', '']);
-    setBloodTypeError(''); 
-    setIsAgreedError(''); 
+    setBloodTypeError('');
+    setIsAgreedError('');
 
     // Doğrulama
     if (!firstName) {

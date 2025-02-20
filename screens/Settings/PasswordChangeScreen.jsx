@@ -13,7 +13,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
-import {useChangePassword} from '../../services/mutations/authRequest';
+import {useChangePassword} from '../../services/requests/authRequest';
 
 const PasswordChangeScreen = ({navigation}) => {
   const [formData, setFormData] = useState({

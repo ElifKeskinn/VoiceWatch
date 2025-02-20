@@ -17,30 +17,34 @@ import ProfileCard from '../components/profile/ProfileCard';
 import {Ionicons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import EditProfileModal from '../components/profile/EditProfile';
-import {useGetUserInfo} from '../services/queries/userInfoRequest';
+import {useGetUserInfo} from '../services/requests/userInfoRequest';
+import {
+  useGetContacts,
+  useAddContact,
+  useUpdateContact,
+  useDeleteContact,
+} from '../services/requests/contactRequests';
 
 const {width, height} = Dimensions.get('window');
 
 const ProfileScreen = () => {
-  const {data: userInfo, isLoading, error} = useGetUserInfo();
-  const [contacts, setContacts] = useState([]);
+  const {
+    data: userInfo,
+    isLoading: userLoading,
+    error: userError,
+  } = useGetUserInfo();
+  const {data: contacts, isLoading: contactsLoading} = useGetContacts();
+  const addContactMutation = useAddContact();
+  const updateContactMutation = useUpdateContact();
+  const deleteContactMutation = useDeleteContact();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
 
   React.useEffect(() => {
     if (userInfo) {
       setEditUser(userInfo);
-      setContacts(
-        userInfo.emergencyContacts.map((contact, index) => ({
-          id: index + 1,
-          name: contact.contactInfo,
-          phone: contact.contactNumber,
-        })),
-      );
     }
   }, [userInfo]);
-
-  const toast = useToast();
 
   const bgColor = useColorModeValue('#FFF2E6', '#121212');
   const cardBgColor = useColorModeValue('#faf1e6', '#1E1E1E');
@@ -62,34 +66,37 @@ const ProfileScreen = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleAddContact = () => {
-    toast.show({
-      title: 'Add Contact',
-      description: 'This feature is not implemented yet.',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleAddContact = async () => {
+    try {
+      await addContactMutation.mutateAsync({
+        contactInfo: 'Yeni Kontak',
+        contactNumber: '5555555555',
+      });
+    } catch (error) {
+      console.error('Add contact error:', error);
+    }
   };
 
-  const handleEditContact = id => {
-    toast.show({
-      title: 'Edit Contact',
-      description: `Edit contact with id: ${id}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleEditContact = async (contactId, newData) => {
+    try {
+      await updateContactMutation.mutateAsync({
+        id: contactId,
+        data: {
+          contactInfo: newData.contactInfo,
+          contactNumber: newData.contactNumber,
+        },
+      });
+    } catch (error) {
+      console.error('Edit contact error:', error);
+    }
   };
 
-  const handleDeleteContact = id => {
-    toast.show({
-      title: 'Delete Contact',
-      description: `Delete contact with id: ${id}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleDeleteContact = async id => {
+    try {
+      await deleteContactMutation.mutateAsync(id);
+    } catch (error) {
+      console.error('Delete contact error:', error);
+    }
   };
 
   const handleEditProfile = () => {
@@ -144,61 +151,74 @@ const ProfileScreen = () => {
           </Pressable>
         </HStack>
 
-        {contacts.map(contact => (
-          <Box
-            key={contact.id}
-            p={3}
-            borderRadius="md"
-            borderWidth={1}
-            borderColor={borderColor}
-            bg={contentBgColor}>
-            <HStack justifyContent="space-between" alignItems="center">
-              <HStack space={3} alignItems="center">
-                <Center bg={iconBgColor} p={2} rounded="full">
-                  <Icon
-                    as={Ionicons}
-                    name="person"
-                    size="md"
-                    color={accentColor}
-                  />
-                </Center>
-                <VStack>
-                  <Text fontWeight="600" color={textColor}>
-                    {contact.name}
-                  </Text>
-                  <Text color={secondaryTextColor}>{contact.phone}</Text>
-                </VStack>
-              </HStack>
+        {contactsLoading ? (
+          <Spinner size="lg" color={accentColor} />
+        ) : contacts?.length > 0 ? (
+          contacts.map(contact => (
+            <Box
+              key={contact.id}
+              p={3}
+              borderRadius="md"
+              borderWidth={1}
+              borderColor={borderColor}
+              bg={contentBgColor}>
+              <HStack justifyContent="space-between" alignItems="center">
+                <HStack space={3} alignItems="center">
+                  <Center bg={iconBgColor} p={2} rounded="full">
+                    <Icon
+                      as={Ionicons}
+                      name="person"
+                      size="md"
+                      color={accentColor}
+                    />
+                  </Center>
+                  <VStack>
+                    <Text fontWeight="600" color={textColor}>
+                      {contact.contactInfo}
+                    </Text>
+                    <Text color={secondaryTextColor}>
+                      {contact.contactNumber}
+                    </Text>
+                  </VStack>
+                </HStack>
 
-              <HStack space={2}>
-                <Pressable
-                  p={2}
-                  rounded="full"
-                  _pressed={{bg: iconBgColor}}
-                  onPress={() => handleEditContact(contact.id)}>
-                  <Icon
-                    as={Ionicons}
-                    name="create"
-                    size="sm"
-                    color={accentColor}
-                  />
-                </Pressable>
-                <Pressable
-                  p={2}
-                  rounded="full"
-                  _pressed={{bg: iconBgColor}}
-                  onPress={() => handleDeleteContact(contact.id)}>
-                  <Icon
-                    as={Ionicons}
-                    name="trash"
-                    size="sm"
-                    color={accentColor}
-                  />
-                </Pressable>
+                <HStack space={2}>
+                  <Pressable
+                    p={2}
+                    rounded="full"
+                    _pressed={{bg: iconBgColor}}
+                    onPress={() =>
+                      handleEditContact(contact._id, {
+                        contactInfo: contact.contactInfo,
+                        contactNumber: contact.contactNumber,
+                      })
+                    }>
+                    <Icon
+                      as={Ionicons}
+                      name="create"
+                      size="sm"
+                      color={accentColor}
+                    />
+                  </Pressable>
+                  <Pressable
+                    p={2}
+                    rounded="full"
+                    _pressed={{bg: iconBgColor}}
+                    onPress={() => handleDeleteContact(contact._id)}>
+                    <Icon
+                      as={Ionicons}
+                      name="trash"
+                      size="sm"
+                      color={accentColor}
+                    />
+                  </Pressable>
+                </HStack>
               </HStack>
-            </HStack>
-          </Box>
-        ))}
+            </Box>
+          ))
+        ) : (
+          <Text color={textColor}>Henüz kontak eklenmemiş</Text>
+        )}
       </VStack>
     </Box>
   );
@@ -207,9 +227,9 @@ const ProfileScreen = () => {
     <ScrollView
       contentContainerStyle={[styles.container, {backgroundColor: bgColor}]}>
       <Center flex={1} width="100%">
-        {isLoading ? (
+        {userLoading ? (
           <Spinner size="lg" color={useColorModeValue('#FF4500', '#FF6347')} />
-        ) : error ? (
+        ) : userError ? (
           <Text color="red.500">Profil bilgileri yüklenemedi</Text>
         ) : userInfo ? (
           <>

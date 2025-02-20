@@ -13,7 +13,7 @@ import {
 import {Ionicons} from '@expo/vector-icons';
 import GeneralModal from '../common/GeneralModal';
 import {useColorModeValue} from 'native-base';
-import {useUpdateUserProfile} from '../../services/mutations/userUpdateRequest';
+import {useUpdateUserProfile} from '../../services/requests/userUpdateRequest';
 
 const EditProfileModal = ({
   isOpen,

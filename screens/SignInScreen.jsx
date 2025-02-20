@@ -6,7 +6,7 @@ import CheckBox from '@react-native-community/checkbox';
 import {useColorModeValue} from 'native-base';
 import Logo from '../components/common/Logo';
 import {styles} from '../styles/SignIn.styles';
-import {useSignin} from '../services/mutations/authRequest';
+import {useSignin} from '../services/requests/authRequest';
 
 const SignInScreen = ({navigation}) => {
   const [tcNumber, setTcNumber] = useState('');

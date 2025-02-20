@@ -16,7 +16,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
-import {useDeleteAccount} from '../../services/mutations/authRequest';
+import {useDeleteAccount} from '../../services/requests/authRequest';
 
 const DeleteAccountScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
