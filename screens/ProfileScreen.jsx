@@ -35,7 +35,11 @@ const ProfileScreen = () => {
     isLoading: userLoading,
     error: userError,
   } = useGetUserInfo();
-  const {data: contacts, isLoading: contactsLoading} = useGetContacts();
+  const {
+    data: contacts,
+    isLoading: contactsLoading,
+    refetch: refetchContacts,
+  } = useGetContacts();
   const addContactMutation = useAddContact();
   const updateContactMutation = useUpdateContact();
   const deleteContactMutation = useDeleteContact();
@@ -74,40 +78,8 @@ const ProfileScreen = () => {
     setIsAddContactModalOpen(true);
   };
 
-  const handleAddContactSubmit = async contactData => {
-    try {
-      await addContactMutation.mutateAsync(contactData);
-      setIsAddContactModalOpen(false);
-    } catch (error) {
-      console.error('Add contact error:', error);
-    }
-  };
-
   const handleEditContact = contact => {
     setEditingContact(contact);
-  };
-
-  const handleEditContactSubmit = async data => {
-    try {
-      await updateContactMutation.mutateAsync({
-        id: editingContact.id,
-        data: {
-          contactInfo: data.contactInfo,
-          contactNumber: data.contactNumber,
-        },
-      });
-      setEditingContact(null);
-    } catch (error) {
-      console.error('Edit contact error:', error);
-    }
-  };
-
-  const handleDeleteContact = async id => {
-    try {
-      await deleteContactMutation.mutateAsync(id);
-    } catch (error) {
-      console.error('Delete contact error:', error);
-    }
   };
 
   const handleEditProfile = () => {
@@ -132,6 +104,38 @@ const ProfileScreen = () => {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleAddContactSubmit = async contactData => {
+    try {
+      await addContactMutation.mutateAsync(contactData);
+      setIsAddContactModalOpen(false);
+    } catch (error) {
+      console.error('Add contact error:', error);
+    }
+  };
+
+  const handleEditContactSubmit = async data => {
+    try {
+      await updateContactMutation.mutateAsync({
+        id: editingContact.id,
+        data: {
+          contactInfo: data.contactInfo,
+          contactNumber: data.contactNumber,
+        },
+      });
+      setEditingContact(null);
+    } catch (error) {
+      console.error('Edit contact error:', error);
+    }
+  };
+
+  const handleDeleteContact = async id => {
+    try {
+      await deleteContactMutation.mutateAsync(id);
+    } catch (error) {
+      console.error('Delete contact error:', error);
+    }
   };
 
   const EmergencyContactSection = () => (
@@ -235,8 +239,6 @@ const ProfileScreen = () => {
       </VStack>
     </Box>
   );
-
-  console.log('Contacts data:', contacts);
 
   return (
     <>

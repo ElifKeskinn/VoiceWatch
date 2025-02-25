@@ -2,7 +2,6 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import useAxiosWithToken from '../apiService';
 import Toast from 'react-native-toast-message';
 
-// Kullanıcının kontaklarını getirme
 export const useGetContacts = () => {
   const {execute} = useAxiosWithToken();
 
@@ -11,28 +10,17 @@ export const useGetContacts = () => {
     queryFn: async () => {
       try {
         const response = await execute('GET', 'contacts');
-        console.log('Raw contacts response:', response); // Debug için
-        // API response yapısını kontrol et
-        if (Array.isArray(response)) {
-          return response;
-        } else if (Array.isArray(response.data)) {
-          return response.data;
-        }
-        return [];
+        return response;
       } catch (error) {
-        console.error('Contacts fetch error:', error);
-        // Hata durumunda da boş array dön
-        return [];
+        console.error('User info fetch error:', error);
+        throw error;
       }
     },
-    // Hata yönetimi
-    onError: error => {
-      Toast.show({
-        type: 'error',
-        text1: 'Hata',
-        text2: 'Kontaklar yüklenirken bir hata oluştu',
-      });
-    },
+    // Otomatik yenilemeyi kapat
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+    staleTime: Infinity, // Veriyi asla stale olarak işaretleme
   });
 };
 
@@ -46,7 +34,7 @@ export const useAddContact = () => {
       return await execute('POST', 'contacts', contactData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['contacts']);
+      queryClient.invalidateQueries(['contacts']); // Cache'i yenile
       Toast.show({
         type: 'success',
         text1: 'Başarılı',
@@ -88,7 +76,7 @@ export const useUpdateContact = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['contacts']);
+      queryClient.invalidateQueries(['contacts']); // Cache'i yenile
       Toast.show({
         type: 'success',
         text1: 'Başarılı',
@@ -109,24 +97,26 @@ export const useUpdateContact = () => {
   });
 };
 
-// Kontak silme
 export const useDeleteContact = () => {
-  const {execute} = useAxiosWithToken();
+  const { execute } = useAxiosWithToken();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async id => {
-      return await execute('DELETE', `contacts/${id}`);
+    mutationFn: id => {
+      const endpoint = `contacts/${id}`; // Backtick kullanarak endpoint'i oluşturduğundan emin ol
+      console.log("📌 DELETE isteği gönderilecek endpoint:", endpoint);
+      return execute('DELETE', endpoint);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['contacts']);
       Toast.show({
         type: 'success',
-        text1: 'Başarılı',
-        text2: 'Kontak başarıyla silindi',
+        text1: 'Başarılı',
+        text2: 'Kontak başarıyla silindi',
       });
     },
     onError: error => {
+      console.error("📌 DELETE isteği hatası:", error);
       Toast.show({
         type: 'error',
         text1: 'Hata',

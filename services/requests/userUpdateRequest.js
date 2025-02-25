@@ -26,7 +26,6 @@ export const useUpdateUserProfile = () => {
           return await execute('PATCH', 'user/me', formData);
         }
 
-        // Normal güncelleme
         return await execute('PATCH', 'user/me', userData);
       } catch (error) {
         console.error('Profile update error:', error);
@@ -34,7 +33,6 @@ export const useUpdateUserProfile = () => {
       }
     },
     onSuccess: () => {
-      // Profil güncellendiğinde cache'i güncelle
       queryClient.invalidateQueries(['userInfo']);
       Toast.show({
         type: 'success',
