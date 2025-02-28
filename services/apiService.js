@@ -51,8 +51,16 @@ const useAxiosWithToken = () => {
       setIsLoading(true);
       setError(null);
   
+      // Endpoint kontrolü
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+
       const config = {
         method,
+        url: cleanEndpoint,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         url: endpoint,
         data: body,
         validateStatus: status => status >= 200 && status < 500,

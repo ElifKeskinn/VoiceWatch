@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Box,
   AspectRatio,
@@ -15,6 +15,8 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
+
+const DEFAULT_PROFILE_IMAGE = require('../../assets/noprofile.png');
 
 const ProfileCard = ({
   firstName,
@@ -43,9 +45,36 @@ const ProfileCard = ({
         ?.label || 'Orta'
     );
   };
-  const imageSource = profileImage
-    ? {uri: profileImage}
-    : require('../../assets/noprofile.png');
+
+  // Resim kaynağını kontrol edelim
+  const [imageSource, setImageSource] = useState(DEFAULT_PROFILE_IMAGE);
+
+  // profileImage değiştiğinde resmi ayarla
+  useEffect(() => {
+    console.log('ProfileImage değişti:', profileImage);
+
+    try {
+      if (
+        profileImage &&
+        typeof profileImage === 'string' &&
+        (profileImage.startsWith('http') ||
+          profileImage.startsWith('data:image') ||
+          profileImage.startsWith('file:'))
+      ) {
+        setImageSource({uri: profileImage});
+        console.log(
+          'URI olarak ayarlandı:',
+          profileImage.substring(0, 30) + '...',
+        );
+      } else {
+        console.log('Varsayılan resim kullanılıyor');
+        setImageSource(DEFAULT_PROFILE_IMAGE);
+      }
+    } catch (error) {
+      console.error('Resim ayarlama hatası:', error);
+      setImageSource(DEFAULT_PROFILE_IMAGE);
+    }
+  }, [profileImage]);
 
   return (
     <Box alignItems="center" p="4" width="100%">
@@ -64,10 +93,15 @@ const ProfileCard = ({
           <AspectRatio w="70%" ratio={1}>
             <Image
               source={imageSource}
-              alt="Profile Image"
+              alt="Profile"
+              fallbackSource={DEFAULT_PROFILE_IMAGE}
               borderRadius="full"
               borderWidth={2}
               borderColor="rgba(255,69,0,0.2)"
+              onError={error => {
+                console.error('Resim yükleme hatası:', error.nativeEvent);
+                setImageSource(DEFAULT_PROFILE_IMAGE);
+              }}
             />
           </AspectRatio>
 
@@ -115,28 +149,28 @@ const ProfileCard = ({
             borderWidth={1}
             borderColor={borderColor}
             bg={contentBgColor}>
-            <HStack space={3} alignItems="center">
+            <HStack space={2} alignItems="center">
               <Icon as={Ionicons} name="id-card" size="sm" color={iconColor} />
               <Text fontSize="md" fontWeight="500" color={textColor}>
                 TC: {tcNumber}
               </Text>
             </HStack>
 
-            <HStack space={3} alignItems="center">
+            <HStack space={2} alignItems="center">
               <Icon as={Ionicons} name="call" size="sm" color={iconColor} />
               <Text fontSize="md" fontWeight="500" color={textColor}>
                 Telefon: {phoneNumber}
               </Text>
             </HStack>
 
-            <HStack space={1} alignItems="center">
+            <HStack space={2} alignItems="center">
               <Icon as={Ionicons} name="water" size="sm" color={iconColor} />
               <Text fontSize="md" fontWeight="500" color={textColor}>
                 Kan Grubu: {bloodType}
               </Text>
             </HStack>
 
-            <HStack space={3} alignItems="center">
+            <HStack space={2} alignItems="center">
               <Icon
                 as={Ionicons}
                 name="alert-circle"
