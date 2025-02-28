@@ -61,7 +61,6 @@ const useAxiosWithToken = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        url: endpoint,
         data: body,
         validateStatus: status => status >= 200 && status < 500,
       };
