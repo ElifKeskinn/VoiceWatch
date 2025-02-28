@@ -32,7 +32,7 @@ const EditProfileModal = ({
         surname: userData.surname,
         age: userData.age,
         bloodGroup: userData.bloodGroup,
-        profilePic: userData.profilePic,
+        profilePic: userData.profilePic || '',
       };
 
       await updateProfileMutation.mutateAsync(updateData);

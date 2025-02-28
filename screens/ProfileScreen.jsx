@@ -69,9 +69,13 @@ const ProfileScreen = () => {
   );
   const secondaryTextColor = useColorModeValue('#666666', '#B0B0B0');
 
-  const handleUserUpdate = () => {
-    setUser(editUser);
-    setIsEditModalOpen(false);
+  const handleUserUpdate = async () => {
+    try {
+      await updateProfileMutation.mutateAsync(editUser);
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
   };
 
   const handleAddContact = () => {
@@ -91,11 +95,17 @@ const ProfileScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.5,
+      base64: true, // Base64 string almak için
     });
 
     if (!result.canceled) {
-      setEditUser({...editUser, profileImage: result.assets[0].uri});
+      // Base64 formatında profil fotoğrafını kaydet
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setEditUser(prev => ({
+        ...prev,
+        profilePic: base64Image,
+      }));
     }
   };
 
@@ -259,10 +269,6 @@ const ProfileScreen = () => {
                 lastName={userInfo.surname}
                 tcNumber={userInfo.tcKimlik}
                 age={userInfo.age}
-                phoneNumber={userInfo.phoneNumber}
-                bloodType={userInfo.bloodGroup}
-                profileImage={userInfo.profilePic}
-                sensitivity={userInfo.sensitivity?.toString()}
                 onEdit={handleEditProfile}
               />
               <EmergencyContactSection />

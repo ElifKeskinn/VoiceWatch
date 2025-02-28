@@ -43,9 +43,10 @@ const ProfileCard = ({
         ?.label || 'Orta'
     );
   };
-  const imageSource = profileImage
-    ? {uri: profileImage}
-    : require('../../assets/noprofile.png');
+  const imageSource =
+    profileImage && profileImage !== ''
+      ? {uri: profileImage}
+      : require('../../assets/noprofile.png');
 
   return (
     <Box alignItems="center" p="4" width="100%">
@@ -68,6 +69,8 @@ const ProfileCard = ({
               borderRadius="full"
               borderWidth={2}
               borderColor="rgba(255,69,0,0.2)"
+              defaultSource={require('../../assets/noprofile.png')} // Yükleme başarısız olursa
+              fallbackSource={require('../../assets/noprofile.png')} // URI geçersizse
             />
           </AspectRatio>
 
