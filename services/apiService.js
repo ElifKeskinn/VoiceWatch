@@ -57,20 +57,40 @@ const useAxiosWithToken = () => {
     try {
       setIsLoading(true);
 
+      // Endpoint kontrolü
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+
       const config = {
         method,
-        url: endpoint,
-        data: body instanceof FormData ? body : body,
+        url: cleanEndpoint,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       };
 
-      // FormData için Content-Type'ı elle ayarlamaya gerek yok
-      if (body instanceof FormData) {
-        config.headers = {'Content-Type': 'multipart/form-data'};
+      // Body varsa ekle
+      if (body) {
+        config.data = body;
+        
+        // Veriyi logla (profilePic hariç)
+        console.log('API isteği:', {
+          method,
+          endpoint: cleanEndpoint,
+          body: {
+            ...body,
+            profilePic: body.profilePic ? 'base64 veri (gizlendi)' : undefined
+          }
+        });
       }
 
       const response = await axiosInstance(config);
-      console.log('HTTP Durum Kodu:', response.status);
-      console.log('API Yanıtı:', response.data);
+      
+      console.log('API yanıtı:', {
+        status: response.status,
+        url: response.config.url,
+        data: response.data ? 'Veri alındı' : 'Veri yok'
+      });
 
       setData(response.data);
       return response.data;

@@ -22,7 +22,7 @@ const AppNavigator = () => {
   );
 
   return (
-    <Stack.Navigator initialRouteName="SignUp">
+    <Stack.Navigator initialRouteName="Main">
       <Stack.Screen
         name="Splash"
         component={SplashScreen}

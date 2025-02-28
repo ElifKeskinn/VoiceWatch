@@ -13,6 +13,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
+import {useChangePassword} from '../../services/mutations/authRequest';
 
 const PasswordChangeScreen = ({navigation}) => {
   const [formData, setFormData] = useState({
@@ -25,10 +26,14 @@ const PasswordChangeScreen = ({navigation}) => {
     new: false,
   });
   const toast = useToast();
+  const changePasswordMutation = useChangePassword();
 
   // Karanlık mod renkleri
   const bgColor = useColorModeValue('#FFFAF0', '#1A1A1A');
-  const boxBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
+  const boxBgColor = useColorModeValue(
+    'rgba(255,69,0,0.1)',
+    'rgba(255,99,71,0.2)',
+  );
   const textColor = useColorModeValue('#FF4500', '#FF6347');
   const labelColor = useColorModeValue('#000000', '#FFFFFF');
   const inputBgColor = useColorModeValue('transparent', '#2D2D2D');
@@ -53,32 +58,32 @@ const PasswordChangeScreen = ({navigation}) => {
     } else if (!/(?=.*[A-Z])/.test(formData.newPassword)) {
       newErrors.newPassword = 'Şifre en az bir büyük harf içermeli';
     } else if (!/(?=.*[!@#$%^&*])/.test(formData.newPassword)) {
-      newErrors.newPassword = 'Şifre en az bir özel karakter içermeli (!@#$%^&*)';
+      newErrors.newPassword =
+        'Şifre en az bir özel karakter içermeli (!@#$%^&*)';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      if (formData.oldPassword === '123ABCD!') {
-        toast.show({
-          title: 'Başarılı',
-          description: 'Şifreniz başarıyla değiştirildi',
-          status: 'success',
+      try {
+        await changePasswordMutation.mutateAsync({
+          oldPassword: formData.oldPassword,
+          newPassword: formData.newPassword,
         });
         navigation.goBack();
-      } else {
+      } catch (error) {
         setErrors({
-          oldPassword: 'Mevcut şifre yanlış',
+          oldPassword: error.message,
         });
       }
     }
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: bgColor }]}>
+    <ScrollView style={[styles.container, {backgroundColor: bgColor}]}>
       <Box p={4}>
         <VStack space={4}>
           <Box bg={boxBgColor} p={4} rounded="xl" mb={4}>
@@ -92,7 +97,7 @@ const PasswordChangeScreen = ({navigation}) => {
           </Box>
 
           <FormControl isInvalid={!!errors.oldPassword}>
-            <FormControl.Label _text={{ color: labelColor }}>
+            <FormControl.Label _text={{color: labelColor}}>
               Mevcut Şifre
             </FormControl.Label>
             <Input
@@ -125,13 +130,14 @@ const PasswordChangeScreen = ({navigation}) => {
                 />
               }
             />
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}>
               {errors.oldPassword}
             </FormControl.ErrorMessage>
           </FormControl>
 
           <FormControl isInvalid={!!errors.newPassword}>
-            <FormControl.Label _text={{ color: labelColor }}>
+            <FormControl.Label _text={{color: labelColor}}>
               Yeni Şifre
             </FormControl.Label>
             <Input
@@ -164,7 +170,8 @@ const PasswordChangeScreen = ({navigation}) => {
                 />
               }
             />
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}>
               {errors.newPassword}
             </FormControl.ErrorMessage>
           </FormControl>

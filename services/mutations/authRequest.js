@@ -86,9 +86,11 @@ export const useDeleteAccount = () => {
 
   return useMutation({
     mutationKey: ['deleteAccount'],
-    mutationFn: async (password) => {
+    mutationFn: async password => {
       try {
-        const response = await execute('DELETE', 'user/delete-account', { password });
+        const response = await execute('DELETE', 'user/delete-account', {
+          password,
+        });
         return response;
       } catch (error) {
         if (error.response?.status === 401) {
@@ -109,6 +111,42 @@ export const useDeleteAccount = () => {
         type: 'success',
         text1: 'Hesap Silindi',
         text2: 'Hesabınız başarıyla silindi',
+      });
+    },
+  });
+};
+
+export const useChangePassword = () => {
+  const {execute} = useAxiosWithToken();
+
+  return useMutation({
+    mutationKey: ['changePassword'],
+    mutationFn: async ({oldPassword, newPassword}) => {
+      try {
+        const response = await execute('POST', 'user/change-password', {
+          oldPassword,
+          newPassword,
+        });
+        return response;
+      } catch (error) {
+        if (error.response?.status === 401) {
+          throw new Error('Mevcut şifre yanlış');
+        }
+        throw error;
+      }
+    },
+    onError: error => {
+      Toast.show({
+        type: 'error',
+        text1: 'Şifre Değiştirilemedi',
+        text2: error.message || 'Bir hata oluştu',
+      });
+    },
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: 'Başarılı',
+        text2: 'Şifreniz başarıyla değiştirildi',
       });
     },
   });
