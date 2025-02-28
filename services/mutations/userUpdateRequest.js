@@ -7,34 +7,67 @@ export const useUpdateUserProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['updateProfile'],
     mutationFn: async userData => {
       try {
-        // Resim için form data kullan
-        if (userData.profilePic && userData.profilePic.startsWith('file://')) {
-          const formData = new FormData();
-          formData.append('profilePic', {
-            uri: userData.profilePic,
-            type: 'image/jpeg',
-            name: 'profile.jpg',
-          });
-          formData.append('name', userData.name);
-          formData.append('surname', userData.surname);
-          formData.append('age', userData.age);
-          formData.append('bloodGroup', userData.bloodGroup);
-
-          return await execute('PATCH', 'user/me', formData);
+        // API'ye gönderilecek veriyi hazırla
+        const requestData = {
+          name: userData.name,
+          surname: userData.surname,
+          age: userData.age ? Number(userData.age) : undefined,
+          bloodGroup: userData.bloodGroup
+        };
+        
+        // Base64 resim kontrolü
+        if (userData.profilePic) {
+          // Eğer URI ise Base64'e çevir
+          if (userData.profilePic.startsWith('file:')) {
+            try {
+              const response = await fetch(userData.profilePic);
+              const blob = await response.blob();
+              
+              return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  // Base64 veriyi al ve prefix'i kaldır
+                  const base64data = reader.result.split(',')[1];
+                  requestData.profilePic = base64data; // Sadece base64 veriyi ekle
+                  
+                  console.log("Resim base64 formatına dönüştürüldü");
+                  
+                  // API isteğini gönder
+                  execute('PATCH', 'user/me', requestData)
+                    .then(resolve)
+                    .catch(reject);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+              });
+            } catch (error) {
+              console.error("Resim dönüştürme hatası:", error);
+              throw error;
+            }
+          } 
+          // Zaten base64 ise doğrudan ekle
+          else if (userData.profilePic.startsWith('data:image')) {
+            // Prefix'i kaldır
+            const base64data = userData.profilePic.split(',')[1];
+            requestData.profilePic = base64data;
+          }
         }
 
-        // Normal güncelleme
-        return await execute('PATCH', 'user/me', userData);
+        // Normal güncelleme isteği yap
+        console.log("Profil güncelleniyor:", {
+          ...requestData, 
+          hasProfilePic: !!requestData.profilePic
+        });
+        
+        return await execute('PATCH', 'user/me', requestData);
       } catch (error) {
-        console.error('Profile update error:', error);
+        console.error('Profil güncelleme hatası:', error);
         throw error;
       }
     },
-    onSuccess: () => {
-      // Profil güncellendiğinde cache'i güncelle
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['userInfo']);
       Toast.show({
         type: 'success',
@@ -42,7 +75,7 @@ export const useUpdateUserProfile = () => {
         text2: 'Profil bilgileriniz güncellendi',
       });
     },
-    onError: error => {
+    onError: (error) => {
       Toast.show({
         type: 'error',
         text1: 'Hata',

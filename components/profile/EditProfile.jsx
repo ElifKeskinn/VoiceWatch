@@ -49,6 +49,21 @@ const EditProfileModal = ({
   const inputBgColor = useColorModeValue('rgba(255, 255, 255, 0.9)', '#1E1E1E');
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
 
+  // DEFAULT_PROFILE_IMAGE ekleyelim
+  const DEFAULT_PROFILE_IMAGE = require('../../assets/noprofile.png');
+
+  // Profil resmini kontrol etmek için
+  const getProfileImageSource = () => {
+    try {
+      if (userData?.profilePic && typeof userData.profilePic === 'string') {
+        return {uri: userData.profilePic};
+      }
+    } catch (error) {
+      console.error('Profil resmi hatası:', error);
+    }
+    return DEFAULT_PROFILE_IMAGE;
+  };
+
   return (
     <GeneralModal
       isOpen={isOpen}
@@ -66,16 +81,13 @@ const EditProfileModal = ({
       <VStack space={4}>
         <Box alignItems="center">
           <Image
-            source={
-              userData.profilePic
-                ? {uri: userData.profilePic}
-                : require('../../assets/noprofile.png')
-            }
+            source={getProfileImageSource()}
             alt="Profile"
             size="xl"
             borderRadius="full"
             borderWidth={2}
             borderColor={`${accentColor}20`}
+            fallbackSource={DEFAULT_PROFILE_IMAGE}
           />
           <Button
             leftIcon={<Icon as={Ionicons} name="camera" size="sm" />}

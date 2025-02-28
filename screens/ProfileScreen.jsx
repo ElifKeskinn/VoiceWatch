@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ScrollView, StyleSheet, Dimensions} from 'react-native';
 import {
   Center,
@@ -39,6 +39,21 @@ const ProfileScreen = () => {
       );
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfo) {
+      console.log('Kullanıcı bilgileri alındı:', {
+        name: userInfo.name,
+        profilePic: userInfo.profilePic ? 'Mevcut' : 'Yok',
+      });
+
+      if (userInfo.profileImage && !userInfo.profilePic) {
+        userInfo.profilePic = userInfo.profileImage;
+      }
+    }
+  }, [userInfo]);
+
+  console.log('User Info:', userInfo);
 
   const toast = useToast();
 
@@ -97,15 +112,42 @@ const ProfileScreen = () => {
   };
 
   const handlePickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'image', // 'MediaTypeOptions.Images' yerine sadece 'image' kullanıyoruz
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5, // Kaliteyi düşürerek boyutu azalt
+        base64: true, // Base64 formatında da alalım
+      });
 
-    if (!result.canceled) {
-      setEditUser({...editUser, profileImage: result.assets[0].uri});
+      if (!result.canceled && result.assets && result.assets[0]) {
+        const selectedImage = result.assets[0];
+        console.log('Resim seçildi:', {
+          width: selectedImage.width,
+          height: selectedImage.height,
+          hasBase64: !!selectedImage.base64,
+        });
+
+        if (selectedImage.base64) {
+          // Base64 formatında ekle
+          const base64Image = `data:image/jpeg;base64,${selectedImage.base64}`;
+          setEditUser(prev => ({
+            ...prev,
+            profilePic: base64Image,
+          }));
+          console.log('Profil resmi base64 olarak ayarlandı');
+        } else {
+          // URI formatında ekle
+          setEditUser(prev => ({
+            ...prev,
+            profilePic: selectedImage.uri,
+          }));
+          console.log('Profil resmi URI olarak ayarlandı');
+        }
+      }
+    } catch (error) {
+      console.error('Resim seçme hatası:', error);
     }
   };
 
@@ -214,14 +256,14 @@ const ProfileScreen = () => {
         ) : userInfo ? (
           <>
             <ProfileCard
-              firstName={userInfo.name}
-              lastName={userInfo.surname}
-              tcNumber={userInfo.tcKimlik}
-              age={userInfo.age}
-              phoneNumber={userInfo.phoneNumber}
-              bloodType={userInfo.bloodGroup}
-              profileImage={userInfo.profilePic}
-              sensitivity={userInfo.sensitivity?.toString()}
+              firstName={userInfo.name || ''}
+              lastName={userInfo.surname || ''}
+              tcNumber={userInfo.tcKimlik || ''}
+              age={userInfo.age || ''}
+              phoneNumber={userInfo.phoneNumber || ''}
+              bloodType={userInfo.bloodGroup || ''}
+              profileImage={userInfo.profilePic || null}
+              sensitivity={userInfo.sensitivity?.toString() || ''}
               onEdit={handleEditProfile}
             />
             <EmergencyContactSection />
