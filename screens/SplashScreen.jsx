@@ -32,7 +32,7 @@ const SplashScreen = () => {
     return (
         <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
             <Animated.Image
-                source={require('../assets/Takehiro_Kanegi[1].png')} // Adjust the path as necessary
+                source={require('../assets/splash.png')} // Adjust the path as necessary
                 style={[styles.logo, { transform: [{ scale: scaleAnim }] }]} // Apply scale animation
                 resizeMode="contain"
             />
