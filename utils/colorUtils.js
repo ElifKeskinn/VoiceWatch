@@ -1,32 +1,26 @@
-import {Platform} from 'react-native';
+import tinycolor from 'tinycolor2';
 
-export const normalizeColor = async (color, opacity = 1) => {
-  if (color == null) return;
+/**
+ * Normalize color input to an RGBA string, applying optional opacity multiplier.
+ * Compatible with both web and mobile (Hermes-safe).
+ *
+ * @param {string} color - Any valid CSS color
+ * @param {number} opacity - Opacity multiplier (0 to 1)
+ * @returns {string|null} RGBA color string or null if invalid
+ */
+export const normalizeColor = (color, opacity = 1) => {
+  if (!color) return null;
 
-  if (typeof color === 'string' && isWebColor(color)) {
-    return color;
+  const parsed = tinycolor(color);
+
+  if (!parsed.isValid()) {
+    console.warn('Invalid color input:', color);
+    return null;
   }
 
-  if (Platform.OS === 'web') {
-    try {
-      const ConvertNumberIntoHex = (await import('normalize-css-color'))
-        .default;
-      const colorInt = processColor(color, ConvertNumberIntoHex);
-      if (colorInt != null) {
-        const r = (colorInt >> 16) & 255;
-        const g = (colorInt >> 8) & 255;
-        const b = colorInt & 255;
-        const a = ((colorInt >> 24) & 255) / 255;
-        const alpha = (a * opacity).toFixed(2);
-        return `rgba(${r},${g},${b},${alpha})`;
-      }
-    } catch (error) {
-      console.warn('Color normalization failed:', error);
-      return color;
-    }
-  }
-
-  return color;
+  const { r, g, b, a } = parsed.toRgb();
+  const finalAlpha = Math.min(1, Math.max(0, a * opacity));
+  return `rgba(${r},${g},${b},${finalAlpha.toFixed(2)})`;
 };
 
 const isWebColor = color => {
@@ -36,11 +30,4 @@ const isWebColor = color => {
     color === 'inherit' ||
     color.indexOf('var(') === 0
   );
-};
-
-const processColor = (color, converter) => {
-  if (!color || !converter) return color;
-  const int32Color = converter(color);
-  if (!int32Color) return undefined;
-  return ((int32Color << 24) | (int32Color >>> 8)) >>> 0;
 };
