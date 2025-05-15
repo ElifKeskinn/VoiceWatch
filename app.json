@@ -4,7 +4,7 @@
     "slug": "voicewatchmobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/splash.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -19,12 +19,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#FFFFF1"
       }
     },
     "web": {
-      "icon": "./assets/icon.png"
+      "icon": "./assets/splash.png"
     }
   }
 }
