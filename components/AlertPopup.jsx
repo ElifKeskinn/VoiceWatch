@@ -5,6 +5,7 @@ import { Box, VStack, HStack, Icon, useColorModeValue } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { styles } from '../styles/AlertPopup.styles';
+import alertSound from '../assets/alert.mp3';
 
 const { width } = Dimensions.get('window');
 
@@ -74,17 +75,15 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   }, [visible, onTimeout]);
 
   // Ses yükleme fonksiyonu
-  const loadSound = async () => {
+ const loadSound = async () => {
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        require('../assets/alert.mp3'),
-        { shouldPlay: false }
-      );
+      const { sound } = await Audio.Sound.createAsync(alertSound, { shouldPlay: false });
       soundRef.current = sound;
     } catch (error) {
       console.log('Ses yüklenirken hata:', error);
     }
   };
+
 
   // Component mount olduğunda sesi yükle
   useEffect(() => {
