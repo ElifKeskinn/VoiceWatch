@@ -5,7 +5,6 @@ import {
   Box,
   VStack,
   Text,
-  Input,
   Icon,
   useToast,
   FormControl,
@@ -18,6 +17,7 @@ import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import {useDeleteAccount} from '../../services/requests/authRequest';
+import { TextInput } from 'react-native';
 
 const DeleteAccountScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
@@ -91,7 +91,7 @@ const DeleteAccountScreen = ({navigation}) => {
             <FormControl.Label _text={{color: warningTextColor}}>
               Şifrenizi Girin
             </FormControl.Label>
-            <Input
+            <TextInput
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChangeText={setPassword}

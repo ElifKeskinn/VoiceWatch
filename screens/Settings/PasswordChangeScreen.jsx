@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, TextInput} from 'react-native';
 import {
   Box,
   VStack,
   Text,
-  Input,
   Icon,
   useToast,
   FormControl,
@@ -107,7 +106,7 @@ const PasswordChangeScreen = ({navigation}) => {
             <FormControl.Label _text={{color: labelColor}}>
               Mevcut Şifre
             </FormControl.Label>
-            <Input
+            <TextInput
               type={showPasswords.old ? 'text' : 'password'}
               value={formData.oldPassword}
               onChangeText={value =>
@@ -147,7 +146,7 @@ const PasswordChangeScreen = ({navigation}) => {
             <FormControl.Label _text={{color: labelColor}}>
               Yeni Şifre
             </FormControl.Label>
-            <Input
+            <TextInput
               type={showPasswords.new ? 'text' : 'password'}
               value={formData.newPassword}
               onChangeText={value =>

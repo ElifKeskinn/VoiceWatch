@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react'; 
 import {NativeBaseProvider, useColorModeValue, Box} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -10,6 +10,14 @@ import PasswordChangeScreen from './screens/Settings/PasswordChangeScreen';
 import DeleteAccountScreen from './screens/Settings/DeleteAccountScreen';
 import Toast from 'react-native-toast-message';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import * as Notifications from 'expo-notifications';
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,   // 🔔 ekranda göster
+    shouldPlaySound: true,   // 🔊 ses çıkar
+    shouldSetBadge: false,
+  }),
+});
 
 const Stack = createStackNavigator();
 
@@ -81,13 +89,22 @@ const AppNavigator = () => {
 const queryClient = new QueryClient();
 
 const App = () => {
+  useEffect(() => {
+    const getPermissions = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+        await Notifications.requestPermissionsAsync();
+      }
+    };
+    getPermissions();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <NativeBaseProvider>
         <NavigationContainer>
           <AppNavigator />
           <Box position="absolute" width="100%">
-            <Toast />
+  <Toast />
           </Box>
         </NavigationContainer>
       </NativeBaseProvider>
