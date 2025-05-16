@@ -15,6 +15,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
+import noProfileImg from '../../assets/noprofile.png';
 
 const ProfileCard = ({
   firstName,
@@ -45,7 +46,7 @@ const ProfileCard = ({
   };
   const imageSource = profileImage
     ? {uri: profileImage}
-    : require('../../assets/noprofile.png');
+    : noProfileImg
 
   return (
     <Box alignItems="center" p="4" width="100%">

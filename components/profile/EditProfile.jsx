@@ -14,6 +14,7 @@ import {Ionicons} from '@expo/vector-icons';
 import GeneralModal from '../common/GeneralModal';
 import {useColorModeValue} from 'native-base';
 import {useUpdateUserProfile} from '../../services/requests/userUpdateRequest';
+import noProfileImg from '../../assets/noprofile.png';
 
 const EditProfileModal = ({
   isOpen,
@@ -69,7 +70,7 @@ const EditProfileModal = ({
             source={
               userData.profilePic
                 ? {uri: userData.profilePic}
-                : require('../../assets/noprofile.png')
+                : noProfileImg
             }
             alt="Profile"
             size="xl"

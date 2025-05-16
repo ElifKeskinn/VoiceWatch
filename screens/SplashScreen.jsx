@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import splashImage from '../assets/splash.png';
 
 const SplashScreen = () => {
     const navigation = useNavigation();
@@ -32,7 +33,7 @@ const SplashScreen = () => {
     return (
         <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
             <Animated.Image
-                source={require('../assets/Takehiro_Kanegi[1].png')} // Adjust the path as necessary
+                source={splashImage} // Adjust the path as necessary
                 style={[styles.logo, { transform: [{ scale: scaleAnim }] }]} // Apply scale animation
                 resizeMode="contain"
             />

@@ -1,8 +1,7 @@
 // screens/SignInScreen.js
 import React, {useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import CheckBox from '@react-native-community/checkbox';
+import Icon from '@expo/vector-icons/FontAwesome';
 import {useColorModeValue} from 'native-base';
 import Logo from '../components/common/Logo';
 import {styles} from '../styles/SignIn.styles';

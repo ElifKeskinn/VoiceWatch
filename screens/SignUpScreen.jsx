@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from '@expo/vector-icons/FontAwesome';
 import CustomPicker from '../components/CustomPicker';
 import {useColorModeValue} from 'native-base';
 import {styles} from '../styles/SignUpScreen.styles';
