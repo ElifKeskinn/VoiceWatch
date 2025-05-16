@@ -1,9 +1,9 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import useAxiosWithToken from '../apiService';
+import useFetchWithToken from '../apiService';
 
 export const useUpdateUserProfile = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -12,6 +12,7 @@ import {
   useColorModeValue,
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import Button from '../../components/common/Button';
 import {useChangePassword} from '../../services/requests/authRequest';
 
@@ -83,7 +84,13 @@ const PasswordChangeScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={[styles.container, {backgroundColor: bgColor}]}>
+     <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 }}
+  >
+    <ScrollView
+      style={[styles.container, {backgroundColor: bgColor}]}
+      keyboardShouldPersistTaps="handled">
       <Box p={4}>
         <VStack space={4}>
           <Box bg={boxBgColor} p={4} rounded="xl" mb={4}>
@@ -186,6 +193,7 @@ const PasswordChangeScreen = ({navigation}) => {
         </VStack>
       </Box>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -1,10 +1,10 @@
 import {useMutation} from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import useAxiosWithToken from '../apiService';
+import useFetchWithToken from '../apiService';
 
 export const useSignup = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useMutation({
     mutationKey: ['signup'],
@@ -39,7 +39,7 @@ export const useSignup = () => {
 };
 
 export const useSignin = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useMutation({
     mutationKey: ['signin'],
@@ -82,7 +82,7 @@ export const useSignin = () => {
 };
 
 export const useDeleteAccount = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useMutation({
     mutationKey: ['deleteAccount'],
@@ -117,7 +117,7 @@ export const useDeleteAccount = () => {
 };
 
 export const useChangePassword = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useMutation({
     mutationKey: ['changePassword'],

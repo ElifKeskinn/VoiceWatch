@@ -1,8 +1,8 @@
 import {useQuery} from '@tanstack/react-query';
-import useAxiosWithToken from '../apiService';
+import useFetchWithToken from '../apiService';
 
 export const useGetUserInfo = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useQuery({
     queryKey: ['userInfo'],

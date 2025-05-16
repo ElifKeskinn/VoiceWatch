@@ -1,9 +1,9 @@
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import useAxiosWithToken from '../apiService';
+import useFetchWithToken from '../apiService';
 import Toast from 'react-native-toast-message';
 
 export const useGetContacts = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
 
   return useQuery({
     queryKey: ['contacts'],
@@ -26,7 +26,7 @@ export const useGetContacts = () => {
 
 // Kontak ekleme
 export const useAddContact = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -53,7 +53,7 @@ export const useAddContact = () => {
 
 // Kontak güncelleme
 export const useUpdateContact = () => {
-  const {execute} = useAxiosWithToken();
+  const {execute} = useFetchWithToken();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -98,7 +98,7 @@ export const useUpdateContact = () => {
 };
 
 export const useDeleteContact = () => {
-  const { execute } = useAxiosWithToken();
+  const { execute } = useFetchWithToken();
   const queryClient = useQueryClient();
 
   return useMutation({
