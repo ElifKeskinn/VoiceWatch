@@ -16,6 +16,7 @@ import {
 } from 'native-base';
 import {Ionicons} from '@expo/vector-icons';
 import Button from '../../components/common/Button';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import {useDeleteAccount} from '../../services/requests/authRequest';
 
 const DeleteAccountScreen = ({navigation}) => {
@@ -67,7 +68,13 @@ const DeleteAccountScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={[styles.container, {backgroundColor: bgColor}]}>
+ <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 }}
+  >
+    <ScrollView
+      style={[styles.container, { backgroundColor: bgColor }]}
+      keyboardShouldPersistTaps="handled">
       <Box p={4}>
         <VStack space={4}>
           <Box bg={boxBgColor} p={4} rounded="xl" mb={4}>
@@ -165,6 +172,7 @@ const DeleteAccountScreen = ({navigation}) => {
         </AlertDialog>
       </Box>
     </ScrollView>
+  </KeyboardAvoidingView>
   );
 };
 
