@@ -30,7 +30,7 @@ const AppNavigator = () => {
   );
 
   return (
-    <Stack.Navigator initialRouteName="Splash">
+    <Stack.Navigator initialRouteName="Main">
       <Stack.Screen
         name="Splash"
         component={SplashScreen}

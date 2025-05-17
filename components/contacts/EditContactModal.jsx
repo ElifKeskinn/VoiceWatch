@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {
   Modal,
   FormControl,
-  Input,
   Button,
   VStack,
   HStack,
   useColorModeValue,
+  Text,
 } from 'native-base';
+import {TextInput} from 'react-native';
 
 const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
   const [formData, setFormData] = useState({
@@ -16,7 +17,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
   });
   const [phoneError, setPhoneError] = useState('');
 
-  // Format phone number
   const formatPhoneNumber = number => {
     const cleaned = number.replace(/\D/g, '');
     if (cleaned.length === 0) return '';
@@ -34,7 +34,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     return formatted;
   };
 
-  // Handle phone number change
   const handlePhoneChange = value => {
     const formattedNumber = formatPhoneNumber(value);
     setFormData(prev => ({
@@ -43,7 +42,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     }));
     setPhoneError('');
 
-    // Validate phone number
     if (formattedNumber && !formattedNumber.startsWith('+90 5')) {
       setPhoneError('Telefon numarası +90 5 ile başlamalıdır');
     } else if (formattedNumber && formattedNumber.length < 17) {
@@ -51,7 +49,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     }
   };
 
-  // Contact data değiştiğinde form verilerini güncelle
   useEffect(() => {
     if (contact) {
       setFormData({
@@ -66,7 +63,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
       return;
     }
 
-    // Final validation before submit
     if (
       !formData.contactNumber.startsWith('+90 5') ||
       formData.contactNumber.length < 17
@@ -85,7 +81,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     }));
   };
 
-  // Form datayı resetle
   const handleClose = () => {
     setFormData({
       contactInfo: '',
@@ -94,7 +89,6 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     onClose();
   };
 
-  // Theme colors
   const modalBg = useColorModeValue('#faf1e6', '#1E1E1E');
   const inputBg = useColorModeValue('#FFF8F0', '#2D2D2D');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
@@ -104,6 +98,17 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
     'rgba(255,69,0,0.15)',
     'rgba(255,255,255,0.1)',
   );
+
+  const inputStyle = {
+    height: 30,
+    fontSize: 16,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: inputBg,
+    borderColor: borderColor,
+    color: textColor,
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
@@ -117,48 +122,40 @@ const EditContactModal = ({isOpen, onClose, onSubmit, contact, isLoading}) => {
           Kontağı Düzenle
         </Modal.Header>
         <Modal.Body>
-          <VStack space={4}>
+          <VStack space={4} width={'95%'}>
             <FormControl isRequired>
               <FormControl.Label _text={{color: labelColor}}>
                 İsim
               </FormControl.Label>
-              <Input
+              <TextInput
                 value={formData.contactInfo}
                 onChangeText={value => handleChange('contactInfo', value)}
                 placeholder="Kontak ismini giriniz"
-                fontSize="md"
-                bg={inputBg}
-                color={textColor}
-                borderColor={borderColor}
-                _focus={{
-                  borderColor: accentColor,
-                  backgroundColor: inputBg,
-                }}
+                placeholderTextColor={labelColor}
+                style={inputStyle}
               />
             </FormControl>
+
             <FormControl isRequired isInvalid={!!phoneError}>
               <FormControl.Label _text={{color: labelColor}}>
                 Telefon
               </FormControl.Label>
-              <Input
+              <TextInput
                 value={formData.contactNumber}
                 onChangeText={handlePhoneChange}
                 placeholder="+90 5XX XXX XX XX"
                 keyboardType="phone-pad"
-                fontSize="md"
                 maxLength={17}
-                bg={inputBg}
-                color={textColor}
-                borderColor={phoneError ? 'red.500' : borderColor}
-                _focus={{
-                  borderColor: phoneError ? 'red.500' : accentColor,
-                  backgroundColor: inputBg,
-                }}
+                placeholderTextColor={labelColor}
+                style={[
+                  inputStyle,
+                  phoneError && {borderColor: 'red'},
+                ]}
               />
               {phoneError && (
-                <FormControl.ErrorMessage>
+                <Text color="red.500" fontSize="xs" mt={1}>
                   {phoneError}
-                </FormControl.ErrorMessage>
+                </Text>
               )}
             </FormControl>
           </VStack>
