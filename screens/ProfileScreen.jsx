@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import {ScrollView, StyleSheet, Dimensions} from 'react-native';
 import {
   Center,
-  Input,
-  useToast,
   HStack,
   VStack,
   Text,
@@ -47,6 +45,7 @@ const ProfileScreen = () => {
   const [editUser, setEditUser] = useState(null);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
+  const isDarkMode = useColorModeValue(false, true);
 
   React.useEffect(() => {
     if (userInfo) {
@@ -277,7 +276,7 @@ const ProfileScreen = () => {
               userData={editUser}
               onUserDataChange={handleUserDataChange}
               onPickImage={handlePickImage}
-              darkMode={useColorModeValue(false, true)}
+              darkMode={isDarkMode}
             />
           )}
         </Center>

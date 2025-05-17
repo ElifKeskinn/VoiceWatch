@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import {VStack, Input, Icon, Text} from 'native-base';
+import {VStack, Icon, Text, useColorModeValue} from 'native-base';
+import {TextInput, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import GeneralModal from '../common/GeneralModal';
-import {useColorModeValue} from 'native-base';
-import Toast from 'react-native-toast-message';
 
 const AddContactModal = ({isOpen, onClose, onSubmit, isLoading}) => {
   const [contactInfo, setContactInfo] = useState('');
@@ -81,6 +80,17 @@ const AddContactModal = ({isOpen, onClose, onSubmit, isLoading}) => {
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
   const errorColor = useColorModeValue('#FF0000', '#FF6666');
 
+  const inputStyle = (hasError) => ({
+    height: 30,
+    borderColor: hasError ? errorColor : accentColor,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    color: textColor,
+    backgroundColor: inputBgColor,
+    flex: 1,
+  });
+
   return (
     <GeneralModal
       isOpen={isOpen}
@@ -97,30 +107,26 @@ const AddContactModal = ({isOpen, onClose, onSubmit, isLoading}) => {
       }}>
       <VStack space={4}>
         <VStack>
-          <Input
-            placeholder="İsim"
-            value={contactInfo}
-            onChangeText={text => {
-              setContactInfo(text);
-              setErrors(prev => ({...prev, contactInfo: ''}));
-            }}
-            borderColor={errors.contactInfo ? errorColor : accentColor}
-            bg={inputBgColor}
-            color={textColor}
-            _focus={{
-              borderColor: errors.contactInfo ? errorColor : accentColor,
-              bg: inputBgColor,
-            }}
-            leftElement={
-              <Icon
-                as={Ionicons}
-                name="person-outline"
-                size="sm"
-                color={errors.contactInfo ? errorColor : accentColor}
-                ml={2}
-              />
-            }
-          />
+          <View style={{flexDirection: 'row', alignItems: 'center',width: '95%'}}>
+            <Icon
+              as={Ionicons}
+              name="person-outline"
+              size="sm"
+              color={errors.contactInfo ? errorColor : accentColor}
+              ml={2}
+              mr={1}
+            />
+            <TextInput
+              placeholder="İsim"
+              placeholderTextColor={textColor}
+              value={contactInfo}
+              onChangeText={text => {
+                setContactInfo(text);
+                setErrors(prev => ({...prev, contactInfo: ''}));
+              }}
+              style={inputStyle(errors.contactInfo)}
+            />
+          </View>
           {errors.contactInfo && (
             <Text color={errorColor} fontSize="xs" mt={1}>
               {errors.contactInfo}
@@ -129,29 +135,25 @@ const AddContactModal = ({isOpen, onClose, onSubmit, isLoading}) => {
         </VStack>
 
         <VStack>
-          <Input
-            placeholder="Telefon Numarası (+90 555 555 55 55)"
-            value={contactNumber}
-            onChangeText={handlePhoneNumberChange}
-            keyboardType="phone-pad"
-            maxLength={17}
-            borderColor={errors.contactNumber ? errorColor : accentColor}
-            bg={inputBgColor}
-            color={textColor}
-            _focus={{
-              borderColor: errors.contactNumber ? errorColor : accentColor,
-              bg: inputBgColor,
-            }}
-            leftElement={
-              <Icon
-                as={Ionicons}
-                name="call-outline"
-                size="sm"
-                color={errors.contactNumber ? errorColor : accentColor}
-                ml={2}
-              />
-            }
-          />
+          <View style={{flexDirection: 'row', alignItems: 'center',width: '95%'}}>
+            <Icon
+              as={Ionicons}
+              name="call-outline"
+              size="sm"
+              color={errors.contactNumber ? errorColor : accentColor}
+              ml={2}
+              mr={1}
+            />
+            <TextInput
+              placeholder="Telefon Numarası (+90 555 555 55 55)"
+              placeholderTextColor={textColor}
+              value={contactNumber}
+              onChangeText={handlePhoneNumberChange}
+              keyboardType="phone-pad"
+              maxLength={17}
+              style={inputStyle(errors.contactNumber)}
+            />
+          </View>
           {errors.contactNumber && (
             <Text color={errorColor} fontSize="xs" mt={1}>
               {errors.contactNumber}

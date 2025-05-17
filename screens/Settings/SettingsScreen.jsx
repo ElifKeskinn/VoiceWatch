@@ -1,7 +1,17 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {useColorMode, Text, VStack, Box, HStack, Icon, Pressable} from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
+import { Button } from 'native-base';
+import {
+  useColorMode,
+  Text,
+  VStack,
+  Box,
+  HStack,
+  Icon,
+  Pressable,
+} from 'native-base';
+import { sendNotification } from '../../utils/notify';
+import {Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
 import SensitivitySection from '../../components/settings/sections/SensitivitySection';
@@ -13,8 +23,10 @@ import LogoutModal from '../../components/common/LogoutModal';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
-  const { colorMode, toggleColorMode } = useColorMode();
-  const [sensitivity, setSensitivity] = useState(SENSITIVITY_LEVELS.MEDIUM.value);
+  const {colorMode, toggleColorMode} = useColorMode();
+  const [sensitivity, setSensitivity] = useState(
+    SENSITIVITY_LEVELS.MEDIUM.value,
+  );
   const [notifications, setNotifications] = useState({
     enabled: true,
     sound: true,
@@ -38,15 +50,15 @@ const SettingsScreen = () => {
     setShowLogoutModal(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SignIn' }],
+      routes: [{name: 'SignIn'}],
     });
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: bgColor }]}>
+    <ScrollView style={[styles.container, {backgroundColor: bgColor}]}>
       <VStack space={4} width="100%" p={4}>
-        <SensitivitySection 
-          value={sensitivity} 
+        <SensitivitySection
+          value={sensitivity}
           onChange={setSensitivity}
           darkMode={darkMode}
         />
@@ -55,8 +67,8 @@ const SettingsScreen = () => {
           onChange={setNotifications}
           darkMode={darkMode}
         />
-        <AppearanceSection 
-          darkMode={darkMode} 
+        <AppearanceSection
+          darkMode={darkMode}
           onToggle={handleDarkModeToggle}
         />
         <AccountSection
@@ -66,27 +78,21 @@ const SettingsScreen = () => {
         />
         <AboutSection darkMode={darkMode} />
 
-        <Pressable 
-          onPress={() => setShowLogoutModal(true)}
-          mb={4}
-          mt={2}
-        >
+        <Pressable onPress={() => setShowLogoutModal(true)} mb={4} mt={2}>
           <Box
             bg={darkMode ? 'rgba(255,99,71,0.1)' : 'transparent'}
             borderWidth={1}
             borderColor={darkMode ? '#FF6347' : '#FF4500'}
             rounded="xl"
-            p={4}
-          >
+            p={4}>
             <HStack space={4} alignItems="center">
               <Box
                 bg={darkMode ? 'rgba(255,99,71,0.2)' : 'rgba(255,69,0,0.1)'}
                 p={2}
-                rounded="lg"
-              >
-                <Icon 
+                rounded="lg">
+                <Icon
                   as={Ionicons}
-                  name="log-out" 
+                  name="log-out"
                   size="md"
                   color={darkMode ? '#FF6347' : '#FF4500'}
                 />
@@ -94,8 +100,7 @@ const SettingsScreen = () => {
               <Text
                 fontSize="md"
                 fontWeight="600"
-                color={darkMode ? '#FFFFFF' : '#000000'}
-              >
+                color={darkMode ? '#FFFFFF' : '#000000'}>
                 Çıkış Yap
               </Text>
             </HStack>
@@ -107,6 +112,17 @@ const SettingsScreen = () => {
           onClose={() => setShowLogoutModal(false)}
           onConfirm={handleLogout}
         />
+        <Button
+                onPress={() =>
+                  sendNotification(
+                    notifications, // SettingsScreen'deki state
+                    'Test Bildirimi',
+                    'Bu bir deneme bildirimidir 📣',
+                  )
+                }
+                mt={4}>
+                Test Bildirimi Gönder
+              </Button>
       </VStack>
     </ScrollView>
   );
@@ -115,7 +131,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30
+    paddingTop: 30,
   },
 });
 
