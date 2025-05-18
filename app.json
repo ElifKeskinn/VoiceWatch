@@ -16,6 +16,9 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Bu uygulama acil durumları algılamak için mikrofonu kullanır."
+      },
       "supportsTablet": true
     },
     "android": {

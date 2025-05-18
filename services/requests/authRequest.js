@@ -2,6 +2,7 @@ import {useMutation} from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useFetchWithToken from '../apiService';
+import { useRegisterDeviceToken } from '../../hooks/useRegisterDeviceToken';
 
 export const useSignup = () => {
   const {execute} = useFetchWithToken();
@@ -40,6 +41,7 @@ export const useSignup = () => {
 
 export const useSignin = () => {
   const {execute} = useFetchWithToken();
+  const { registerDeviceToken } = useRegisterDeviceToken();
 
   return useMutation({
     mutationKey: ['signin'],
@@ -71,12 +73,14 @@ export const useSignin = () => {
         text2: error.message || 'Giriş yapılırken bir hata oluştu',
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       Toast.show({
         type: 'success',
         text1: 'Hoş Geldiniz',
         text2: 'Başarıyla giriş yaptınız',
       });
+
+      await registerDeviceToken();
     },
   });
 };
