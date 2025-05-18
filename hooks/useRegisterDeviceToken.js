@@ -29,8 +29,11 @@ export const useRegisterDeviceToken = () => {
       return;
     }
 
-    const tokenData = await Notifications.getExpoPushTokenAsync();
+    // Uygulamayi canliya alinca bu satiri degistir cunku bu sadece expo go da calisir
 
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
 
     const deviceToken = tokenData.data;
     console.log('📱 Alınan deviceToken:', deviceToken);
