@@ -15,9 +15,26 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Uygulamanın konumunuzu kullanmasına izin verin.",
+          "locationAlwaysPermission": "Uygulamanın arka planda konumunuzu kullanmasına izin verin.",
+          "locationWhenInUsePermission": "Uygulamanın konumunuzu kullanmasına izin verin.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ],
     "ios": {
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Bu uygulama acil durumları algılamak için mikrofonu kullanır."
+        "NSMicrophoneUsageDescription": "Bu uygulama acil durumları algılamak için mikrofonu kullanır.",
+        "UIBackgroundModes": ["location", "fetch"],
+        "NSLocationWhenInUseUsageDescription": "Uygulamanın konumunuzu kullanmasına izin verin.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Uygulamanın konumunuzu kullanmasına izin verin.",
+        "NSLocationAlwaysUsageDescription": "Uygulamanın arka planda konumunuzu kullanmasına izin verin.",
+        "supportsTablet": true
       },
       "supportsTablet": true
     },
@@ -25,6 +42,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#FFFFF1"
+      },
+      "package": "com.voicewatchmobile",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+        }
       }
     },
     "web": {
