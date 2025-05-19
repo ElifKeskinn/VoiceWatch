@@ -11,7 +11,7 @@ import DeleteAccountScreen from './screens/Settings/DeleteAccountScreen';
 import Toast from 'react-native-toast-message';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
-import { requestLocationPermission, getCurrentLocation } from './services/locationService';
+import { requestLocationPermission, getCurrentLocation, startLocationTracking, stopLocationTracking } from './services/locationService';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -108,9 +108,18 @@ const App = () => {
           longitude: location.coords.longitude
         });
       }
+
+      // Periyodik konum takibini başlat
+      await startLocationTracking();
     };
 
     initializeApp();
+
+    // Cleanup function
+    return () => {
+      // Component unmount olduğunda konum takibini durdur
+      stopLocationTracking();
+    };
   }, []);
 
   return (
