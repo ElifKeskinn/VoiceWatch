@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring,
-  withRepeat,
-  withSequence,
-  withTiming,
-  withDelay,
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+    withRepeat,
+    withSequence,
+    withTiming,
+    withDelay,
 } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import AlertPopup from '../components/AlertPopup';
 import { useColorModeValue } from 'native-base';
 import Logo from '../components/common/Logo';
+import ManualAlertPopup from '../components/ManualAlertPopup';
 import { styles } from '../styles/Home.styles';
+import {
+    sendManualAlert,
+    sendBulkSms,
+} from '../services/requests/alertRequests';
+import { useGetContacts } from '../services/requests/contactRequests';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_LENGTH = width * 0.7;
@@ -27,10 +33,14 @@ const HomeScreen = () => {
     const ring1Scale = useSharedValue(1);
     const ring2Scale = useSharedValue(1);
     const ring3Scale = useSharedValue(1);
-    
+    const [showManualAlert, setShowManualAlert] = useState(true);
+
     // Alert timer'ı için useRef kullanıyoruz
     const alertTimer = React.useRef(null);
-
+    const { data: contacts, isLoading: loadingContacts } = useGetContacts();
+    const contactNumbers = Array.isArray(contacts)
+        ? contacts.map(c => c.phoneNumber)  // API’nize göre değiştirin
+        : [];
     // Dark mod renkleri
     const bgColor = useColorModeValue('#FFFAF0', '#121212');
     const textColor = useColorModeValue('#000000', '#E8E8E8');
@@ -40,6 +50,9 @@ const HomeScreen = () => {
     const descBorderColor = useColorModeValue('rgba(255,69,0,0.15)', 'rgba(255,255,255,0.1)');
     const iconBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.15)');
     const secondaryTextColor = useColorModeValue('#666666', '#B0B0B0');
+  useEffect(() => {
+    console.log('showManualAlert değişti:', showManualAlert);
+  }, [showManualAlert]);
 
     const animateRing = (ringScale, delay = 0, maxScale = 1.8) => {
         'worklet';
@@ -103,7 +116,7 @@ const HomeScreen = () => {
 
     useEffect(() => {
         let newAlertTimer;
-        
+
         if (isListening && !showAlert) {
             newAlertTimer = setTimeout(() => {
                 const alertTypes = ['silence', 'glass', 'fall', 'scream'];
@@ -138,44 +151,67 @@ const HomeScreen = () => {
         });
     }, []);
 
+    // --- MANUEL UYARI CALLBACK’LERİ ---
+    const onManualConfirm = async () => {
+        setShowManualAlert(false);
+
+        if (loadingContacts) {
+            return Alert.alert('Bekleyin', 'Kontaklar yükleniyor…');
+        }
+        if (!contactNumbers.length) {
+            return Alert.alert('Hata', 'Kontak bulunamadı');
+        }
+
+        try {
+            // 1) Alert kaydı
+            await sendManualAlert();
+            // 2) SMS
+            await sendBulkSms('Manuel acil durum bildirimi!', contactNumbers);
+            Alert.alert('Başarılı', 'SMS’ler gönderildi.');
+        } catch (err) {
+            Alert.alert('Hata', err.message);
+        }
+    };
+
+
     return (
-        <View style={[styles.container, {backgroundColor: bgColor}]}>
+        <View style={[styles.container, { backgroundColor: bgColor }]}>
             <View style={styles.headerContainer}>
                 <Logo size="lg" />
             </View>
-            
+
             <View style={styles.circleContainer}>
                 <Animated.View
                     style={[
                         styles.ring,
                         ring3Style,
-                        {borderColor: accentColor},
+                        { borderColor: accentColor },
                     ]}
                 />
                 <Animated.View
                     style={[
                         styles.ring,
                         ring2Style,
-                        {borderColor: accentColor},
+                        { borderColor: accentColor },
                     ]}
                 />
                 <Animated.View
                     style={[
                         styles.ring,
                         ring1Style,
-                        {borderColor: accentColor},
+                        { borderColor: accentColor },
                     ]}
                 />
-                
+
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                     <Animated.View
                         style={[
                             styles.button,
                             buttonStyle,
-                            {backgroundColor: buttonBgColor},
+                            { backgroundColor: buttonBgColor },
                         ]}>
-                        <MaterialIcons 
-                            name={isListening ? "mic-off" : "mic"} 
+                        <MaterialIcons
+                            name={isListening ? "mic-off" : "mic"}
                             size={56}
                             color="white"
                         />
@@ -191,28 +227,31 @@ const HomeScreen = () => {
                     backgroundColor: descBgColor,
                     borderColor: descBorderColor,
                 }]}>
-                    <View style={[styles.iconBackground, {backgroundColor: iconBgColor}]}>
-                        <MaterialIcons 
-                            name="security" 
-                            size={24} 
-                            color={accentColor} 
+                    <View style={[styles.iconBackground, { backgroundColor: iconBgColor }]}>
+                        <MaterialIcons
+                            name="security"
+                            size={24}
+                            color={accentColor}
                         />
                     </View>
-                    <Text style={[styles.descriptionText, {color: secondaryTextColor}]}>
+                    <Text style={[styles.descriptionText, { color: secondaryTextColor }]}>
                         Bu özellik, çevredeki sesleri algılar ve acil durumları hızla tespit eder. Mikrofon butonuna basarak sesli izlemeyi aktive edebilir, tehlikelere hızlıca tepki verebilirsiniz.
                     </Text>
                 </View>
             )}
 
-            <TouchableOpacity 
-                style={[styles.alertButton, {backgroundColor: buttonBgColor}]}
-                onPress={() => console.log("Bilinçli uyarı gönderildi!")}
-            >
-                <MaterialIcons 
-                    name="warning" 
-                    size={24} 
-                    color="white" 
-                    style={styles.alertButtonIcon} 
+            <TouchableOpacity
+                style={[styles.alertButton, { backgroundColor: buttonBgColor }]}
+                onPress={() => {
+                    console.log('Buton basıldı, showManualAlert önce:', showManualAlert);
+                    setShowManualAlert(true);
+                    console.log('Buton basıldı, showManualAlert sonra:', showManualAlert);
+                }}            >
+                <MaterialIcons
+                    name="warning"
+                    size={24}
+                    color="white"
+                    style={styles.alertButtonIcon}
                 />
                 <Text style={styles.alertButtonText}>Bilinçli Uyarı Gönder</Text>
             </TouchableOpacity>
@@ -223,6 +262,12 @@ const HomeScreen = () => {
                 onCancel={handleAlertCancel}
                 onConfirm={handleAlertConfirm}
                 onTimeout={handleAlertTimeout}
+            />
+            {/* Manuel Popup */}
+            <ManualAlertPopup
+                visible={showManualAlert}
+                onCancel={() => setShowManualAlert(false)}
+                onConfirm={onManualConfirm}
             />
         </View>
     );
