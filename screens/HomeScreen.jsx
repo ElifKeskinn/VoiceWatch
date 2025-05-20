@@ -33,7 +33,7 @@ const HomeScreen = () => {
     const ring1Scale = useSharedValue(1);
     const ring2Scale = useSharedValue(1);
     const ring3Scale = useSharedValue(1);
-    const [showManualAlert, setShowManualAlert] = useState(true);
+    const [showManualAlert, setShowManualAlert] = useState(false);
 
     // Alert timer'ı için useRef kullanıyoruz
     const alertTimer = React.useRef(null);

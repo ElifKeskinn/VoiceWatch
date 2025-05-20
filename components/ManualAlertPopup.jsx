@@ -9,36 +9,29 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-import { sendBulkSms } from '../services/requests/alertRequests';
+import { sendBulkSms } from '../services/requests/alertRequests';  // sadece SMS
 import { useGetContacts } from '../services/requests/contactRequests';
 
 const { width } = Dimensions.get('window');
 
 export default function ManualAlertPopup({ visible, onCancel }) {
-  // contacts içindeki doğru alan contactNumber
   const { data: contacts, isLoading } = useGetContacts();
-
+  const numbers = Array.isArray(contacts)
+    ? contacts.map(c => c.phoneNumber)
+    : [];
+  console.log('[ManualAlertPopup] mapped numbers:', numbers);
   const handleConfirm = async () => {
     onCancel();
 
     if (isLoading) {
       return Alert.alert('Bekleyin', 'Kontaklar yükleniyor…');
     }
-
-    // contactNumber alanını al, boşları at
-    const numbers = Array.isArray(contacts)
-      ? contacts
-          .map(c => c.contactNumber)
-          .filter(n => typeof n === 'string' && n.trim().length > 0)
-      : [];
-
-    console.log('[ManualAlertPopup] final numbers:', numbers);
-
     if (!numbers.length) {
       return Alert.alert('Hata', 'Gönderilecek kontak bulunamadı.');
     }
 
     try {
+      // Sadece SMS endpoint’ine POST
       console.log('[ManualAlertPopup] → sendBulkSms çağrılıyor', numbers);
       const smsRes = await sendBulkSms('Manuel acil durum bildirimi!', numbers);
       console.log('[ManualAlertPopup] ← sendBulkSms yanıt:', smsRes);
@@ -51,7 +44,6 @@ export default function ManualAlertPopup({ visible, onCancel }) {
   };
 
   if (!visible) return null;
-  
   return (
     <Modal
       animationType="fade"
