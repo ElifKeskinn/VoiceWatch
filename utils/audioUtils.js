@@ -18,17 +18,34 @@ export async function recordAudioBase64(durationMs = 2000) {
   });
 
   const recording = new Audio.Recording();
-  await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-  await recording.startAsync();
 
-  await new Promise(res => setTimeout(res, durationMs));
+  try {
+    await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+    await recording.startAsync();
 
-  await recording.stopAndUnloadAsync();
-  const uri = recording.getURI();
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
+    await new Promise(res => setTimeout(res, durationMs));
 
-  console.log('▶️ Base64 dönüştürüldü, uzunluk:', base64.length);
-  return { base64, uri };
+    await recording.stopAndUnloadAsync();
+
+    const uri = recording.getURI();
+    const base64 = await FileSystem.readAsStringAsync(uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    console.log('▶️ Base64 dönüştürüldü, uzunluk:', base64.length);
+    console.log('▶️ Kayıt tamamlandı, uri:', uri);
+
+    return { base64, uri };
+  } catch (err) {
+    console.error('❌ Kayıt hatası:', err.message);
+    throw err;
+  } finally {
+    // 🔧 Çok önemli: kayıt nesnesini boşalt!
+    try {
+      await recording.stopAndUnloadAsync(); // Eğer kayıt hâlâ devam ediyorsa
+    } catch (_) {}
+    try {
+      await recording.unloadAsync(); // Belleği boşalt
+    } catch (_) {}
+  }
 }
