@@ -1,3 +1,4 @@
+// ✅ audioUtils.js
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
@@ -22,9 +23,7 @@ export async function recordAudioBase64(durationMs = 2000) {
   try {
     await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
     await recording.startAsync();
-
     await new Promise(res => setTimeout(res, durationMs));
-
     await recording.stopAndUnloadAsync();
 
     const uri = recording.getURI();
@@ -40,12 +39,11 @@ export async function recordAudioBase64(durationMs = 2000) {
     console.error('❌ Kayıt hatası:', err.message);
     throw err;
   } finally {
-    // 🔧 Çok önemli: kayıt nesnesini boşalt!
     try {
-      await recording.stopAndUnloadAsync(); // Eğer kayıt hâlâ devam ediyorsa
+      await recording.stopAndUnloadAsync();
     } catch (_) {}
     try {
-      await recording.unloadAsync(); // Belleği boşalt
+      await recording.unloadAsync();
     } catch (_) {}
   }
 }

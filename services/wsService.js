@@ -1,3 +1,5 @@
+
+// ✅ wsService.js
 import { recordAudioBase64 } from '../utils/audioUtils';
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
@@ -18,8 +20,8 @@ export function connectWS({ token }) {
     return false;
   }
 
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    console.log('▶️ [WS Service] Zaten bağlantı açık');
+  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+    console.log('▶️ [WS Service] Bağlantı zaten kuruluyor veya açık');
     return true;
   }
 
@@ -31,6 +33,7 @@ export function connectWS({ token }) {
   socket.onopen = () => {
     console.log('▶️ [WS Service] WS bağlantısı açıldı');
     reconnectAttempts = 0;
+    stopSignal = false;
   };
 
   socket.onclose = event => {
@@ -68,6 +71,7 @@ export function onAIResult(callback) {
     try {
       const data = JSON.parse(msg.data);
       if (data.action === 'aiResult') {
+          console.log('🎯 AI sonucu geldi:', data);
         callback({ result: data.result, alertId: data.alertId });
 
         if (lastUri) {
@@ -87,6 +91,8 @@ export function onAIResult(callback) {
 }
 
 export async function startSendingAudio(token, intervalMs = 2000) {
+  stopSignal = false;
+
   if (isStreaming) return;
 
   if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -107,10 +113,11 @@ export async function startSendingAudio(token, intervalMs = 2000) {
   }
 
   isStreaming = true;
-  stopSignal = false;
 
   while (!stopSignal) {
     try {
+      if (stopSignal) break; // ✅ ekstra kontrol
+
       console.log('🎙️ Ses kaydı başlatılıyor...');
       const { base64, uri } = await recordAudioBase64(intervalMs);
       lastUri = uri;
@@ -125,7 +132,7 @@ export async function startSendingAudio(token, intervalMs = 2000) {
         JSON.stringify({
           action: 'aiIntegration',
           data: base64,
-        }),
+        })
       );
 
       console.log('📤 Ses verisi gönderildi');
