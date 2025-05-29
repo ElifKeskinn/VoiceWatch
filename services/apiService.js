@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
@@ -19,45 +19,45 @@ const useFetchWithToken = () => {
   const [error, setError] = useState(null);
 
   const execute = async (method, endpoint, body = null) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+    setIsLoading(true);
+    setError(null);
 
-      const token = await getToken();
-      const fullUrl = `${API_URL}${endpoint}`;
+    const token = await getToken();
+    const fullUrl = `${API_URL}${endpoint}`;
 
-      console.log('📌 Fetch URL:', fullUrl);
-      console.log('📌 Kullanılacak Token:', token);
+    // Ortak header’lar (FormData için Content-Type eklemiyoruz)
+    const headers = {
+      Accept: 'application/json',
+      ...(token && {Authorization: `Bearer ${token}`}),
+    };
 
-      const response = await fetch(fullUrl, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: method !== 'GET' && body ? JSON.stringify(body) : null,
-      });
+    const options = {method, headers};
 
-      const json = await response.json();
-      console.log('📦 FETCH sonucu:', json);
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          await AsyncStorage.removeItem('token');
-          throw new Error('Yetkisiz erişim. Lütfen tekrar giriş yapın.');
-        }
-        throw new Error(json.message || `İstek başarısız: ${response.status}`);
+    if (body) {
+      if (body instanceof FormData) {
+        // FormData → multipart, boundary’i fetch’in halletmesine izin ver
+        options.body = body;
+      } else if (method !== 'GET') {
+        // JSON objesi
+        headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(body);
       }
-
-      return json;
-    } catch (err) {
-      console.error('📌 API Hatası:', err.message);
-      setError(err.message);
-      throw err;
-    } finally {
-      setIsLoading(false);
     }
+
+    console.log('📌 Fetch URL:', fullUrl, options);
+    const response = await fetch(fullUrl, options);
+    const json = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        await AsyncStorage.removeItem('token');
+        throw new Error('Yetkisiz erişim. Lütfen tekrar giriş yapın.');
+      }
+      throw new Error(json.message || `İstek başarısız: ${response.status}`);
+    }
+
+    setIsLoading(false);
+    return json;
   };
 
   return {
