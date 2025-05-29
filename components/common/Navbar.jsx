@@ -19,11 +19,11 @@ const TabNavigator = () => {
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
-          if (route.name === 'Home') {
+          if (route.name === 'Ana sayfa') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Profile') {
+          } else if (route.name === 'Profil') {
             iconName = focused ? 'account' : 'account-outline';
-          } else if (route.name === 'Settings') {
+          } else if (route.name === 'Ayarlar') {
             iconName = focused ? 'cog' : 'cog-outline';
           }
 
@@ -42,9 +42,9 @@ const TabNavigator = () => {
         },
         headerShown: false,
       })}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Ana sayfa" component={HomeScreen} />
+      <Tab.Screen name="Profil" component={ProfileScreen} />
+      <Tab.Screen name="Ayarlar" component={SettingsScreen} />
     </Tab.Navigator>
   );
 };
