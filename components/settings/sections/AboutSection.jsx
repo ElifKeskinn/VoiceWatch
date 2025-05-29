@@ -2,8 +2,10 @@ import React from 'react';
 import { VStack, Box, Text, Icon, HStack, Center, Pressable, useColorModeValue } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import SettingsSection from '../SettingsSection';
+import { useNavigation } from '@react-navigation/native';
 
 const AboutSection = () => {
+  const navigation = useNavigation();
   const boxBgColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,99,71,0.2)');
   const textColor = useColorModeValue('#666666', '#D3D3D3');
   const titleColor = useColorModeValue('#FF4500', '#FF6347');
@@ -27,7 +29,7 @@ const AboutSection = () => {
         </Box>
         
         <VStack space={3}>
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={() => navigation.navigate('AboutSupport')}>
             <Box 
               bg={boxBgColor}
               p={4} 
@@ -58,10 +60,12 @@ const AboutSection = () => {
             <VStack space={4}>
               {[
                 { icon: "star", title: "Uygulamayı Değerlendir" },
-                { icon: "document-text", title: "Kullanım Koşulları" },
                 { icon: "shield-checkmark", title: "Gizlilik Politikası" }
               ].map((item, index) => (
-                <Pressable key={index} onPress={() => {}}>
+                <Pressable 
+                  key={index} 
+                  onPress={() => item.title === "Gizlilik Politikası" ? navigation.navigate('PrivacyPolicy') : {}}
+                >
                   <HStack space={3} alignItems="center">
                     <Center bg={boxBgColor} p={2} rounded="lg">
                       <Icon as={Ionicons} name={item.icon} size="sm" color={iconColor} />
