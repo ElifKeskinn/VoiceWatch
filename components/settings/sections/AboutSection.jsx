@@ -59,12 +59,12 @@ const AboutSection = () => {
             </Text>
             <VStack space={4}>
               {[
-                { icon: "star", title: "Uygulamayı Değerlendir" },
-                { icon: "shield-checkmark", title: "Gizlilik Politikası" }
+                { icon: "star", title: "Uygulamayı Değerlendir", screen: "RateApp" },
+                { icon: "shield-checkmark", title: "Gizlilik Politikası", screen: "PrivacyPolicy" }
               ].map((item, index) => (
                 <Pressable 
                   key={index} 
-                  onPress={() => item.title === "Gizlilik Politikası" ? navigation.navigate('PrivacyPolicy') : {}}
+                  onPress={() => navigation.navigate(item.screen)}
                 >
                   <HStack space={3} alignItems="center">
                     <Center bg={boxBgColor} p={2} rounded="lg">
