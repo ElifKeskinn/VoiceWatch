@@ -26,6 +26,7 @@ import ManualAlertPopup from '../components/ManualAlertPopup';
 import {styles} from '../styles/Home.styles';
 import {sendManualAlert, sendBulkSms} from '../services/requests/alertRequests';
 import {useGetContacts} from '../services/requests/contactRequests';
+import {sendNotification} from '../utils/notify';
 
 const HomeScreen = () => {
   const {getToken, execute} = useFetchWithToken();
@@ -40,10 +41,12 @@ const HomeScreen = () => {
 
   // Alert timer'ı için useRef kullanıyoruz
   const alertTimer = React.useRef(null);
+  // Kontakları al
   const {data: contacts, isLoading: loadingContacts} = useGetContacts();
-  const contactNumbers = Array.isArray(contacts)
-    ? contacts.map(c => c.phoneNumber) // API’nize göre değiştirin
-    : [];
+  const contactNumbers = React.useMemo(() => {
+    return Array.isArray(contacts) ? contacts.map(c => c.contactNumber) : [];
+  }, [contacts]);
+
   // Dark mod renkleri
   const bgColor = useColorModeValue('#FFFAF0', '#121212');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
@@ -63,146 +66,50 @@ const HomeScreen = () => {
     console.log('showManualAlert değişti:', showManualAlert);
   }, [showManualAlert]);
 
+  // Update animation configuration
   const animateRing = (ringScale, delay = 0, maxScale = 1.8) => {
     'worklet';
     ringScale.value = withDelay(
       delay,
       withRepeat(
         withSequence(
-          withTiming(maxScale, {duration: 1000}),
-          withTiming(1, {duration: 1000}),
+          withTiming(maxScale, {duration: 1000, useNativeDriver: true}),
+          withTiming(1, {duration: 1000, useNativeDriver: true}),
         ),
         -1,
       ),
     );
   };
 
-  const startAnimation = () => {
-    'worklet';
-    animateRing(ring1Scale, 0, 1.8);
-    animateRing(ring2Scale, 200, 1.85);
-    animateRing(ring3Scale, 400, 1.9);
-  };
+  // Update animated styles
+  const ring1Style = useAnimatedStyle(
+    () => ({
+      transform: [{scale: ring1Scale.value}],
+      opacity: withTiming(isListening ? 0.2 : 0, {useNativeDriver: true}),
+    }),
+    [isListening],
+  );
 
-  const stopAnimation = () => {
-    'worklet';
-    ring1Scale.value = withTiming(1);
-    ring2Scale.value = withTiming(1);
-    ring3Scale.value = withTiming(1);
-  };
+  const ring2Style = useAnimatedStyle(
+    () => ({
+      transform: [{scale: ring2Scale.value}],
+      opacity: withTiming(isListening ? 0.15 : 0, {useNativeDriver: true}),
+    }),
+    [isListening],
+  );
 
-  const handleAlertCancel = useCallback(async () => {
-    setShowAlert(false);
-    setAlertType(null);
-    setPaused(false);
-
-    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
-    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
-    const token = await getToken();
-    startSendingAudio(token, 2000);
-  }, []);
-
-  const handleAlertTimeout = useCallback(async () => {
-    requestAnimationFrame(async () => {
-      setShowAlert(false);
-      setAlertType(null);
-      setPaused(false);
-
-      // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
-      console.log('🔄 Ses dinleme yeniden başlatılıyor...');
-      const token = await getToken();
-      startSendingAudio(token, 2000);
-    });
-  }, []);
-
-  const handleAlertConfirm = useCallback(async () => {
-    console.log('Kontaklar bilgilendiriliyor...');
-    setShowAlert(false);
-    setAlertType(null);
-    setPaused(false);
-
-    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
-    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
-    const token = await getToken();
-    startSendingAudio(token, 2000);
-  }, []);
-
-  const handlePress = async () => {
-    console.log('▶️ [HomeScreen] WS_URL =', Constants.expoConfig.extra.WS_URL);
-    console.log('▶️ [HomeScreen] Platform.OS =', Platform.OS);
-    console.log('▶️ handlePress çağrıldı, isListening =', isListening);
-    try {
-      if (!isListening) {
-        console.log('  • Dinlemeye başlıyoruz…');
-        startAnimation();
-        scale.value = withSpring(0.95);
-
-        console.log('  • JWT almaya çalışılıyor…');
-        const token = await getToken();
-        console.log('  • Token:', token);
-
-        console.log('  • WS’e bağlanılıyor…');
-        connectWS({token});
-        console.log('  • onAIResult handler ayarlandı');
-
-        onAIResult(async ({result}) => {
-          console.log('🧠 AI sonucu:', result);
-
-          if (showAlert) {
-            console.log('⚠️ Zaten aktif bir alert var');
-            return;
-          }
-
-          if (!result || result === 'silence') {
-            console.log('✅ Güvenli durum algılandı');
-            return;
-          }
-
-          // Alert göster ve ses dinlemeyi durdur
-          console.log('🚨 Alert gösteriliyor:', result);
-          setPaused(true); // Önce ses dinlemeyi durdur
-          setAlertType(result);
-          setShowAlert(true);
-        });
-
-        console.log('  • startSendingAudio başlatılıyor…');
-        startSendingAudio(token, 2000);
-        console.log('  • Audio gönderme başlatıldı');
-      } else {
-        console.log('  • Dinleme durduruluyor…');
-        stopAnimation();
-        scale.value = withSpring(1);
-        disconnectWS();
-        setShowAlert(false);
-        setAlertType(null);
-      }
-
-      setIsListening(v => !v);
-      console.log('▶️ isListening artık =', !isListening);
-    } catch (err) {
-      console.error('▶️ handlePress Hatası:', err);
-      Alert.alert('Hata', err.message);
-    }
-  };
-
-  const ring1Style = useAnimatedStyle(() => ({
-    transform: [{scale: ring1Scale.value}],
-    opacity: withTiming(isListening ? 0.2 : 0),
-  }));
-
-  const ring2Style = useAnimatedStyle(() => ({
-    transform: [{scale: ring2Scale.value}],
-    opacity: withTiming(isListening ? 0.15 : 0),
-  }));
-
-  const ring3Style = useAnimatedStyle(() => ({
-    transform: [{scale: ring3Scale.value}],
-    opacity: withTiming(isListening ? 0.1 : 0),
-  }));
+  const ring3Style = useAnimatedStyle(
+    () => ({
+      transform: [{scale: ring3Scale.value}],
+      opacity: withTiming(isListening ? 0.1 : 0, {useNativeDriver: true}),
+    }),
+    [isListening],
+  );
 
   const buttonStyle = useAnimatedStyle(() => ({
     transform: [{scale: scale.value}],
-  }));
+  }), []);
+
   // --- MANUEL UYARI CALLBACK’LERİ ---
   const onManualConfirm = async () => {
     setShowManualAlert(false);
@@ -225,6 +132,137 @@ const HomeScreen = () => {
     }
   };
 
+  const startAnimation = () => {
+    'worklet';
+    animateRing(ring1Scale, 0, 1.8);
+    animateRing(ring2Scale, 200, 1.85);
+    animateRing(ring3Scale, 400, 1.9);
+    scale.value = withSpring(0.95, {useNativeDriver: true});
+  };
+
+  const stopAnimation = () => {
+    'worklet';
+    ring1Scale.value = withTiming(1, {useNativeDriver: true});
+    ring2Scale.value = withTiming(1, {useNativeDriver: true});
+    ring3Scale.value = withTiming(1, {useNativeDriver: true});
+    scale.value = withSpring(1, {useNativeDriver: true});
+  };
+
+  const handleAlertCancel = useCallback(async () => {
+    setShowAlert(false);
+    setAlertType(null);
+    setPaused(false);
+
+    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
+    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
+    const token = await getToken();
+    startSendingAudio(token, 2000);
+  }, []);
+
+  const handleAlertConfirm = useCallback(async () => {
+    console.log('✅ Kontaklar bilgilendiriliyor...');
+    setShowAlert(false);
+    setAlertType(null);
+    setPaused(false);
+
+    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
+    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
+    const token = await getToken();
+    startSendingAudio(token, 2000);
+  }, []);
+
+  const handleAlertTimeout = useCallback(async () => {
+    try {
+      console.log('⏰ Alert süresi doldu, SMS gönderiliyor...');
+      
+      if (loadingContacts) {
+        console.log('⚠️ Kontaklar yükleniyor');
+        return;
+      }
+
+      if (!contactNumbers?.length) {
+        console.log('❌ Gönderilecek kontak yok');
+        await sendNotification(
+          { enabled: true, sound: true, vibration: true },
+          '❌ SMS Gönderilemedi',
+          'Kayıtlı kontak bulunamadı'
+        );
+        return;
+      }
+
+      // Contact numaralarını kontrol et
+      const validNumbers = contactNumbers.filter(num => num && typeof num === 'string');
+      if (validNumbers.length === 0) {
+        throw new Error('Geçerli telefon numarası bulunamadı');
+      }
+
+      // Alert tipine göre mesaj oluştur
+      const message = `${alertType === 'glass_breaking' ? 'Cam Kırılma' : 
+                       alertType === 'fall' ? 'Düşme' :
+                       alertType === 'scream' ? 'Çığlık' : 
+                       'Bilinmeyen'} Sesi Algılandı! - Otomatik acil durum bildirimi`;
+
+      // SMS gönder
+      await sendBulkSms(message, validNumbers);
+      
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '✅ SMS Gönderildi',
+        'Kontaklar otomatik olarak bilgilendirildi'
+      );
+
+      requestAnimationFrame(() => {
+        setShowAlert(false);
+        setAlertType(null);
+        setPaused(false);
+      });
+
+    } catch (err) {
+      console.error('❌ SMS gönderme hatası:', err);
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '❌ SMS Gönderilemedi',
+        err.message || 'SMS gönderimi sırasında bir hata oluştu'
+      );
+    }
+  }, [alertType, contactNumbers, loadingContacts]);
+
+  const handlePress = async () => {
+    try {
+      if (!isListening) {
+        startAnimation();
+        scale.value = withSpring(0.95);
+
+        const token = await getToken();
+        connectWS({token});
+
+        onAIResult(async ({result}) => {
+          if (showAlert) return;
+          
+          if (!result || result === 'silence') return;
+
+          // Sessizlik dışındaki tehlikeli durumlar için alert göster
+          setPaused(true);
+          setAlertType(result);
+          setShowAlert(true);
+        });
+
+        startSendingAudio(token, 2000);
+      } else {
+        stopAnimation();
+        scale.value = withSpring(1);
+        disconnectWS();
+        setShowAlert(false);
+        setAlertType(null);
+      }
+
+      setIsListening(v => !v);
+    } catch (err) {
+      console.error('❌ Hata:', err);
+      Alert.alert('Hata', err.message);
+    }
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: bgColor}]}>
       <View style={styles.headerContainer}>
@@ -234,21 +272,22 @@ const HomeScreen = () => {
       <View style={styles.circleContainer}>
         <Animated.View
           style={[styles.ring, ring3Style, {borderColor: accentColor}]}
+          needsOffscreenAlphaCompositing
         />
         <Animated.View
           style={[styles.ring, ring2Style, {borderColor: accentColor}]}
+          needsOffscreenAlphaCompositing
         />
         <Animated.View
           style={[styles.ring, ring1Style, {borderColor: accentColor}]}
+          needsOffscreenAlphaCompositing
         />
 
         <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
           <Animated.View
-            style={[
-              styles.button,
-              buttonStyle,
-              {backgroundColor: buttonBgColor},
-            ]}>
+            style={[styles.button, buttonStyle, {backgroundColor: buttonBgColor}]}
+            needsOffscreenAlphaCompositing
+          >
             <MaterialIcons
               name={isListening ? 'mic-off' : 'mic'}
               size={56}
@@ -283,11 +322,7 @@ const HomeScreen = () => {
 
       <TouchableOpacity
         style={[styles.alertButton, {backgroundColor: buttonBgColor}]}
-        onPress={() => {
-          console.log('Buton basıldı, showManualAlert önce:', showManualAlert);
-          setShowManualAlert(true);
-          console.log('Buton basıldı, showManualAlert sonra:', showManualAlert);
-        }}>
+        onPress={() => setShowManualAlert(true)}>
         <MaterialIcons
           name="warning"
           size={24}

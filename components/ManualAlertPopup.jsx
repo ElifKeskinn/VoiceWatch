@@ -12,6 +12,7 @@ import {MaterialIcons} from '@expo/vector-icons';
 import {useColorModeValue} from 'native-base';
 import {sendBulkSms} from '../services/requests/alertRequests';
 import {useGetContacts} from '../services/requests/contactRequests';
+import { sendNotification } from '../utils/notify';
 
 const {width} = Dimensions.get('window');
 
@@ -35,22 +36,44 @@ export default function ManualAlertPopup({visible, onCancel}) {
     onCancel();
 
     if (isLoading) {
-      return Alert.alert('Bekleyin', 'Kontaklar yükleniyor…');
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        'SMS Gönderilemedi',
+        'Kontaklar henüz yükleniyor, lütfen bekleyin.'
+      );
+      return;
     }
+
     if (!numbers.length) {
-      return Alert.alert('Hata', 'Gönderilecek kontak bulunamadı.');
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        'SMS Gönderilemedi',
+        'Kayıtlı kontak bulunamadı.'
+      );
+      return;
     }
 
     try {
-      // Sadece SMS endpoint’ine POST
       console.log('[ManualAlertPopup] → sendBulkSms çağrılıyor', numbers);
       const smsRes = await sendBulkSms('Manuel acil durum bildirimi!', numbers);
       console.log('[ManualAlertPopup] ← sendBulkSms yanıt:', smsRes);
 
-      Alert.alert('Başarılı', 'Tüm SMS’ler gönderildi.');
+      // Başarılı bildirim
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '✅ Manuel Uyarı Gönderildi',
+        'Kontaklar başarıyla bilgilendirildi.'
+      );
+
     } catch (err) {
       console.error('[ManualAlertPopup] HATA:', err);
-      Alert.alert('Hata', err.message);
+      
+      // Hata bildirimi
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '❌ SMS Gönderilemedi',
+        'SMS gönderimi sırasında bir hata oluştu.'
+      );
     }
   };
 

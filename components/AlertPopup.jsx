@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Dimensions, Animated, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useColorModeValue } from 'native-base';
 import { Audio } from 'expo-av';
 import { styles } from '../styles/AlertPopup.styles';
 import alertSound from '../assets/alert.mp3';
+import { sendBulkSms } from '../services/requests/alertRequests';
+import { useGetContacts } from '../services/requests/contactRequests';
+import { sendNotification } from '../utils/notify';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +23,11 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
   const secondaryTextColor = useColorModeValue('#888', '#B0B0B0');
   const buttonBgColor = useColorModeValue('white', '#2D2D2D');
+
+  const { data: contacts, isLoading } = useGetContacts();
+  const numbers = Array.isArray(contacts) 
+    ? contacts.map(c => c.contactNumber)
+    : [];
 
   useEffect(() => {
     if (timeLeft <= 5 && timeLeft > 0) {
@@ -38,6 +46,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
     }
   }, [timeLeft]);
 
+  // Timer effect'ini güncelle
   useEffect(() => {
     if (visible) {
       setTimeLeft(30);
@@ -45,10 +54,10 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
-            if (timerRef.current) {
-              clearInterval(timerRef.current);
-              timerRef.current = null;
-            }
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+            
+            // Süre bittiğinde direkt timeout handler'ı çağır
             requestAnimationFrame(() => {
               onTimeout?.();
             });
@@ -190,6 +199,63 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
     outputRange: [buttonBgColor, 'rgba(255, 0, 0, 0.1)']
   });
 
+  // SMS gönderme fonksiyonu
+  const sendAlertSms = async () => {
+    try {
+      if (isLoading) {
+        console.log('❌ Kontaklar yükleniyor');
+        await sendNotification(
+          { enabled: true, sound: true, vibration: true },
+          'SMS Gönderilemedi',
+          'Kontaklar henüz yükleniyor, lütfen bekleyin.'
+        );
+        return false;
+      }
+
+      if (!numbers?.length) {
+        console.log('❌ Gönderilecek kontak yok');
+        await sendNotification(
+          { enabled: true, sound: true, vibration: true },
+          'SMS Gönderilemedi',
+          'Kayıtlı kontak bulunamadı.'
+        );
+        return false;
+      }
+
+      const message = `${getAlertInfo().title} - Otomatik acil durum bildirimi!`;
+      await sendBulkSms(message, numbers);
+      console.log('✅ SMS gönderimi başarılı');
+
+      // Başarılı bildirim
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '✅ SMS Gönderildi',
+        'Kontaklar başarıyla bilgilendirildi.'
+      );
+
+      return true;
+    } catch (err) {
+      console.error('❌ SMS gönderme hatası:', err);
+      
+      // Hata bildirimi
+      await sendNotification(
+        { enabled: true, sound: true, vibration: true },
+        '❌ SMS Gönderilemedi',
+        'SMS gönderimi sırasında bir hata oluştu.'
+      );
+      
+      return false;
+    }
+  };
+
+  // Kontakları bilgilendir butonunu güncelle
+  const handleConfirm = async () => {
+    const success = await sendAlertSms();
+    if (success) {
+      onConfirm?.();
+    }
+  };
+
   return (
     <Modal
       transparent
@@ -267,7 +333,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={onConfirm}
+                onPress={handleConfirm}
                 style={[
                   styles.button,
                   styles.confirmButton,

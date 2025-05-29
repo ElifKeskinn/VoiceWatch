@@ -28,18 +28,56 @@ export async function sendManualAlert() {
 
 
 export async function sendBulkSms(message, numbers) {
-  const token = await getToken();
-  const url = `${API_BASE}alert/send-sms`;
-  const body = JSON.stringify({ numbers, message });
-  const options = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body
-  };
-  console.log('[sendBulkSms] HTTP Request:', { url, ...options });
-  const res = await fetch(url, options);
-  if (!res.ok) throw new Error('SMS gönderimi başarısız');
-  return res.json();
+  try {
+    const token = await getToken();
+    // Token kontrolü ekle
+    if (!token) {
+      throw new Error('Token bulunamadı');
+    }
+
+    // Numara kontrolü ekle
+    if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
+      throw new Error('Geçerli telefon numarası bulunamadı');
+    }
+
+    // Boş/null numaraları filtrele
+    const validNumbers = numbers.filter(num => num && typeof num === 'string');
+
+    const url = `${API_BASE}alert/send-sms`;
+    const body = JSON.stringify({ 
+      numbers: validNumbers,
+      message 
+    });
+
+    const options = {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${token}` 
+      },
+      body
+    };
+
+    console.log('[sendBulkSms] Request:', {
+      url,
+      headers: options.headers,
+      numbers: validNumbers,
+      message
+    });
+
+    const res = await fetch(url, options);
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error('[sendBulkSms] Error response:', data);
+      throw new Error(data.message || 'SMS gönderimi başarısız');
+    }
+
+    return data;
+  } catch (err) {
+    console.error('[sendBulkSms] Error:', err);
+    throw err;
+  }
 }
 
 export async function sendAiIntegration(data) {
