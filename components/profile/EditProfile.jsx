@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   VStack,
   Text,
@@ -10,22 +10,22 @@ import {
   useColorModeValue,
   HStack,
 } from 'native-base';
-import {TextInput, View} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import { TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import GeneralModal from '../common/GeneralModal';
-import {useUpdateUserProfile} from '../../services/requests/userUpdateRequest';
+import { useUpdateUserProfile } from '../../services/requests/userUpdateRequest';
 import noProfileImg from '../../assets/noprofile.png';
 import CustomPicker from '../CustomPicker';
 
 const bloodGroupOptions = [
-  {label: 'A+', value: 'A+'},
-  {label: 'A-', value: 'A-'},
-  {label: 'B+', value: 'B+'},
-  {label: 'B-', value: 'B-'},
-  {label: 'AB+', value: 'AB+'},
-  {label: 'AB-', value: 'AB-'},
-  {label: '0+', value: '0+'},
-  {label: '0-', value: '0-'},
+  { label: 'A+', value: 'A+' },
+  { label: 'A-', value: 'A-' },
+  { label: 'B+', value: 'B+' },
+  { label: 'B-', value: 'B-' },
+  { label: 'AB+', value: 'AB+' },
+  { label: 'AB-', value: 'AB-' },
+  { label: '0+', value: '0+' },
+  { label: '0-', value: '0-' },
 ];
 
 const EditProfileModal = ({
@@ -52,19 +52,29 @@ const EditProfileModal = ({
 
     try {
       setError('');
-      const updateData = {
-        name: userData.name,
-        surname: userData.surname,
-        age: userData.age,
-        bloodGroup: userData.bloodGroup,
-        profilePic: userData.profilePic,
-      };
+      const formData = new FormData();
+      formData.append('name', userData.name);
+      formData.append('surname', userData.surname);
+      formData.append('age', userData.age.toString());
+      formData.append('bloodGroup', userData.bloodGroup);
 
-      const updatedUser = await updateProfileMutation.mutateAsync(updateData);
-      onSuccess?.(updatedUser); // parent'ı anlık güncelle
+      // Yeni foto seçildiyse FormData'ya ekle
+      if (userData.profilePic?.startsWith('file://')) {
+        const uriParts = userData.profilePic.split('.');
+        const fileExt = uriParts[uriParts.length - 1];
+        formData.append('profilePic', {
+          uri: userData.profilePic,
+          name: `profile-${Date.now()}.${fileExt}`,
+          type: `image/${fileExt}`,
+        });
+      }
+      // Eğer kullanıcı yeni foto seçmediyse profilePic eklenmez, backend eski URL'i korur
+
+      await updateProfileMutation.mutateAsync(formData);
+      onSuccess?.();
       onClose();
-    } catch (error) {
-      console.error('Update failed:', error);
+    } catch (err) {
+      console.error('❌ Update failed:', err);
       setError('Profil güncellenirken bir hata oluştu.');
     }
   };
@@ -125,12 +135,13 @@ const EditProfileModal = ({
       confirmButtonProps={{
         bg: accentColor,
         _pressed: {bg: useColorModeValue('#FF8C00', '#FF7F50')},
-      }}>
+      }}
+    >
       <VStack space={4}>
         <Box alignItems="center">
           <Image
             source={
-              userData.profilePic ? {uri: userData.profilePic} : noProfileImg
+              userData.profilePic ? { uri: userData.profilePic } : noProfileImg
             }
             alt="Profile"
             size="xl"
@@ -142,8 +153,9 @@ const EditProfileModal = ({
             leftIcon={<Icon as={Ionicons} name="camera" size="sm" />}
             onPress={onPickImage}
             variant="ghost"
-            _text={{color: accentColor}}
-            mt={2}>
+            _text={{ color: accentColor }}
+            mt={2}
+          >
             Fotoğrafı Değiştir
           </Button>
         </Box>
