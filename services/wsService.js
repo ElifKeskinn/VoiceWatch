@@ -12,7 +12,15 @@ let isPaused = false; // Yeni eklenen durum değişkeni
 let reconnectAttempts = 0;
 let lastUri = null;
 
-let alertPopupVisible = false;
+let _alertPopupVisible = false;
+
+export function setAlertPopupVisible(value) {
+  _alertPopupVisible = value;
+}
+
+export function isAlertPopupVisible() {
+  return _alertPopupVisible;
+}
 
 export function setPaused(value) {
   isPaused = value;
@@ -136,6 +144,12 @@ export function onAIResult(callback) {
           now - lastResultTime < MIN_TIME_BETWEEN_ALERTS
         ) {
           console.log('⏳ Alert cooldown aktif:', result);
+          return;
+        }
+
+        // Eğer zaten bir alert gösteriliyorsa yeni alert'i gösterme
+        if (isAlertPopupVisible()) {
+          console.log('⚠️ Zaten aktif bir alert var, yeni alert gösterilmiyor');
           return;
         }
 

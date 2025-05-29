@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { styles } from '../styles/AlertPopup.styles';
 import alertSound from '../assets/alert.mp3';
+import { setAlertPopupVisible } from '../services/wsService';
 
 const { width } = Dimensions.get('window');
 
@@ -42,6 +43,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   useEffect(() => {
     if (visible) {
       setTimeLeft(30);
+      setAlertPopupVisible(true);
       
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
@@ -50,6 +52,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
               clearInterval(timerRef.current);
               timerRef.current = null;
             }
+            setAlertPopupVisible(false);
             requestAnimationFrame(() => {
               onTimeout?.();
             });
@@ -63,6 +66,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
+      setAlertPopupVisible(false);
       setTimeLeft(30);
     }
 
@@ -71,6 +75,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
+      setAlertPopupVisible(false);
     };
   }, [visible, onTimeout]);
 
