@@ -59,7 +59,7 @@ const AboutSupportScreen = () => {
   };
 
   const handleWebsitePress = () => {
-    Linking.openURL('https://voicewatch.com');
+    Linking.openURL('https://voice-watcher-web.vercel.app/');
   };
 
   return (
