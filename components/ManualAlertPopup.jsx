@@ -8,23 +8,28 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useColorModeValue } from 'native-base';
-import { sendBulkSms } from '../services/requests/alertRequests';
-import { useGetContacts } from '../services/requests/contactRequests';
+import {MaterialIcons} from '@expo/vector-icons';
+import {useColorModeValue} from 'native-base';
+import {sendBulkSms} from '../services/requests/alertRequests';
+import {useGetContacts} from '../services/requests/contactRequests';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-export default function ManualAlertPopup({ visible, onCancel }) {
+export default function ManualAlertPopup({visible, onCancel}) {
   // Renk şemasını güncelle
   const modalBgColor = useColorModeValue('#FFFAF0', '#1A1A1A');
   const textColor = useColorModeValue('#000000', '#E8E8E8');
-  const borderColor = useColorModeValue('rgba(255,69,0,0.1)', 'rgba(255,255,255,0.1)');
+  const borderColor = useColorModeValue(
+    'rgba(255,69,0,0.1)',
+    'rgba(255,255,255,0.1)',
+  );
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
   const buttonBgColor = useColorModeValue('#FFFAF0', '#2D2D2D');
 
-  const { data: contacts, isLoading } = useGetContacts();
-  const numbers = Array.isArray(contacts) ? contacts.map(c => c.phoneNumber) : [];
+  const {data: contacts, isLoading} = useGetContacts();
+  const numbers = Array.isArray(contacts)
+    ? contacts.map(c => c.contactNumber)
+    : [];
 
   const handleConfirm = async () => {
     onCancel();
@@ -56,54 +61,60 @@ export default function ManualAlertPopup({ visible, onCancel }) {
       animationType="fade"
       transparent
       visible={visible}
-      onRequestClose={onCancel}
-    >
+      onRequestClose={onCancel}>
       <TouchableWithoutFeedback onPress={onCancel}>
-        <View style={[styles.backdrop, { backgroundColor: 'rgba(0,0,0,0.6)' }]}>
+        <View style={[styles.backdrop, {backgroundColor: 'rgba(0,0,0,0.6)'}]}>
           <TouchableWithoutFeedback>
-            <View style={[
-              styles.alertBox, 
-              { 
-                backgroundColor: modalBgColor, 
-                borderColor: borderColor,
-                borderWidth: 1,
-              }
-            ]}>
+            <View
+              style={[
+                styles.alertBox,
+                {
+                  backgroundColor: modalBgColor,
+                  borderColor: borderColor,
+                  borderWidth: 1,
+                },
+              ]}>
               <View style={styles.headerContainer}>
                 <MaterialIcons name="warning" size={24} color={accentColor} />
-                <Text style={[styles.title, { color: textColor }]}>Manuel Uyarı</Text>
+                <Text style={[styles.title, {color: textColor}]}>
+                  Manuel Uyarı
+                </Text>
               </View>
-              
-              <View style={[styles.divider, { backgroundColor: borderColor }]} />
-              
-              <Text style={[styles.message, { color: textColor }]}>
+
+              <View style={[styles.divider, {backgroundColor: borderColor}]} />
+
+              <Text style={[styles.message, {color: textColor}]}>
                 Kontak kişilerine acil durum SMS'i gönderilecek. Emin misiniz?
               </Text>
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[
-                    styles.button, 
-                    styles.cancelButton, 
-                    { 
+                    styles.button,
+                    styles.cancelButton,
+                    {
                       borderColor: accentColor,
-                      backgroundColor: buttonBgColor 
-                    }
+                      backgroundColor: buttonBgColor,
+                    },
                   ]}
-                  onPress={onCancel}
-                >
-                  <Text style={[styles.buttonText, { color: accentColor }]}>İptal</Text>
+                  onPress={onCancel}>
+                  <Text style={[styles.buttonText, {color: accentColor}]}>
+                    İptal
+                  </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
                   style={[
-                    styles.button, 
-                    styles.confirmButton, 
-                    { backgroundColor: accentColor }
+                    styles.button,
+                    styles.confirmButton,
+                    {backgroundColor: accentColor},
                   ]}
-                  onPress={handleConfirm}
-                >
-                  <MaterialIcons name="notification-important" size={20} color="white" />
+                  onPress={handleConfirm}>
+                  <MaterialIcons
+                    name="notification-important"
+                    size={20}
+                    color="white"
+                  />
                   <Text style={styles.confirmButtonText}>Gönder</Text>
                 </TouchableOpacity>
               </View>
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
