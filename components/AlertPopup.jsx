@@ -126,13 +126,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
 
   const getAlertInfo = () => {
     switch (type) {
-      case 'silence':
-        return {
-          icon: 'volume-off',
-          title: 'Uzun Süreli Sessizlik Algılandı!',
-          color: '#FF4500',
-        };
-      case 'glass':
+      case 'glass_breaking':
         return {
           icon: 'broken-image',
           title: 'Cam Kırılma Sesi Algılandı!',
@@ -153,7 +147,7 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       default:
         return {
           icon: 'warning',
-          title: 'Uyarı!',
+          title: 'Bilinmeyen Tehlike!',
           color: '#FF4500',
         };
     }
@@ -298,4 +292,4 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
   );
 };
 
-export default AlertPopup; 
+export default AlertPopup;

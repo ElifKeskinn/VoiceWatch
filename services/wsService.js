@@ -1,6 +1,5 @@
-
 // ✅ wsService.js
-import { recordAudioBase64 } from '../utils/audioUtils';
+import {recordAudioBase64} from '../utils/audioUtils';
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
 
@@ -9,18 +8,38 @@ const WS_URL = Constants.expoConfig.extra.WS_URL;
 let socket = null;
 let isStreaming = false;
 let stopSignal = false;
+let isPaused = false; // Yeni eklenen durum değişkeni
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 5;
-
 let lastUri = null;
 
-export function connectWS({ token }) {
+let alertPopupVisible = false;
+
+export function setPaused(value) {
+  isPaused = value;
+  if (value) {
+    // Alert gösterildiğinde ses kaydını durdur
+    stopSignal = true;
+  } else {
+    // Alert kapandığında ses kaydını tekrar başlat
+    stopSignal = false;
+    // Ses kaydını tekrar başlat
+    if (socket?.readyState === WebSocket.OPEN) {
+      isStreaming = false; // streaming'i sıfırla ki yeniden başlayabilsin
+    }
+  }
+}
+
+export function connectWS({token}) {
   if (stopSignal) {
     console.log('❌ Durdurulmuş durumda, yeniden bağlantı yapılmadı');
     return false;
   }
 
-  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+  if (
+    socket &&
+    (socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING)
+  ) {
     console.log('▶️ [WS Service] Bağlantı zaten kuruluyor veya açık');
     return true;
   }
@@ -37,13 +56,19 @@ export function connectWS({ token }) {
   };
 
   socket.onclose = event => {
-    console.log('▶️ [WS Service] WS bağlantısı kapandı:', event.code, event.reason);
+    console.log(
+      '▶️ [WS Service] WS bağlantısı kapandı:',
+      event.code,
+      event.reason,
+    );
     isStreaming = false;
 
     if (!stopSignal && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
       reconnectAttempts++;
-      console.log(`▶️ [WS Service] Yeniden bağlanma denemesi ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}`);
-      setTimeout(() => connectWS({ token }), 3000);
+      console.log(
+        `▶️ [WS Service] Yeniden bağlanma denemesi ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}`,
+      );
+      setTimeout(() => connectWS({token}), 3000);
     }
   };
 
@@ -67,22 +92,59 @@ export function disconnectWS() {
 export function onAIResult(callback) {
   if (!socket) return;
 
+  let lastResult = null;
+  let lastResultTime = 0;
+  const MIN_TIME_BETWEEN_ALERTS = 5000; // 5 saniye
+
   socket.onmessage = async msg => {
     try {
       const data = JSON.parse(msg.data);
       if (data.action === 'aiResult') {
-          console.log('🎯 AI sonucu geldi:', data);
-        callback({ result: data.result, alertId: data.alertId });
+        console.log('🎯 AI sonucu geldi:', data);
+        const result = data.result;
+        const prediction = data.prediction;
 
+        // Geçici dosyayı temizle
         if (lastUri) {
           try {
-            await FileSystem.deleteAsync(lastUri, { idempotent: true });
+            await FileSystem.deleteAsync(lastUri, {idempotent: true});
             console.log('🧹 Geçici ses dosyası silindi:', lastUri);
             lastUri = null;
           } catch (err) {
             console.warn('⚠️ Dosya silinemedi:', err.message);
           }
         }
+
+        // Sonucu kontrol et ve işle
+        const now = Date.now();
+        const maxConfidence = Math.max(...prediction);
+        const predictionIndex = prediction.indexOf(maxConfidence);
+
+        // Sessizlik veya düşük güven skoru kontrolü
+        if (result === 'silence' || maxConfidence < 0.9) {
+          console.log(
+            'ℹ️ Güvenli durum veya düşük güven:',
+            result,
+            maxConfidence,
+          );
+          return;
+        }
+
+        // Aynı alert'i kısa sürede tekrarlama kontrolü
+        if (
+          lastResult === result &&
+          now - lastResultTime < MIN_TIME_BETWEEN_ALERTS
+        ) {
+          console.log('⏳ Alert cooldown aktif:', result);
+          return;
+        }
+
+        // Sonuçları güncelle
+        lastResult = result;
+        lastResultTime = now;
+
+        console.log('🚨 Tehlike algılandı:', result, 'Güven:', maxConfidence);
+        callback({result});
       }
     } catch (e) {
       console.warn('⚠️ Yanıt parse edilemedi:', e.message);
@@ -91,55 +153,41 @@ export function onAIResult(callback) {
 }
 
 export async function startSendingAudio(token, intervalMs = 2000) {
+  if (isStreaming || isPaused) return; // Eğer durdurulmuşsa veya zaten çalışıyorsa başlatma
+
   stopSignal = false;
-
-  if (isStreaming) return;
-
-  if (!socket || socket.readyState !== WebSocket.OPEN) {
-    console.log('▶️ [WS Service] WebSocket bağlantısı yeniden kuruluyor...');
-    const connected = connectWS({ token });
-    if (!connected) {
-      console.error('▶️ [WS Service] WebSocket bağlantısı kurulamadı');
-      return;
-    }
-
-    await new Promise(resolve => {
-      const waitForOpen = () => {
-        if (socket?.readyState === WebSocket.OPEN) return resolve();
-        setTimeout(waitForOpen, 100);
-      };
-      waitForOpen();
-    });
-  }
-
   isStreaming = true;
 
   while (!stopSignal) {
     try {
-      if (stopSignal) break; // ✅ ekstra kontrol
+      if (isPaused) {
+        console.log('⏸️ Ses kaydı duraklatıldı (Alert gösteriliyor)');
+        break; // While döngüsünden çık
+      }
 
       console.log('🎙️ Ses kaydı başlatılıyor...');
-      const { base64, uri } = await recordAudioBase64(intervalMs);
+      const {base64, uri} = await recordAudioBase64(intervalMs);
       lastUri = uri;
 
       if (!socket || socket.readyState !== WebSocket.OPEN) {
-        console.warn('⚠️ WebSocket bağlantısı kopmuş, yeniden deneniyor...');
-        connectWS({ token });
-        continue;
+        console.warn('⚠️ WebSocket bağlantısı kopmuş');
+        break;
       }
 
       socket.send(
         JSON.stringify({
           action: 'aiIntegration',
           data: base64,
-        })
+        }),
       );
 
       console.log('📤 Ses verisi gönderildi');
     } catch (err) {
-      console.error('▶️ [WS Service] Ses gönderme hatası:', err);
+      console.error('❌ Ses gönderme hatası:', err);
+      break;
     }
   }
 
-  console.log('🛑 [WS Service] Ses gönderme döngüsü sona erdi');
+  isStreaming = false;
+  console.log('🛑 Ses gönderme döngüsü sonlandı');
 }

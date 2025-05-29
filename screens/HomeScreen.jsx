@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {MaterialIcons} from '@expo/vector-icons';
 import AlertPopup from '../components/AlertPopup';
+import {setPaused} from '../services/wsService';
 import {
   connectWS,
   startSendingAudio,
@@ -80,6 +81,42 @@ const HomeScreen = () => {
     ring3Scale.value = withTiming(1);
   };
 
+  const handleAlertCancel = useCallback(async () => {
+    setShowAlert(false);
+    setAlertType(null);
+    setPaused(false);
+
+    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
+    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
+    const token = await getToken();
+    startSendingAudio(token, 2000);
+  }, []);
+
+  const handleAlertTimeout = useCallback(async () => {
+    requestAnimationFrame(async () => {
+      setShowAlert(false);
+      setAlertType(null);
+      setPaused(false);
+
+      // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
+      console.log('🔄 Ses dinleme yeniden başlatılıyor...');
+      const token = await getToken();
+      startSendingAudio(token, 2000);
+    });
+  }, []);
+
+  const handleAlertConfirm = useCallback(async () => {
+    console.log('Kontaklar bilgilendiriliyor...');
+    setShowAlert(false);
+    setAlertType(null);
+    setPaused(false);
+
+    // Alert kapandıktan sonra ses dinlemeyi tekrar başlat
+    console.log('🔄 Ses dinleme yeniden başlatılıyor...');
+    const token = await getToken();
+    startSendingAudio(token, 2000);
+  }, []);
+
   const handlePress = async () => {
     console.log('▶️ [HomeScreen] WS_URL =', Constants.expoConfig.extra.WS_URL);
     console.log('▶️ [HomeScreen] Platform.OS =', Platform.OS);
@@ -98,23 +135,24 @@ const HomeScreen = () => {
         connectWS({token});
         console.log('  • onAIResult handler ayarlandı');
 
-        onAIResult(async ({result, alertId}) => {
-          console.log('🧠 AI sonucu:', result, 'alertId:', alertId);
-          if (result !== 'silence') {
-            setAlertType(result);
-            setShowAlert(true);
+        onAIResult(async ({result}) => {
+          console.log('🧠 AI sonucu:', result);
 
-            if (alertId !== undefined && alertId !== null) {
-              try {
-                await execute('POST', '/alert/respond', {alertId});
-                console.log('✅ Alert respond başarıyla gönderildi.');
-              } catch (err) {
-                console.warn('❌ Alert respond gönderilemedi:', err.message);
-              }
-            } else {
-              console.warn('⚠️ alertId boş geldiği için respond gönderilmedi.');
-            }
+          if (showAlert) {
+            console.log('⚠️ Zaten aktif bir alert var');
+            return;
           }
+
+          if (!result || result === 'silence') {
+            console.log('✅ Güvenli durum algılandı');
+            return;
+          }
+
+          // Alert göster ve ses dinlemeyi durdur
+          console.log('🚨 Alert gösteriliyor:', result);
+          setPaused(true); // Önce ses dinlemeyi durdur
+          setAlertType(result);
+          setShowAlert(true);
         });
 
         console.log('  • startSendingAudio başlatılıyor…');
@@ -155,24 +193,6 @@ const HomeScreen = () => {
   const buttonStyle = useAnimatedStyle(() => ({
     transform: [{scale: scale.value}],
   }));
-
-  const handleAlertCancel = useCallback(() => {
-    setShowAlert(false);
-    setAlertType(null);
-  }, []);
-
-  const handleAlertConfirm = useCallback(() => {
-    console.log('Kontaklar bilgilendiriliyor...');
-    setShowAlert(false);
-    setAlertType(null);
-  }, []);
-
-  const handleAlertTimeout = useCallback(() => {
-    requestAnimationFrame(() => {
-      setShowAlert(false);
-      setAlertType(null);
-    });
-  }, []);
 
   return (
     <View style={[styles.container, {backgroundColor: bgColor}]}>
