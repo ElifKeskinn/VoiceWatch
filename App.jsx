@@ -8,6 +8,9 @@ import SplashScreen from './screens/SplashScreen';
 import TabNavigator from './components/common/Navbar';
 import PasswordChangeScreen from './screens/Settings/PasswordChangeScreen';
 import DeleteAccountScreen from './screens/Settings/DeleteAccountScreen';
+import AboutSupportScreen from './screens/Settings/AboutSupportScreen';
+import PrivacyPolicyScreen from './screens/Settings/PrivacyPolicyScreen';
+import RateAppScreen from './screens/Settings/RateAppScreen';
 import Toast from 'react-native-toast-message';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
@@ -81,6 +84,47 @@ const AppNavigator = () => {
             elevation: 0,
             shadowOpacity: 0,
           },
+        }}
+      />
+      <Stack.Screen
+        name="AboutSupport"
+        component={AboutSupportScreen}
+        options={{
+          title: 'Hakkında & Destek',
+          headerTintColor: headerTintColor,
+          headerStyle: {
+            backgroundColor: headerBgColor,
+            borderBottomWidth: 1,
+            borderBottomColor: headerBorderColor,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{
+          title: 'Gizlilik Politikası',
+          headerTintColor: headerTintColor,
+          headerStyle: {
+            backgroundColor: headerBgColor,
+            borderBottomWidth: 1,
+            borderBottomColor: headerBorderColor,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="RateApp"
+        component={RateAppScreen}
+        options={{
+          title: 'Uygulamayı Değerlendir',
+          headerStyle: {
+            backgroundColor: '#FF4500',
+          },
+          headerTintColor: '#fff',
         }}
       />
     </Stack.Navigator>

@@ -3,12 +3,13 @@ import { Modal, View, Text, TouchableOpacity, Dimensions, Animated, Alert } from
 import { MaterialIcons } from '@expo/vector-icons';
 import { useColorModeValue } from 'native-base';
 import { Audio } from 'expo-av';
-import { styles } from '../styles/AlertPopup.styles';
 import alertSound from '../assets/alert.mp3';
+import { styles } from '../styles/AlertPopup.styles';
 import { sendBulkSms } from '../services/requests/alertRequests';
 import { useGetContacts } from '../services/requests/contactRequests';
 import { sendNotification } from '../utils/notify';
 import { setAlertPopupVisible } from '../services/wsService';
+import { getCurrentLocation } from '../services/locationService';
 
 const { width } = Dimensions.get('window');
 
@@ -47,20 +48,59 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
     }
   }, [timeLeft]);
 
-  // Timer effect'ini güncelle
+  // Ses yükleme fonksiyonu
+  const loadSound = async () => {
+    try {
+      console.log('🔊 Alert sesi yükleniyor...');
+      const { sound } = await Audio.Sound.createAsync(
+        alertSound,
+        { shouldPlay: false }
+      );
+      soundRef.current = sound;
+      console.log('✅ Alert sesi yüklendi');
+    } catch (error) {
+      console.error('❌ Ses yüklenirken hata:', error);
+    }
+  };
+
+  // Ses çalma fonksiyonu - volume parametresi eklendi
+  const playWarningSound = async (volume = 1.0, duration = 3000) => {
+    try {
+      if (!soundRef.current) {
+        await loadSound();
+      }
+      
+      await soundRef.current.setPositionAsync(0);
+      await soundRef.current.setVolumeAsync(volume);
+      await soundRef.current.playAsync();
+
+      // Belirtilen süre sonra sesi durdur
+      setTimeout(async () => {
+        if (soundRef.current) {
+          await soundRef.current.stopAsync();
+        }
+      }, duration);
+
+    } catch (error) {
+      console.error('❌ Ses çalınırken hata:', error);
+    }
+  };
+
   useEffect(() => {
     if (visible) {
       setTimeLeft(30);
-      setAlertPopupVisible(true);
+
+      playWarningSound(0.5, 3000); 
       
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
+          if (prev === 5) {
+            playWarningSound(1.0, 5000); 
+          }
+          
           if (prev <= 1) {
             clearInterval(timerRef.current);
             timerRef.current = null;
-            
-            // Süre bittiğinde direkt timeout handler'ı çağır
-            setAlertPopupVisible(false);
             requestAnimationFrame(() => {
               onTimeout?.();
             });
@@ -70,6 +110,9 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         });
       }, 1000);
     } else {
+      if (soundRef.current) {
+        soundRef.current.stopAsync();
+      }
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -79,6 +122,9 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
     }
 
     return () => {
+      if (soundRef.current) {
+        soundRef.current.stopAsync();
+      }
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -86,56 +132,6 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
       setAlertPopupVisible(false);
     };
   }, [visible, onTimeout]);
-
-  // Ses yükleme fonksiyonu
- const loadSound = async () => {
-    try {
-      const { sound } = await Audio.Sound.createAsync(alertSound, { shouldPlay: false });
-      soundRef.current = sound;
-    } catch (error) {
-      console.log('Ses yüklenirken hata:', error);
-    }
-  };
-
-
-  // Component mount olduğunda sesi yükle
-  useEffect(() => {
-    loadSound();
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.unloadAsync();
-      }
-    };
-  }, []);
-
-  // Popup görünür olduğunda sesi çal
-  useEffect(() => {
-    const playSound = async () => {
-      try {
-        if (visible && soundRef.current) {
-          await soundRef.current.setPositionAsync(0);
-          await soundRef.current.playAsync();
-          
-          // 3 saniye sonra sesi durdur
-          setTimeout(async () => {
-            if (soundRef.current) {
-              await soundRef.current.stopAsync();
-            }
-          }, 3000);
-        }
-      } catch (error) {
-        console.log('Ses çalınırken hata:', error);
-      }
-    };
-
-    playSound();
-
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.stopAsync();
-      }
-    };
-  }, [visible]);
 
   const getAlertInfo = () => {
     switch (type) {
@@ -227,7 +223,12 @@ const AlertPopup = ({ visible, type, onCancel, onConfirm, onTimeout }) => {
         return false;
       }
 
-      const message = `${getAlertInfo().title} - Otomatik acil durum bildirimi!`;
+      const location = await getCurrentLocation();
+      const alertInfo = getAlertInfo();
+      const message = `${alertInfo.title} - Otomatik acil durum bildirimi!${
+        location?.mapsLink ? `\n\nKonum: ${location.mapsLink}` : ''
+      }`;
+
       await sendBulkSms(message, numbers);
       console.log('✅ SMS gönderimi başarılı');
 

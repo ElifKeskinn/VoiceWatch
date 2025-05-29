@@ -10,7 +10,6 @@ import {
   Icon,
   Pressable,
 } from 'native-base';
-import { sendNotification } from '../../utils/notify';
 import {Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {SENSITIVITY_LEVELS} from '../../constants/sensitivity';
@@ -112,17 +111,6 @@ const SettingsScreen = () => {
           onClose={() => setShowLogoutModal(false)}
           onConfirm={handleLogout}
         />
-        <Button
-                onPress={() =>
-                  sendNotification(
-                    notifications, // SettingsScreen'deki state
-                    'Test Bildirimi',
-                    'Bu bir deneme bildirimidir 📣',
-                  )
-                }
-                mt={4}>
-                Test Bildirimi Gönder
-              </Button>
       </VStack>
     </ScrollView>
   );

@@ -1,5 +1,6 @@
 // services/apiService/requests/alertRequests.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCurrentLocation } from '../locationService';
 
 async function getToken() {
   return await AsyncStorage.getItem('token');
@@ -30,23 +31,28 @@ export async function sendManualAlert() {
 export async function sendBulkSms(message, numbers) {
   try {
     const token = await getToken();
-    // Token kontrolü ekle
     if (!token) {
       throw new Error('Token bulunamadı');
     }
 
-    // Numara kontrolü ekle
     if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
       throw new Error('Geçerli telefon numarası bulunamadı');
     }
 
-    // Boş/null numaraları filtrele
+    // Konum bilgisini al
+    const location = await getCurrentLocation();
     const validNumbers = numbers.filter(num => num && typeof num === 'string');
 
     const url = `${API_BASE}alert/send-sms`;
+    
     const body = JSON.stringify({ 
       numbers: validNumbers,
-      message 
+      message,
+      location: location ? {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        mapsLink: location.mapsLink
+      } : null
     });
 
     const options = {
@@ -62,7 +68,8 @@ export async function sendBulkSms(message, numbers) {
       url,
       headers: options.headers,
       numbers: validNumbers,
-      message
+      message,
+      hasLocation: !!location
     });
 
     const res = await fetch(url, options);
