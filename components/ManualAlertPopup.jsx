@@ -13,6 +13,7 @@ import {useColorModeValue} from 'native-base';
 import {sendBulkSms} from '../services/requests/alertRequests';
 import {useGetContacts} from '../services/requests/contactRequests';
 import { sendNotification } from '../utils/notify';
+import { getCurrentLocation } from '../services/locationService';
 
 const {width} = Dimensions.get('window');
 
@@ -54,8 +55,13 @@ export default function ManualAlertPopup({visible, onCancel}) {
     }
 
     try {
+      const location = await getCurrentLocation();
+      const message = `Manuel acil durum bildirimi!${
+        location?.mapsLink ? `\n\nKonum: ${location.mapsLink}` : ''
+      }`;
+
       console.log('[ManualAlertPopup] → sendBulkSms çağrılıyor', numbers);
-      const smsRes = await sendBulkSms('Manuel acil durum bildirimi!', numbers);
+      const smsRes = await sendBulkSms(message, numbers);
       console.log('[ManualAlertPopup] ← sendBulkSms yanıt:', smsRes);
 
       // Başarılı bildirim

@@ -7,6 +7,24 @@ const NotificationsSection = ({ values, onChange }) => {
   const accentColor = useColorModeValue('#FF4500', '#FF6347');
   const offTrackColor = useColorModeValue('#666666', '#404040');
 
+  const handleSoundToggle = () => {
+    onChange(prev => ({
+      ...prev, 
+      sound: !prev.sound,
+      // Ses açıldığında titreşimi kapat
+      vibration: !prev.sound ? false : prev.vibration
+    }));
+  };
+
+  const handleVibrationToggle = () => {
+    onChange(prev => ({
+      ...prev, 
+      vibration: !prev.vibration,
+      // Titreşim açıldığında sesi kapat
+      sound: !prev.vibration ? false : prev.sound
+    }));
+  };
+
   return (
     <SettingsSection title="Bildirim Ayarları" icon="notifications">
       <VStack space={4} mt={4}>
@@ -22,19 +40,19 @@ const NotificationsSection = ({ values, onChange }) => {
         {values.enabled && (
           <VStack space={3}>
             <HStack justifyContent="space-between" alignItems="center">
-              <Text color={textColor}>Ses</Text>
+              <Text color={textColor}>Sesli Bildirim</Text>
               <Switch 
                 isChecked={values.sound}
-                onToggle={() => onChange(prev => ({...prev, sound: !prev.sound}))}
+                onToggle={handleSoundToggle}
                 onTrackColor={accentColor}
                 offTrackColor={offTrackColor}
               />
             </HStack>
             <HStack justifyContent="space-between" alignItems="center">
-              <Text color={textColor}>Titreşim</Text>
+              <Text color={textColor}>Titreşimli Bildirim</Text>
               <Switch 
                 isChecked={values.vibration}
-                onToggle={() => onChange(prev => ({...prev, vibration: !prev.vibration}))}
+                onToggle={handleVibrationToggle}
                 onTrackColor={accentColor}
                 offTrackColor={offTrackColor}
               />
