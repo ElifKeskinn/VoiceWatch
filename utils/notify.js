@@ -27,7 +27,5 @@ export const sendNotification = async (settings, title, body) => {
   });
 
   console.log('✅ Bildirim gönderildi:', title, body);
-
-  alert('Fonksiyon çağrıldı ✅');
-
+  // alert çağrısını kaldırdık
 };
