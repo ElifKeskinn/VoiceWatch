@@ -1,10 +1,18 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import Constants from 'expo-constants';
+
+const API_URL = Constants.expoConfig.extra.API_URL;
 
 /**
- * API isteklerini token ile birlikte fetch kullanarak yapan hook.
- * Tüm servis dosyalarında bu fonksiyon kullanılabilir.
+ * Token getter
+ */
+const getToken = async () => {
+  return await AsyncStorage.getItem('token');
+};
+
+/**
+ * API hook
  */
 const useFetchWithToken = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +23,7 @@ const useFetchWithToken = () => {
       setIsLoading(true);
       setError(null);
 
-      const token = await AsyncStorage.getItem('token');
+      const token = await getToken();
       const fullUrl = `${API_URL}${endpoint}`;
 
       console.log('📌 Fetch URL:', fullUrl);
@@ -26,7 +34,7 @@ const useFetchWithToken = () => {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          ...(token && {Authorization: `Bearer ${token}`}),
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: method !== 'GET' && body ? JSON.stringify(body) : null,
       });
@@ -35,7 +43,6 @@ const useFetchWithToken = () => {
       console.log('📦 FETCH sonucu:', json);
 
       if (!response.ok) {
-        // 401 durumunda token'ı temizleyip logout tetikleyebilirsin
         if (response.status === 401) {
           await AsyncStorage.removeItem('token');
           throw new Error('Yetkisiz erişim. Lütfen tekrar giriş yapın.');
@@ -57,6 +64,7 @@ const useFetchWithToken = () => {
     isLoading,
     error,
     execute,
+    getToken, // ✅ EKLENDİ!
   };
 };
 

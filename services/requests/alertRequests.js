@@ -9,7 +9,7 @@ const API_BASE = 'https://voicewatchbackend-production.up.railway.app/api/';
 
 export async function sendManualAlert() {
   const token = await getToken();
-  const url = `${API_BASE}/alert/manual`;
+  const url = `${API_BASE}alert/manual`;
   const options = {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },

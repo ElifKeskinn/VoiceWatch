@@ -39,15 +39,6 @@ const NotificationsSection = ({ values, onChange }) => {
                 offTrackColor={offTrackColor}
               />
             </HStack>
-            <HStack justifyContent="space-between" alignItems="center">
-              <Text color={textColor}>Rahatsız Etme Modu</Text>
-              <Switch 
-                isChecked={values.silent}
-                onToggle={() => onChange(prev => ({...prev, silent: !prev.silent}))}
-                onTrackColor={accentColor}
-                offTrackColor={offTrackColor}
-              />
-            </HStack>
           </VStack>
         )}
       </VStack>
