@@ -16,11 +16,18 @@ let aiResultCallback = null;
 
 // Kayıt kilidi - aynı anda tek bir kayıt nesnesinin oluşturulmasını sağlar
 let isRecording = false;
+let recordingLock = false;
+let lastRecordingError = 0; // Rate limit recording errors
 
 // Exponential backoff için değerler
 const MAX_RECONNECT_ATTEMPTS = 5;
 const INITIAL_RECONNECT_DELAY = 1000;
 const MAX_RECONNECT_DELAY = 30000;
+
+// Error recovery constants
+const RECORDING_ERROR_COOLDOWN = 3000; // 3 seconds cooldown after recording errors
+const MAX_CONSECUTIVE_ERRORS = 5;
+let consecutiveErrors = 0;
 
 // Reconnect delay hesaplama
 const getReconnectDelay = attempt => {
@@ -90,14 +97,12 @@ export function isAlertPopupVisible() {
 export function setPaused(value) {
   isPaused = value;
   if (value) {
-    // Durdurma sinyalini aynı anda ayarla
+    // Immediately stop any ongoing recording sessions
     stopSignal = true;
+    isStreaming = false;
     console.log('⏸️ Ses kaydı duraklatıldı ve durdurma sinyali gönderildi');
   } else {
     stopSignal = false;
-    if (socket?.readyState === WebSocket.OPEN) {
-      isStreaming = false;
-    }
   }
 }
 
@@ -207,6 +212,11 @@ export function disconnectWS() {
 
   // Önce durdurma sinyalini ayarla
   stopSignal = true;
+  isStreaming = false; // Immediately stop streaming
+  
+  // Reset recording flags
+  isRecording = false;
+  recordingLock = false;
 
   // Timeout'ları temizle
   if (connectionTimeout) {
@@ -228,9 +238,9 @@ export function disconnectWS() {
   }
 
   // Diğer state'leri sıfırla
-  isStreaming = false;
   reconnectAttempts = 0;
   connectionState = WS_STATES.DISCONNECTED;
+  consecutiveErrors = 0;
 }
 
 export function onAIResult(callback) {
@@ -242,6 +252,36 @@ export function onAIResult(callback) {
     console.log("🔄 AI callback mevcut socket'e bağlandı");
     socket.onmessage = wrapHandler;
   }
+}
+
+// Acquires recording lock with timeout
+async function acquireRecordingLock(timeout = 5000) {
+  // If lock is already held, wait
+  if (recordingLock || isRecording) {
+    console.log('⏳ Kayıt kilidi için bekleniyor...');
+    
+    // Wait for lock to be released with timeout
+    const startTime = Date.now();
+    while ((recordingLock || isRecording) && Date.now() - startTime < timeout) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    // If still locked after timeout, fail
+    if (recordingLock || isRecording) {
+      console.log('⚠️ Kayıt kilidi zaman aşımına uğradı!');
+      return false;
+    }
+  }
+  
+  // Acquire lock
+  recordingLock = true;
+  return true;
+}
+
+// Releases recording lock
+function releaseRecordingLock() {
+  recordingLock = false;
+  isRecording = false;
 }
 
 export async function startSendingAudio(token, intervalMs = 2000) {
@@ -256,6 +296,9 @@ export async function startSendingAudio(token, intervalMs = 2000) {
     return;
   }
 
+  // Reset error counts
+  consecutiveErrors = 0;
+  
   // Durdurma sinyalini sıfırla ve yayını başlat
   stopSignal = false;
   isStreaming = true;
@@ -268,6 +311,14 @@ export async function startSendingAudio(token, intervalMs = 2000) {
       if (isPaused || stopSignal) {
         console.log('⏸️ Ses kaydı duraklatıldı veya durduruldu');
         break;
+      }
+
+      // Rate limiting for recording attempts after errors
+      const now = Date.now();
+      if (now - lastRecordingError < RECORDING_ERROR_COOLDOWN) {
+        console.log(`⏳ Kayıt hatası nedeniyle bekleniyor (${RECORDING_ERROR_COOLDOWN}ms)`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
       }
 
       // Bağlantı durumunu kontrol et
@@ -286,62 +337,85 @@ export async function startSendingAudio(token, intervalMs = 2000) {
         }
       }
 
-      // Kayıt kilidi
-      if (isRecording) {
-        console.log('⏳ Önceki kayıt hala devam ediyor, bekliyor...');
-        await new Promise(resolve => setTimeout(resolve, 500));
+      // Acquire recording lock - wait if another recording is in progress
+      if (!await acquireRecordingLock()) {
+        console.log('⚠️ Kayıt kilidi alınamadı, tekrar deneniyor...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
         continue;
       }
 
-      // Kayıt kilidini ayarla
-      isRecording = true;
+      try {
+        console.log('🎙️ Ses kaydı başlatılıyor...');
+        isRecording = true;
+        
+        const {base64, uri} = await recordAudioBase64(intervalMs);
+        
+        // Record completed successfully, reset error count
+        consecutiveErrors = 0;
+        lastUri = uri;
+        
+        // Socket kontrolü
+        if (stopSignal) {
+          console.log('🛑 Durdurma sinyali alındı, kayıt gönderilmiyor');
+          if (uri) {
+            try {
+              await FileSystem.deleteAsync(uri, {idempotent: true});
+            } catch (err) {
+              console.warn('⚠️ Geçici dosya silinemedi:', err.message);
+            }
+          }
+          break;
+        }
 
-      console.log('🎙️ Ses kaydı başlatılıyor...');
-      const {base64, uri} = await recordAudioBase64(intervalMs).catch(err => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          socket.send(
+            JSON.stringify({
+              action: 'aiIntegration',
+              data: base64,
+            }),
+          );
+          console.log('📤 Ses verisi gönderildi');
+        } else {
+          console.warn('⚠️ Ses verisi gönderilemedi: Socket bağlı değil');
+          if (uri) {
+            try {
+              await FileSystem.deleteAsync(uri, {idempotent: true});
+            } catch (err) {
+              console.warn('⚠️ Geçici dosya silinemedi:', err.message);
+            }
+          }
+        }
+      } catch (err) {
         console.error('❌ Kayıt hatası:', err);
-        return {base64: null, uri: null};
-      });
-
-      // Kayıt kilidini kaldır
-      isRecording = false;
-
-      // Kayıt başarısızsa devam et
-      if (!base64 || !uri) {
-        continue;
-      }
-
-      lastUri = uri;
-
-      // Socket kontrolü
-      if (stopSignal) {
-        console.log('🛑 Durdurma sinyali alındı, kayıt gönderilmiyor');
-        break;
-      }
-
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(
-          JSON.stringify({
-            action: 'aiIntegration',
-            data: base64,
-          }),
-        );
-        console.log('📤 Ses verisi gönderildi');
-      } else {
-        console.warn('⚠️ Ses verisi gönderilemedi: Socket bağlı değil');
+        lastRecordingError = Date.now();
+        consecutiveErrors++;
+        
+        // If too many consecutive errors, take a longer break
+        if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+          console.log(`⚠️ ${MAX_CONSECUTIVE_ERRORS} ardışık hata, uzun mola veriliyor...`);
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          consecutiveErrors = 0;
+        }
+      } finally {
+        // Always release locks when done
+        isRecording = false;
+        releaseRecordingLock();
       }
     } catch (err) {
-      console.error('❌ Ses gönderme hatası:', err);
-
+      console.error('❌ Ses gönderme ana hatası:', err);
+      
       // Kayıt kilidini hataya rağmen temizle
       isRecording = false;
+      releaseRecordingLock();
 
       // Ciddi hatalarda kısa bir bekleyiş ekle
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
 
   // Döngüden çıktık, kaynakları temizle
   isStreaming = false;
   isRecording = false;
+  recordingLock = false;
   console.log('🛑 Ses gönderme döngüsü sonlandırıldı');
 }
