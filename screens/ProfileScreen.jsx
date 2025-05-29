@@ -85,16 +85,22 @@ const ProfileScreen = () => {
     setIsEditModalOpen(true);
   };
 
+  // handlePickImage fonksiyonunu güncelle
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled) {
-      setEditUser({...editUser, profileImage: result.assets[0].uri});
+      // Tutarlı isimlendirme: profilePic kullan (profileImage değil)
+      setEditUser(prev => ({
+        ...prev,
+        profilePic: result.assets[0].uri,
+      }));
+      console.log('🖼️ Yeni profil resmi seçildi:', result.assets[0].uri);
     }
   };
 
