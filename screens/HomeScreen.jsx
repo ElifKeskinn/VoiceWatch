@@ -27,6 +27,7 @@ import {styles} from '../styles/Home.styles';
 import {sendManualAlert, sendBulkSms} from '../services/requests/alertRequests';
 import {useGetContacts} from '../services/requests/contactRequests';
 import {sendNotification} from '../utils/notify';
+import { getCurrentLocation } from '../services/locationService';
 
 const HomeScreen = () => {
   const {getToken, execute} = useFetchWithToken();
@@ -196,11 +197,16 @@ const HomeScreen = () => {
         throw new Error('Geçerli telefon numarası bulunamadı');
       }
 
-      // Alert tipine göre mesaj oluştur
+      // Konum bilgisini al
+      const location = await getCurrentLocation();
+      console.log('📍 Uyarı için konum bilgisi alındı:', location?.mapsLink || 'Konum alınamadı');
+
+      // Alert tipine göre mesaj oluştur (konum bilgisiyle)
       const message = `${alertType === 'glass_breaking' ? 'Cam Kırılma' : 
                        alertType === 'fall' ? 'Düşme' :
                        alertType === 'scream' ? 'Çığlık' : 
-                       'Bilinmeyen'} Sesi Algılandı! - Otomatik acil durum bildirimi`;
+                       'Bilinmeyen'} Sesi Algılandı! - Otomatik acil durum bildirimi${
+                       location?.mapsLink ? `\n\nKonum: ${location.mapsLink}` : ''}`;
 
       // SMS gönder
       await sendBulkSms(message, validNumbers);
